@@ -24,7 +24,8 @@ hides it; use the tray icon to exit.
   (`﴿٤٦﴾`) always stay intact when lines wrap.
 - **Translation picker** — Saheeh International (built in), plus Pickthall,
   Yusuf Ali, Muhammad Asad and Hilali & Khan (downloaded on demand, cached offline).
-- **Search** — jump straight to `2:255`, or full-text search the translation.
+- **Search** — jump straight to `2:255`, or full-text search the translation
+  **and the Arabic text** (Arabic matches even without diacritics).
 - **Favorites** — tap the star to keep verses; browse them from the popup or the
   right-click menu.
 - **Save as image** — export the verse card as a high-resolution PNG for sharing.
@@ -36,7 +37,8 @@ hides it; use the tray icon to exit.
   the next surah, and stops where you tell it (end of surah / 10–50 verses / until
   you stop). The widget follows along and **highlights the verse being recited**.
 - **Resume** — the reading position is remembered between sessions.
-- **Sleep timer** — stop the recitation after 10 / 20 / 30 / 60 minutes.
+- **Sleep timer** — stop the recitation after 10 / 20 / 30 / 60 minutes, with a
+  live countdown so you always know when it will stop.
 - **Read the meaning** — reads the translation aloud with your Windows voices.
 
 **Look & feel**
@@ -85,7 +87,7 @@ hides it; use the tray icon to exit.
   ISCC.exe installer\QuranWidget.iss
   ```
 
-  which produces `QuranWidgetSetup-1.0.0.exe` with Start-menu shortcut, optional
+  which produces `QuranWidgetSetup-2.0.0.exe` with Start-menu shortcut, optional
   autostart and a clean uninstaller.
 
 ## Updates

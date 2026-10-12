@@ -5,7 +5,7 @@
 ; a clean uninstaller.
 
 #define AppName "Quran Widget"
-#define AppVersion "1.0.1"
+#define AppVersion "2.0.0"
 #define AppPublisher "Quran Widget"
 #define AppExe "QuranWidget.exe"
 
