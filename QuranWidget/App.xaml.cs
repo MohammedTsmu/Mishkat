@@ -136,18 +136,39 @@ public partial class App : System.Windows.Application
         };
 
         var menu = new WinForms.ContextMenuStrip();
-        menu.Items.Add("Verse of the Day", null, (_, _) => ShowDaily());
-        menu.Items.Add("New Verse Widget", null, (_, _) => CreateWidget());
-        menu.Items.Add(new WinForms.ToolStripSeparator());
-        menu.Items.Add("Check for Updates", null, (_, _) => CheckForUpdates());
-        menu.Items.Add("Open Log File", null, (_, _) => OpenLog());
-        menu.Items.Add(new WinForms.ToolStripSeparator());
-        menu.Items.Add("Unpin from desktop", null, (_, _) => UnpinAll());
-        menu.Items.Add(new WinForms.ToolStripSeparator());
-        menu.Items.Add("Exit", null, (_, _) => ExitApp());
+        var dailyItem = new WinForms.ToolStripMenuItem(L10n.T("Verse of the Day", "آية اليوم"), null, (_, _) => ShowDaily()) { Name = "Daily" };
+        var newWidget = new WinForms.ToolStripMenuItem(L10n.T("New Verse Widget", "أداة آية جديدة"), null, (_, _) => CreateWidget()) { Name = "NewWidget" };
+        var updates = new WinForms.ToolStripMenuItem(L10n.T("Check for Updates", "التحقق من التحديثات"), null, (_, _) => CheckForUpdates()) { Name = "Updates" };
+        var log = new WinForms.ToolStripMenuItem(L10n.T("Open Log File", "فتح ملف السجل"), null, (_, _) => OpenLog()) { Name = "Log" };
+        var unpin = new WinForms.ToolStripMenuItem(L10n.T("Unpin from desktop", "إلغاء التثبيت من سطح المكتب"), null, (_, _) => UnpinAll()) { Name = "Unpin" };
+        var exit = new WinForms.ToolStripMenuItem(L10n.T("Exit", "خروج"), null, (_, _) => ExitApp()) { Name = "Exit" };
+        menu.Items.AddRange(new WinForms.ToolStripItem[]
+        {
+            dailyItem, newWidget, new WinForms.ToolStripSeparator(), updates, log,
+            new WinForms.ToolStripSeparator(), unpin, new WinForms.ToolStripSeparator(), exit,
+        });
 
         _tray.ContextMenuStrip = menu;
         _tray.DoubleClick += (_, _) => ShowDaily();
+    }
+
+    public void ApplyTrayLanguage()
+    {
+        if (_tray == null) return;
+        _tray.Text = "Quran Widget";
+        foreach (var item in _tray.ContextMenuStrip!.Items.OfType<WinForms.ToolStripMenuItem>())
+        {
+            item.Text = item.Name switch
+            {
+                "Daily" => L10n.T("Verse of the Day", "آية اليوم"),
+                "NewWidget" => L10n.T("New Verse Widget", "أداة آية جديدة"),
+                "Updates" => L10n.T("Check for Updates", "التحقق من التحديثات"),
+                "Log" => L10n.T("Open Log File", "فتح ملف السجل"),
+                "Unpin" => L10n.T("Unpin from desktop", "إلغاء التثبيت من سطح المكتب"),
+                "Exit" => L10n.T("Exit", "خروج"),
+                _ => item.Text,
+            };
+        }
     }
 
     public async void CheckForUpdates()

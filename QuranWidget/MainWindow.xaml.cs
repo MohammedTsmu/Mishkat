@@ -121,7 +121,9 @@ public partial class MainWindow : Window
 
         var first = _passage.Verses[0];
         SurahArabicText.Text = first.Surah.Name;
-        SurahEnglishText.Text = $"{first.Surah.EnglishName} · {first.Surah.Meaning}   {_passage.Reference}";
+        SurahEnglishText.Text = L10n.T(
+            $"{first.Surah.EnglishName} · {first.Surah.Meaning}   {_passage.Reference}",
+            $"{first.Surah.Name}   {_passage.Reference}");
 
         ArabicText.Text = "";
         BuildArabicInlines(_passage);
@@ -129,13 +131,15 @@ public partial class MainWindow : Window
 
         if (IsDaily)
         {
-            ModeText.Text = "VERSE OF THE DAY";
-            DateText.Text = $"{DateTime.Today:dddd, d MMMM yyyy}  ·  {HijriToday()}";
+            ModeText.Text = L10n.T("VERSE OF THE DAY", "آية اليوم");
+            DateText.Text = L10n.T(
+                $"{DateTime.Today:dddd, d MMMM yyyy}  ·  {HijriToday()}",
+                $"{HijriToday()}  ·  {DateTime.Today:dddd, d MMMM yyyy}");
         }
         else
         {
-            ModeText.Text = "A VERSE TO REFLECT ON";
-            DateText.Text = "Tap ⟳ to explore another verse";
+            ModeText.Text = L10n.T("A VERSE TO REFLECT ON", "آية للتأمل");
+            DateText.Text = L10n.T("Tap ⟳ to explore another verse", "اضغط ⟳ لآية أخرى");
         }
 
         ResetAudioButtons();
@@ -177,7 +181,9 @@ public partial class MainWindow : Window
         }
         else
         {
-            DateText.Text = $"{today:dddd, d MMMM yyyy}  ·  {HijriToday()}";
+            DateText.Text = L10n.T(
+                $"{today:dddd, d MMMM yyyy}  ·  {HijriToday()}",
+                $"{HijriToday()}  ·  {today:dddd, d MMMM yyyy}");
         }
     }
 
@@ -505,7 +511,7 @@ public partial class MainWindow : Window
             sb.AppendLine(Quran.EnglishOf(_passage));
             sb.Append($"— Quran, Surah {first.Surah.EnglishName} ({first.Surah.Meaning}) {_passage.Reference}");
             System.Windows.Clipboard.SetText(sb.ToString());
-            ShowStatus("Copied to clipboard");
+            ShowStatus(L10n.T("Copied to clipboard", "تم النسخ"));
         }
         catch
         {
@@ -539,8 +545,10 @@ public partial class MainWindow : Window
         if (Audio.SleepEnd != null) SyncSleepCountdown();
         UpdateResumeText();
         PrayerCheck.IsChecked = s.PrayerEnabled;
+        ShowTranslationCheck.IsChecked = s.ShowTranslation;
         FontSizeSlider.Value = Math.Clamp(s.ArabicFontSize, 18, 40);
         ApplyFontSize();
+        ApplyLanguage();
         PlayButton.ToolTip = s.ContinueReading ? "Play recitation (continuous reading)" : "Play recitation";
         SyncFavoriteStar();
     }
@@ -548,10 +556,88 @@ public partial class MainWindow : Window
     static string TranslationName(string id) =>
         Array.Find(Translations.Available, t => t.Id == id).Name ?? "Saheeh International";
 
+    // ---------- language (English / Arabic UI) ----------
+
+    void ApplyLanguage()
+    {
+        FlowDirection = L10n.ArabicUI ? System.Windows.FlowDirection.RightToLeft : System.Windows.FlowDirection.LeftToRight;
+
+        // header + body text depend on the passage; refresh them if one is loaded
+        if (_passage.Verses.Count > 0)
+            ApplyPassage(animate: false);
+
+        // settings panel
+        ReciterLabel.Text = L10n.T("RECITER", "القارئ");
+        TranslationLabel.Text = L10n.T("TRANSLATION", "الترجمة");
+        ThemeLabel.Text = L10n.T("THEME", "المظهر");
+        OpacityLabel.Text = L10n.T("OPACITY", "الشفافية");
+        FontSizeLabel.Text = L10n.T("ARABIC FONT SIZE", "حجم خط المصحف");
+        ContinueLabel.Text = L10n.T("CONTINUOUS READING", "متابعة القراءة");
+        SleepLabel2.Text = L10n.T("SLEEP TIMER", "مؤقت النوم");
+        UpdatesLabel.Text = L10n.T("UPDATES", "التحديثات");
+        LanguageLabel.Text = L10n.T("LANGUAGE", "اللغة");
+        LangButton.Content = L10n.T("English / العربية", "العربية / English");
+        CheckUpdatesButton.Content = L10n.T("Check for updates now", "تحقق من التحديثات الآن");
+        ClearResumeButton.Content = L10n.T("Clear saved reading position", "مسح موضع القراءة المحفوظ");
+
+        TopmostCheck.Content = L10n.T("Always on top", "دائماً في المقدمة");
+        PinCheck.Content = L10n.T("Pin to the desktop background", "تثبيت في خلفية سطح المكتب");
+        StartupCheck.Content = L10n.T("Start with Windows", "البدء مع Windows");
+        PrayerCheck.Content = L10n.T("Show next prayer time (auto-locates once)", "إظهار وقت الصلاة القادمة (يحدد الموقع تلقائياً)");
+        ShowTranslationCheck.Content = L10n.T("Show translation", "إظهار الترجمة");
+        ContinueCheck.Content = L10n.T("Keep reading — continue to the next verses", "متابعة القراءة — انتقل إلى الآيات التالية");
+
+        StopAtToggle.Content = StopAtLabel(SettingsService.Current.StopAt);
+        SleepToggle.Content = SleepLabel(SettingsService.Current.SleepMinutes);
+        SyncTranslationToggle();
+
+        // tooltips
+        ToolTipService.SetToolTip(SearchButton, L10n.T("Search the Quran (text or verse number like 2:255)", "ابحث في القرآن (نص أو رقم آية مثل 2:255)"));
+        ToolTipService.SetToolTip(PlayButton, SettingsService.Current.ContinueReading
+            ? L10n.T("Play recitation (continuous reading)", "تشغيل التلاوة (متابعة القراءة)")
+            : L10n.T("Play recitation", "تشغيل التلاوة"));
+        ToolTipService.SetToolTip(TtsButton, L10n.T("Read the meaning aloud", "قراءة المعنى صوتياً"));
+        ToolTipService.SetToolTip(NextButton, L10n.T("Another verse", "آية أخرى"));
+        ToolTipService.SetToolTip(FavoriteButton, L10n.T("Favorites — tap to save this verse", "المفضلة — اضغط لحفظ هذه الآية"));
+        ToolTipService.SetToolTip(CopyButton, L10n.T("Copy", "نسخ"));
+        SearchBoxHint.Text = L10n.T("Type words to search, or 2:255 to jump to a verse",
+                                    "اكتب كلمات للبحث، أو 2:255 للانتقال إلى آية");
+
+        ApplyTranslationVisibility();
+        UpdateResumeText();
+    }
+
+    void Language_Click(object sender, RoutedEventArgs e)
+    {
+        SettingsService.Current.Language = L10n.ArabicUI ? "en" : "ar";
+        SettingsService.Save();
+        ApplyLanguage();
+        App.Instance.ApplyTrayLanguage();
+        ShowStatus(L10n.T("Language: English", "اللغة: العربية"));
+    }
+
+    void ShowTranslation_Changed(object sender, RoutedEventArgs e)
+    {
+        if (!_ready) return;
+        bool on = ShowTranslationCheck.IsChecked == true;
+        if (on == SettingsService.Current.ShowTranslation) return;
+        SettingsService.Current.ShowTranslation = on;
+        SettingsService.Save();
+        ApplyTranslationVisibility();
+    }
+
+    void ApplyTranslationVisibility()
+    {
+        bool on = SettingsService.Current.ShowTranslation;
+        TranslationScroll.Visibility = on ? Visibility.Visible : Visibility.Collapsed;
+        DividerGrid.Visibility = on ? Visibility.Visible : Visibility.Collapsed;
+    }
+
     static readonly int[] SleepOptions = { 0, 10, 20, 30, 60 };
 
     static string SleepLabel(int minutes) =>
-        minutes <= 0 ? "Off — play until I stop" : $"Stop after {minutes} minutes";
+        minutes <= 0 ? L10n.T("Off — play until I stop", "بدون توقيت — تشغيل حتى أوقفه")
+                     : L10n.T($"Stop after {minutes} minutes", $"التوقف بعد {minutes} دقيقة");
 
     // Live countdown shown in the footer while a sleep timer is armed, so the
     // user always knows when recitation will stop.
@@ -573,12 +659,15 @@ public partial class MainWindow : Window
         if (end == null)
         {
             _sleepUiTimer?.Stop();
-            if (StatusText.Text.StartsWith("Sleeping in", StringComparison.Ordinal)) ShowStatus("");
+            if (StatusText.Text.StartsWith("Sleeping in", StringComparison.Ordinal) ||
+                StatusText.Text.StartsWith("سيتم التوقف بعد", StringComparison.Ordinal))
+                ShowStatus("");
             return;
         }
         var rem = end.Value - DateTime.UtcNow;
         if (rem <= TimeSpan.Zero) return;
-        ShowStatus($"Sleeping in {(int)rem.TotalMinutes}:{rem.Seconds:00}");
+        ShowStatus(L10n.T($"Sleeping in {(int)rem.TotalMinutes}:{rem.Seconds:00}",
+                          $"سيتم التوقف بعد {(int)rem.TotalMinutes}:{rem.Seconds:00}"));
     }
 
     void ApplyFontSize()
@@ -589,16 +678,18 @@ public partial class MainWindow : Window
         TranslationText.LineHeight = TranslationText.FontSize * 1.5;
     }
 
-    static readonly string[] StopAtLabels =
+    static readonly (string En, string Ar)[] StopAtLabels =
     {
-        "Stop at the end of the surah",
-        "Stop after 10 verses",
-        "Stop after 25 verses",
-        "Stop after 50 verses",
-        "Keep going until I stop",
+        ("Stop at the end of the surah", "التوقف في نهاية السورة"),
+        ("Stop after 10 verses", "التوقف بعد 10 آيات"),
+        ("Stop after 25 verses", "التوقف بعد 25 آية"),
+        ("Stop after 50 verses", "التوقف بعد 50 آية"),
+        ("Keep going until I stop", "الاستمرار حتى أوقفه"),
     };
 
-    static string StopAtLabel(int i) => StopAtLabels[Math.Clamp(i, 0, StopAtLabels.Length - 1)];
+    static string StopAtLabel(int i) =>
+        L10n.T(StopAtLabels[Math.Clamp(i, 0, StopAtLabels.Length - 1)].En,
+               StopAtLabels[Math.Clamp(i, 0, StopAtLabels.Length - 1)].Ar);
 
     void UpdateReciterButton()
     {
@@ -958,7 +1049,8 @@ public partial class MainWindow : Window
     {
         bool fav = IsFavorite(_passage);
         FavoriteButton.Content = fav ? "\uE735" : "\uE734";
-        FavoriteButton.ToolTip = fav ? "Remove from favorites" : "Favorites — tap to save this verse";
+        FavoriteButton.ToolTip = fav ? L10n.T("Remove from favorites", "إزالة من المفضلة")
+                                     : L10n.T("Favorites — tap to save this verse", "المفضلة — اضغط لحفظ هذه الآية");
     }
 
     void Favorite_Click(object sender, RoutedEventArgs e)
@@ -1084,7 +1176,9 @@ public partial class MainWindow : Window
         var next = PrayerTimes.Next(s.Latitude, s.Longitude);
         if (next == null) return;
         string city = string.IsNullOrWhiteSpace(s.CityName) ? "" : $"  ·  {s.CityName}";
-        PrayerText.Text = $"Next prayer: {next.Value.Name} at {next.Value.Time}{city}";
+        PrayerText.Text = L10n.T(
+            $"Next prayer: {L10n.Prayer(next.Value.Name)} at {next.Value.Time}{city}",
+            $"الصلاة القادمة: {L10n.Prayer(next.Value.Name)} {next.Value.Time}{city}");
         PrayerText.Visibility = Visibility.Visible;
     }
 
@@ -1162,13 +1256,17 @@ public partial class MainWindow : Window
         {
             var surah = Quran.Surah(s.ResumeS);
             string where = $"{s.ResumeS}:{s.ResumeA}" + (surah != null ? $" ({surah.EnglishName})" : "");
-            ResumeText.Text = (s.ContinueReading
-                ? $"Recitation will resume from {where} the next time you press play."
-                : $"Position {where} saved — turn on \u201CKeep reading\u201D above to resume from it.");
+            ResumeText.Text = s.ContinueReading
+                ? L10n.T($"Recitation will resume from {where} the next time you press play.",
+                         $"سيتم استئناف التلاوة من {where} عند التشغيل التالي.")
+                : L10n.T($"Position {where} saved — turn on \u201CKeep reading\u201D above to resume from it.",
+                         $"حُفظ الموضع {where} — فعّل \u201Cمتابعة القراءة\u201D أعلاه للاستئناف منه.");
         }
         else
         {
-            ResumeText.Text = "Play recitation and your position is saved automatically.";
+            ResumeText.Text = L10n.T(
+                "Play recitation and your position is saved automatically.",
+                "شغّل التلاوة ويُحفظ موضعك تلقائياً.");
         }
     }
 
@@ -1247,6 +1345,14 @@ public partial class MainWindow : Window
 
     void ContextMenu_Opened(object sender, RoutedEventArgs e)
     {
+        MenuDaily.Header = L10n.T("Verse of the Day", "آية اليوم");
+        MenuNew.Header = L10n.T("New Verse Widget", "أداة آية جديدة");
+        MenuFavorites.Header = L10n.T("Favorites", "المفضلة");
+        MenuSaveImage.Header = L10n.T("Save verse as image", "حفظ الآية كصورة");
+        MenuTopmost.Header = L10n.T("Always on top", "دائماً في المقدمة");
+        MenuPin.Header = L10n.T("Pin to desktop", "تثبيت على سطح المكتب");
+        MenuStartup.Header = L10n.T("Start with Windows", "البدء مع Windows");
+        MenuExit.Header = L10n.T("Exit", "خروج");
         SyncMenuChecks();
         SyncFavoriteStar();
     }

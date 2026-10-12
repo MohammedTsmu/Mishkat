@@ -54,6 +54,10 @@ hides it; use the tray icon to exit.
   gone (recitation stops cleanly, the play button disables) and disappears when
   it's back. Reading, searching and copying always work offline.
 - **Multiple widgets** — right-click → *New Verse Widget* (up to 5).
+- **Two UI languages** — English or Arabic (with right-to-left layout), chosen in
+  Settings; non-Arabic speakers keep English.
+- **Optional translation** — hide the translation panel entirely if you only want
+  the Arabic text.
 - **Hijri date** using the Umm al-Qura calendar.
 - **Multi-monitor aware** — widgets remember which screen they were on.
 
@@ -87,7 +91,7 @@ hides it; use the tray icon to exit.
   ISCC.exe installer\QuranWidget.iss
   ```
 
-  which produces `QuranWidgetSetup-2.0.0.exe` with Start-menu shortcut, optional
+  which produces `QuranWidgetSetup-2.6.3.exe` with Start-menu shortcut, optional
   autostart and a clean uninstaller.
 
 ## Updates

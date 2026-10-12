@@ -134,8 +134,9 @@ public static class Translations
         return s == null ? Array.Empty<string>() : s.Ayahs.Select(a => a.Arabic).ToArray();
     }
 
-    // Removes harakat/tanwin and other diacritics so typed Arabic without them
-    // still matches the fully vocalized Quran text.
+    // Removes harakat/tanwin and normalizes letter variants (alef wasla, hamza
+    // seats, alif maqsura, ta marbuta) so Arabic typed on a normal keyboard —
+    // without any harakat — still matches the vocalized Quran text.
     static string StripArabicDiacritics(string s)
     {
         var sb = new System.Text.StringBuilder(s.Length);
@@ -144,7 +145,14 @@ public static class Translations
             if ((c >= '\u064B' && c <= '\u065F') || c == '\u0670' ||
                 (c >= '\u06D6' && c <= '\u06ED') || c == '\u0640')
                 continue;
-            sb.Append(c);
+            sb.Append(c switch
+            {
+                '\u0671' => '\u0627', // alef wasla -> alef
+                '\u0623' or '\u0625' or '\u0622' => '\u0627', // hamza seats -> alef
+                '\u0649' => '\u064A', // alif maqsura -> ya
+                '\u0629' => '\u0647', // ta marbuta -> ha
+                _ => c,
+            });
         }
         return sb.ToString();
     }

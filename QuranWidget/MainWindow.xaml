@@ -1,4 +1,4 @@
-﻿<Window x:Class="QuranWidget.MainWindow"
+<Window x:Class="QuranWidget.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Quran Widget"
@@ -17,17 +17,17 @@
 
     <Window.ContextMenu>
         <ContextMenu Style="{StaticResource DarkContextMenu}" Opened="ContextMenu_Opened">
-            <MenuItem Header="Verse of the Day" Style="{StaticResource DarkMenuItem}" Click="MenuDaily_Click"/>
-            <MenuItem Header="New Verse Widget" Style="{StaticResource DarkMenuItem}" Click="MenuNew_Click"/>
+            <MenuItem x:Name="MenuDaily" Header="Verse of the Day" Style="{StaticResource DarkMenuItem}" Click="MenuDaily_Click"/>
+            <MenuItem x:Name="MenuNew" Header="New Verse Widget" Style="{StaticResource DarkMenuItem}" Click="MenuNew_Click"/>
             <Separator Style="{StaticResource DarkSeparator}"/>
-            <MenuItem Header="Favorites" Style="{StaticResource DarkMenuItem}" Click="MenuFavorites_Click"/>
-            <MenuItem Header="Save verse as image" Style="{StaticResource DarkMenuItem}" Click="MenuSaveImage_Click"/>
+            <MenuItem x:Name="MenuFavorites" Header="Favorites" Style="{StaticResource DarkMenuItem}" Click="MenuFavorites_Click"/>
+            <MenuItem x:Name="MenuSaveImage" Header="Save verse as image" Style="{StaticResource DarkMenuItem}" Click="MenuSaveImage_Click"/>
             <Separator Style="{StaticResource DarkSeparator}"/>
             <MenuItem x:Name="MenuTopmost" Header="Always on top" Style="{StaticResource DarkMenuItem}" Click="MenuTopmost_Click"/>
             <MenuItem x:Name="MenuPin" Header="Pin to desktop" Style="{StaticResource DarkMenuItem}" Click="MenuPin_Click"/>
             <MenuItem x:Name="MenuStartup" Header="Start with Windows" Style="{StaticResource DarkMenuItem}" Click="MenuStartup_Click"/>
             <Separator Style="{StaticResource DarkSeparator}"/>
-            <MenuItem Header="Exit" Style="{StaticResource DarkMenuItem}" Click="MenuExit_Click"/>
+            <MenuItem x:Name="MenuExit" Header="Exit" Style="{StaticResource DarkMenuItem}" Click="MenuExit_Click"/>
         </ContextMenu>
     </Window.ContextMenu>
 
@@ -129,7 +129,7 @@
                 </ScrollViewer>
 
                 <!-- divider -->
-                <Grid Grid.Row="2" Margin="0,12,0,0">
+                <Grid x:Name="DividerGrid" Grid.Row="2" Margin="0,12,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
@@ -217,7 +217,7 @@
                                          TextChanged="SearchBox_TextChanged"
                                          KeyDown="SearchBox_KeyDown"/>
                             </Border>
-                            <TextBlock Text="Type words to search, or 2:255 to jump to a verse"
+                            <TextBlock x:Name="SearchBoxHint" Text="Type words to search, or 2:255 to jump to a verse"
                                        FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="8,5,0,4"/>
                             <ListBox x:Name="SearchList" Background="Transparent" BorderThickness="0" Visibility="Collapsed"
                                      ItemContainerStyle="{StaticResource DarkListBoxItem}"
@@ -266,7 +266,7 @@
                                         Content="&#xE711;" HorizontalAlignment="Right" Click="SettingsClose_Click"/>
                             </Grid>
 
-                            <TextBlock Text="RECITER" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
+                            <TextBlock x:Name="ReciterLabel" Text="RECITER" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
                             <ToggleButton x:Name="ReciterToggle" Style="{StaticResource ComboToggle}"
                                           Checked="ReciterToggle_Changed" Unchecked="ReciterToggle_Changed"/>
                             <Popup x:Name="ReciterPopup" PlacementTarget="{Binding ElementName=ReciterToggle}"
@@ -284,7 +284,7 @@
                                 </Border>
                             </Popup>
 
-                            <TextBlock Text="TRANSLATION" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
+                            <TextBlock x:Name="TranslationLabel" Text="TRANSLATION" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
                             <ToggleButton x:Name="TranslationToggle" Style="{StaticResource ComboToggle}"
                                           Checked="TranslationToggle_Changed" Unchecked="TranslationToggle_Changed"/>
                             <Popup x:Name="TranslationPopup" PlacementTarget="{Binding ElementName=TranslationToggle}"
@@ -301,8 +301,11 @@
                                              SelectionChanged="TranslationList_SelectionChanged"/>
                                 </Border>
                             </Popup>
+                            <CheckBox x:Name="ShowTranslationCheck" Style="{StaticResource DarkCheck}"
+                                      Content="Show translation" Margin="0,10,0,0"
+                                      Checked="ShowTranslation_Changed" Unchecked="ShowTranslation_Changed"/>
 
-                            <TextBlock Text="THEME" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
+                            <TextBlock x:Name="ThemeLabel" Text="THEME" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
                             <ToggleButton x:Name="ThemeToggle" Style="{StaticResource ComboToggle}"
                                           Checked="ThemeToggle_Changed" Unchecked="ThemeToggle_Changed"/>
                             <Popup x:Name="ThemePopup" PlacementTarget="{Binding ElementName=ThemeToggle}"
@@ -320,10 +323,10 @@
                                 </Border>
                             </Popup>
 
-                            <TextBlock Text="OPACITY" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
+                            <TextBlock x:Name="OpacityLabel" Text="OPACITY" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
                             <Slider x:Name="OpacitySlider" Style="{StaticResource GoldSlider}" Minimum="0.35" Maximum="1.0"
                                     IsMoveToPointEnabled="True" ValueChanged="Opacity_ValueChanged"/>
-                            <TextBlock Text="ARABIC FONT SIZE" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
+                            <TextBlock x:Name="FontSizeLabel" Text="ARABIC FONT SIZE" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
                             <Slider x:Name="FontSizeSlider" Style="{StaticResource GoldSlider}" Minimum="18" Maximum="40"
                                     IsSnapToTickEnabled="True" TickFrequency="2"
                                     IsMoveToPointEnabled="True" ValueChanged="FontSize_ValueChanged"/>
@@ -340,7 +343,7 @@
                                       Content="Show next prayer time (auto-locates once)" Margin="0,10,0,0"
                                       Checked="Prayer_Changed" Unchecked="Prayer_Changed"/>
 
-                            <TextBlock Text="CONTINUOUS READING" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
+                            <TextBlock x:Name="ContinueLabel" Text="CONTINUOUS READING" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
                             <CheckBox x:Name="ContinueCheck" Style="{StaticResource DarkCheck}"
                                       Content="Keep reading — continue to the next verses"
                                       Checked="Continue_Changed" Unchecked="Continue_Changed"/>
@@ -367,7 +370,7 @@
                             <Button x:Name="ClearResumeButton" Style="{StaticResource ComboButton}" Margin="0,8,0,0"
                                     Content="Clear saved reading position" Click="ClearResume_Click"/>
 
-                            <TextBlock Text="SLEEP TIMER" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
+                            <TextBlock x:Name="SleepLabel2" Text="SLEEP TIMER" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
                             <ToggleButton x:Name="SleepToggle" Style="{StaticResource ComboToggle}"
                                           Checked="SleepToggle_Changed" Unchecked="SleepToggle_Changed"/>
                             <Popup x:Name="SleepPopup" PlacementTarget="{Binding ElementName=SleepToggle}"
@@ -385,9 +388,12 @@
                                 </Border>
                             </Popup>
 
-                            <TextBlock Text="UPDATES" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
+                            <TextBlock x:Name="UpdatesLabel" Text="UPDATES" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
                             <Button x:Name="CheckUpdatesButton" Style="{StaticResource ComboButton}"
                                     Content="Check for updates now" Click="CheckUpdates_Click"/>
+                            <TextBlock x:Name="LanguageLabel" Text="LANGUAGE" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
+                            <Button x:Name="LangButton" Style="{StaticResource ComboButton}"
+                                    Click="Language_Click"/>
 
                             <TextBlock Text="Recitation: cdn.islamic.network  ·  Translations: api.alquran.cloud"
                                        FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,0" TextWrapping="Wrap"/>

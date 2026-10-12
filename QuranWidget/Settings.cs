@@ -51,6 +51,12 @@ public sealed class Settings
     public double Longitude { get; set; } = double.NaN;
     public string CityName { get; set; } = "";
 
+    // UI language: "en" or "ar"
+    public string Language { get; set; } = "en";
+
+    // Whether the translation panel is shown under the Arabic text
+    public bool ShowTranslation { get; set; } = true;
+
     public List<Favorite> Favorites { get; set; } = new();
 
     // Last continuous-reading position, for resume
