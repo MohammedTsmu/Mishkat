@@ -1,0 +1,174 @@
+<Window x:Class="QuranWidget.HifzWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Quran Widget — Hifz"
+        Width="920" Height="680" MinWidth="760" MinHeight="560"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" ResizeMode="CanResize"
+        Background="Transparent" AllowsTransparency="False"
+        FontFamily="{StaticResource FontAmiri}">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="6" CornerRadius="0" GlassFrameThickness="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+    <Border Background="{DynamicResource Surface}" BorderBrush="{DynamicResource SurfaceBorder}" BorderThickness="1" CornerRadius="12"
+            Margin="8">
+        <Border.Effect>
+            <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="18" ShadowDepth="4" Opacity="0.5"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- custom title bar -->
+            <!-- custom title bar; CaptionHeight is 0 so every button receives its
+                 clicks — the background handles the drag manually -->
+            <Grid Grid.Row="0" Height="52" Margin="8,4,8,0" Background="Transparent"
+                  MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">                    <TextBlock x:Name="TitleText" Text="MEMORIZATION — حفظ" FontSize="15" FontWeight="Bold"
+                               Foreground="{DynamicResource Gold}" VerticalAlignment="Center"/>
+                    <Border Background="{DynamicResource A24}" CornerRadius="8" Padding="10,3" Margin="14,0,0,0"
+                            VerticalAlignment="Center">
+                        <TextBlock x:Name="StatsText" FontSize="11.5" Foreground="{DynamicResource TextSecondary}"/>
+                    </Border>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button x:Name="TabMemorize" Style="{StaticResource HifzTab}" Click="TabMemorize_Click"/>
+                    <Button x:Name="TabReview" Style="{StaticResource HifzTab}" Margin="6,0,0,0" Click="TabReview_Click"/>
+                    <Button x:Name="TabProgress" Style="{StaticResource HifzTab}" Margin="6,0,0,0" Click="TabProgress_Click"/>
+                    <Button Style="{StaticResource IconButton}" Content="&#xE8BB;" Margin="14,0,0,0" Click="Close_Click"
+                            ToolTip="Close"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- ============ MEMORIZE TAB ============ -->
+            <ScrollViewer Grid.Row="1" Style="{StaticResource ThinScrollViewer}" x:Name="MemorizePanel"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto" Margin="14,4,14,14">
+                <StackPanel>
+                    <TextBlock x:Name="PickGroupLabel" FontSize="10.5" Foreground="{DynamicResource TextFaint}" Margin="4,2,0,8"/>
+                    <WrapPanel Margin="0,0,0,12">
+                        <Button x:Name="SurahPicker" MinWidth="260" MaxWidth="340" Style="{StaticResource ComboButton}" Click="SurahPicker_Click"/>
+                        <Button x:Name="RangePicker" Width="160" Style="{StaticResource ComboButton}" Margin="12,0,0,0" Click="RangePicker_Click"/>
+                        <Button x:Name="RepsPicker" Width="170" Style="{StaticResource ComboButton}" Margin="12,0,0,0" Click="RepsPicker_Click"/>
+                        <Button x:Name="StartButton" Style="{StaticResource GoldButton}" Margin="12,0,0,0" Click="StartSession_Click"/>
+                    </WrapPanel>
+                    <TextBlock x:Name="PickHint" FontSize="11.5" Foreground="{DynamicResource TextFaint}" Margin="4,0,4,14"
+                               TextWrapping="Wrap"/>
+
+                    <!-- session card -->
+                    <Border x:Name="SessionCard" Visibility="Collapsed" Background="{DynamicResource Card2}"
+                            BorderBrush="{DynamicResource Border2}" BorderThickness="1" CornerRadius="12" Padding="20,16">
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock x:Name="SessionStep" FontSize="11.5" Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Left"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button x:Name="LoopButton" Style="{StaticResource IconButton}" Content="&#xE768;" Click="LoopPlay_Click"/>
+                                    <Button x:Name="HideButton" Style="{StaticResource IconButton}" Content="&#xE7B3;" Margin="6,0,0,0" Click="HideText_Click"/>
+                                    <Button x:Name="PrevVerseButton" Style="{StaticResource IconButton}" Content="&#xE76B;" Margin="6,0,0,0" Click="PrevVerse_Click"/>
+                                    <Button x:Name="NextVerseButton" Style="{StaticResource IconButton}" Content="&#xE76C;" Margin="6,0,0,0" Click="NextVerse_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Border x:Name="VerseCover" Background="{DynamicResource Card1}" CornerRadius="8" Padding="14,26" Margin="0,10,0,0"
+                                    Cursor="Hand" MouseLeftButtonDown="VerseCover_Click">
+                                <TextBlock x:Name="VerseCoverText" Text="&#xE7B3;" FontFamily="{StaticResource FontIcons}" FontSize="22"
+                                           Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Center"/>
+                            </Border>
+                            <TextBlock x:Name="SessionVerse" FontFamily="{StaticResource FontQuran}" FontSize="30" FlowDirection="RightToLeft"
+                                       Foreground="{DynamicResource TextPrimary}" TextAlignment="Center" TextWrapping="Wrap"
+                                       Margin="0,14,0,4" LineHeight="58"/>
+                            <TextBlock x:Name="SessionRef" FontSize="12" Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Center" Margin="0,2,0,10"/>
+                            <TextBlock x:Name="SessionTranslation" FontSize="14" Foreground="{DynamicResource TextSecondary}"
+                                       TextAlignment="Center" TextWrapping="Wrap" Margin="20,0,20,14"/>
+                            <TextBlock x:Name="LoopCounter" FontSize="12.5" Foreground="{DynamicResource Gold}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="MarkKnownButton" Style="{StaticResource GoldButton}" Click="MarkKnown_Click"/>
+                                <Button x:Name="FinishButton" Style="{StaticResource GoldButton}" Margin="10,0,0,0" Click="FinishSession_Click"/>
+                            </StackPanel>
+                            <TextBlock x:Name="SessionStatus" FontSize="12" Foreground="{DynamicResource TextFaint}" HorizontalAlignment="Center" Margin="0,12,0,0"
+                                       TextWrapping="Wrap" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- ============ REVIEW TAB ============ -->
+            <Grid Grid.Row="1" x:Name="ReviewPanel" Visibility="Collapsed" Margin="14,4,14,14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="290"/>
+                    <ColumnDefinition Width="14"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="0" Background="{DynamicResource Card3}" BorderBrush="{DynamicResource Border2}"
+                        BorderThickness="1" CornerRadius="12" Padding="8">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="DueLabel" Grid.Row="0" FontSize="10.5" Foreground="{DynamicResource TextFaint}" Margin="6,2,6,8"/>
+                        <ListBox x:Name="DueList" Grid.Row="1" Background="Transparent" BorderThickness="0"
+                                 ItemContainerStyle="{StaticResource DarkListBoxItem}"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 SelectionChanged="DueList_SelectionChanged"/>
+                    </Grid>
+                </Border>
+                <Border Grid.Column="2" Background="{DynamicResource Card2}" BorderBrush="{DynamicResource Border2}"
+                        BorderThickness="1" CornerRadius="12" Padding="20,16">
+                    <Grid>
+                        <StackPanel x:Name="ReviewEmpty" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="&#xE73E;" FontFamily="{StaticResource FontIcons}" FontSize="30"
+                                       Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock x:Name="ReviewEmptyText" FontSize="13" Foreground="{DynamicResource TextSecondary}"
+                                       TextAlignment="Center" TextWrapping="Wrap" MaxWidth="360"/>
+                        </StackPanel>
+                        <StackPanel x:Name="ReviewCard" Visibility="Collapsed">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button x:Name="ReviewPlayButton" Style="{StaticResource IconButton}" Content="&#xE768;" Click="ReviewPlay_Click"/>
+                                <Button x:Name="ReviewRevealButton" Style="{StaticResource IconButton}" Content="&#xE7B3;" Margin="6,0,0,0" Click="ReviewReveal_Click"/>
+                            </StackPanel>
+                            <Border x:Name="ReviewCover" Background="{DynamicResource Card1}" CornerRadius="8" Padding="14,30" Margin="0,10,0,0"
+                                    Cursor="Hand" MouseLeftButtonDown="ReviewCover_Click">
+                                <TextBlock x:Name="ReviewCoverText" Text="&#xE7B3;" FontFamily="{StaticResource FontIcons}" FontSize="22"
+                                           Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Center"/>
+                            </Border>
+                            <TextBlock x:Name="ReviewVerse" FontFamily="{StaticResource FontQuran}" FontSize="32" FlowDirection="RightToLeft"
+                                       Foreground="{DynamicResource TextPrimary}" TextAlignment="Center" TextWrapping="Wrap"
+                                       Margin="0,16,0,4" LineHeight="62"/>
+                            <TextBlock x:Name="ReviewRef" FontSize="12.5" Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Center" Margin="0,2,0,12"/>
+                            <TextBlock x:Name="ReviewTranslation" FontSize="14.5" Foreground="{DynamicResource TextSecondary}"
+                                       TextAlignment="Center" TextWrapping="Wrap" Margin="20,0,20,16"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="RememberedButton" Style="{StaticResource GoldButton}" Click="Remembered_Click"/>
+                                <Button x:Name="ForgotButton" Style="{StaticResource GoldButton}" Margin="10,0,0,0" Click="Forgot_Click"/>
+                            </StackPanel>
+                            <TextBlock x:Name="ReviewStage" FontSize="11.5" Foreground="{DynamicResource TextFaint}" HorizontalAlignment="Center" Margin="0,12,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- ============ PROGRESS TAB ============ -->
+            <Grid Grid.Row="1" x:Name="ProgressPanel" Visibility="Collapsed" Margin="14,4,14,14">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Background="{DynamicResource Card2}" BorderBrush="{DynamicResource Border2}"
+                        BorderThickness="1" CornerRadius="12" Padding="16,12" Margin="0,0,0,12">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="ProgressTotal" FontSize="14" Foreground="{DynamicResource Gold}" FontWeight="Bold"/>
+                        <TextBlock x:Name="ProgressDue" FontSize="14" Foreground="{DynamicResource TextSecondary}" Margin="22,0,0,0"/>
+                        <TextBlock x:Name="ProgressSurahs" FontSize="14" Foreground="{DynamicResource TextSecondary}" Margin="22,0,0,0"/>
+                    </StackPanel>
+                </Border>
+                <ScrollViewer Grid.Row="1" Style="{StaticResource ThinScrollViewer}" VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ListBox x:Name="ProgressList" Background="Transparent" BorderThickness="0"
+                             ItemContainerStyle="{StaticResource DarkListBoxItem}"/>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

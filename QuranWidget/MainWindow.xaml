@@ -191,6 +191,8 @@
                                 ToolTip="Read the meaning aloud" Margin="6,0,0,0" Click="SpeakMeaning_Click"/>
                         <Button x:Name="NextButton" Style="{StaticResource IconButton}" Content="&#xE72C;"
                                 ToolTip="Another verse" Margin="6,0,0,0" Click="NextVerse_Click"/>
+                        <Button x:Name="HifzButton" Style="{StaticResource IconButton}" Content="&#xE8F1;"
+                                ToolTip="Memorize (Hifz)" Margin="6,0,0,0" Click="Hifz_Click"/>
                         <Button x:Name="FavoriteButton" Style="{StaticResource IconButton}" Content="&#xE734;"
                                 ToolTip="Favorites — tap to save this verse" Margin="6,0,0,0" Click="Favorite_Click"/>
                         <Button x:Name="CopyButton" Style="{StaticResource IconButton}" Content="&#xE8C8;"

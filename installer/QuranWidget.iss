@@ -5,7 +5,7 @@
 ; a clean uninstaller.
 
 #define AppName "Quran Widget"
-#define AppVersion "2.7.2"
+#define AppVersion "2.8.0"
 #define AppPublisher "Quran Widget"
 #define AppExe "QuranWidget.exe"
 
@@ -17,6 +17,7 @@ AppPublisher={#AppPublisher}
 DefaultDirName={autopf}\QuranWidget
 DefaultGroupName={#AppName}
 UninstallDisplayIcon={app}\{#AppExe}
+SetupIconFile=..\QuranWidget\Assets\app.ico
 OutputDir=..
 OutputBaseFilename=QuranWidgetSetup-{#AppVersion}
 Compression=lzma2

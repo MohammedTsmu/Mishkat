@@ -1,6 +1,8 @@
 using System.IO;
 using System.IO.Pipes;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using Microsoft.Win32;
 using System.Drawing;
@@ -72,8 +74,16 @@ public partial class App : System.Windows.Application
             return;
         }
         Translations.Load(SettingsService.Current.TranslationId);
+        try { HifzStore.Open(); } catch { /* hifz persistence is best-effort */ }
         Audio.SetSleepTimer(SettingsService.Current.SleepMinutes);
         SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
+
+        // Gentle, pixel-precise scrolling everywhere: touchpads fire many small
+        // wheel events and the default WPF response (3 lines per event) scrolls
+        // far too fast to aim at anything. This scales the delta down and takes
+        // over scrolling for every ScrollViewer in the app.
+        EventManager.RegisterClassHandler(typeof(ScrollViewer), UIElement.PreviewMouseWheelEvent,
+            new MouseWheelEventHandler(OnScrollPreviewMouseWheel), true);
 
         BuildTray();
 
@@ -138,13 +148,14 @@ public partial class App : System.Windows.Application
         var menu = new WinForms.ContextMenuStrip();
         var dailyItem = new WinForms.ToolStripMenuItem(L10n.T("Verse of the Day", "آية اليوم"), null, (_, _) => ShowDaily()) { Name = "Daily" };
         var newWidget = new WinForms.ToolStripMenuItem(L10n.T("New Verse Widget", "أداة آية جديدة"), null, (_, _) => CreateWidget()) { Name = "NewWidget" };
+        var hifzItem = new WinForms.ToolStripMenuItem(L10n.T("Memorize (Hifz)", "الحفظ"), null, (_, _) => ShowHifz()) { Name = "Hifz" };
         var updates = new WinForms.ToolStripMenuItem(L10n.T("Check for Updates", "التحقق من التحديثات"), null, (_, _) => CheckForUpdates()) { Name = "Updates" };
         var log = new WinForms.ToolStripMenuItem(L10n.T("Open Log File", "فتح ملف السجل"), null, (_, _) => OpenLog()) { Name = "Log" };
         var unpin = new WinForms.ToolStripMenuItem(L10n.T("Unpin from desktop", "إلغاء التثبيت من سطح المكتب"), null, (_, _) => UnpinAll()) { Name = "Unpin" };
         var exit = new WinForms.ToolStripMenuItem(L10n.T("Exit", "خروج"), null, (_, _) => ExitApp()) { Name = "Exit" };
         menu.Items.AddRange(new WinForms.ToolStripItem[]
         {
-            dailyItem, newWidget, new WinForms.ToolStripSeparator(), updates, log,
+            dailyItem, newWidget, hifzItem, new WinForms.ToolStripSeparator(), updates, log,
             new WinForms.ToolStripSeparator(), unpin, new WinForms.ToolStripSeparator(), exit,
         });
 
@@ -152,8 +163,47 @@ public partial class App : System.Windows.Application
         _tray.DoubleClick += (_, _) => ShowDaily();
     }
 
-    public void ApplyTrayLanguage()
+    static void OnScrollPreviewMouseWheel(object sender, MouseWheelEventArgs e)
     {
+        if (e.Handled) return;
+        var sv = (ScrollViewer)sender;
+
+        // only the innermost ScrollViewer under the pointer responds, so nested
+        // lists inside scrollable pages keep their own gentle scrolling
+        var d = e.OriginalSource as DependencyObject;
+        while (d != null && !ReferenceEquals(d, sv))
+        {
+            if (d is ScrollViewer && !ReferenceEquals(d, sv)) return;
+            d = d is System.Windows.Media.Visual || d is System.Windows.Media.Media3D.Visual3D
+                ? System.Windows.Media.VisualTreeHelper.GetParent(d)
+                : LogicalTreeHelper.GetParent(d);
+        }
+
+        // touchpad events carry small deltas but arrive very often; scaling the
+        // delta (instead of using line-based scrolling) keeps both devices sane
+        double notches = e.Delta / 120.0;
+        double amount = notches * System.Windows.SystemParameters.WheelScrollLines * 16 * 0.4;
+
+        if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+        {
+            sv.ScrollToHorizontalOffset(sv.HorizontalOffset - amount);
+        }
+        else if (sv.ScrollableHeight > 0)
+        {
+            sv.ScrollToVerticalOffset(sv.VerticalOffset - amount);
+        }
+        else if (sv.ScrollableWidth > 0)
+        {
+            sv.ScrollToHorizontalOffset(sv.HorizontalOffset - amount);
+        }
+        else
+        {
+            return; // nothing to scroll here; let the outer surface try
+        }
+        e.Handled = true;
+    }
+
+    public void ApplyTrayLanguage()    {
         if (_tray == null) return;
         _tray.Text = "Quran Widget";
         foreach (var item in _tray.ContextMenuStrip!.Items.OfType<WinForms.ToolStripMenuItem>())
@@ -162,6 +212,7 @@ public partial class App : System.Windows.Application
             {
                 "Daily" => L10n.T("Verse of the Day", "آية اليوم"),
                 "NewWidget" => L10n.T("New Verse Widget", "أداة آية جديدة"),
+                "Hifz" => L10n.T("Memorize (Hifz)", "الحفظ"),
                 "Updates" => L10n.T("Check for Updates", "التحقق من التحديثات"),
                 "Log" => L10n.T("Open Log File", "فتح ملف السجل"),
                 "Unpin" => L10n.T("Unpin from desktop", "إلغاء التثبيت من سطح المكتب"),
@@ -250,6 +301,20 @@ public partial class App : System.Windows.Application
         w.Show();
     }
 
+    HifzWindow? _hifz;
+
+    // Opens (or focuses) the memorization window; it outlives individual widgets.
+    public void ShowHifz()
+    {
+        if (_hifz == null)
+        {
+            _hifz = new HifzWindow();
+            _hifz.Closed += (_, _) => _hifz = null;
+        }
+        _hifz.Show();
+        _hifz.Activate();
+    }
+
     public void WidgetClosed(MainWindow w)
     {
         _widgets.Remove(w);
@@ -262,6 +327,7 @@ public partial class App : System.Windows.Application
         if (Exiting) return;
         Exiting = true;
         SettingsService.Save();
+        HifzStore.Close();
         _pipeCts?.Cancel();
         foreach (var w in _widgets.ToList()) w.Close();
         if (_tray != null)

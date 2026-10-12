@@ -11,7 +11,7 @@
     <RootNamespace>QuranWidget</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
-    <Version>2.7.2</Version>
+    <Version>2.8.0</Version>
     <Product>Quran Widget</Product>
     <Authors>Quran Widget</Authors>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -27,6 +27,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.13" />
     <PackageReference Include="System.Speech" Version="10.0.12" />
   </ItemGroup>
 

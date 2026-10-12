@@ -59,6 +59,12 @@ public sealed class Settings
 
     public List<Favorite> Favorites { get; set; } = new();
 
+    // Hifz (memorization) session preferences
+    public int HifzSurah { get; set; } = 1;
+    public int HifzFrom { get; set; } = 1;
+    public int HifzTo { get; set; } = 3;
+    public int HifzReps { get; set; } = 7;
+
     // Last continuous-reading position, for resume
     public int ResumeS { get; set; } = -1;
     public int ResumeA { get; set; } = -1;

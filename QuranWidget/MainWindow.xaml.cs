@@ -120,10 +120,11 @@ public partial class MainWindow : Window
         TranslationScroll.ScrollToTop();
 
         var first = _passage.Verses[0];
+        var last = _passage.Verses[^1];
         SurahArabicText.Text = first.Surah.Name;
         SurahEnglishText.Text = L10n.T(
-            $"{first.Surah.EnglishName} · {first.Surah.Meaning}   {_passage.Reference}",
-            $"{first.Surah.Name}   {_passage.Reference}");
+            $"{first.Surah.EnglishName} · {first.Surah.Meaning} — {L10n.AyahsLabel(first.NumberInSurah, last.NumberInSurah)}",
+            $"{first.Surah.Name} — {L10n.AyahsLabel(first.NumberInSurah, last.NumberInSurah)}");
 
         ArabicText.Text = "";
         BuildArabicInlines(_passage);
@@ -445,7 +446,8 @@ public partial class MainWindow : Window
         {
             _passage = Quran.GetPassage(s.ResumeS, s.ResumeA, s.ResumeA + 2);
             ApplyPassage(animate: false);
-            ShowStatus(L10n.T($"Resumed from {_passage.Reference}", $"استؤنف من {_passage.Reference}"));
+            var resumed = L10n.SurahRef(s.ResumeS, s.ResumeA);
+            ShowStatus(L10n.T($"Resumed from {resumed}", $"استؤنف من {resumed}"));
         }
 
         // remember the position so playback can resume later
@@ -490,7 +492,9 @@ public partial class MainWindow : Window
 
         _passage = next;
         ApplyPassage(animate: true);
-        ShowStatus(L10n.T($"Reciting… {next.Reference}", $"تلاوة… {next.Reference}"));
+        var reciting = L10n.SurahRef(next.Verses[0].SurahNumber, next.Verses[0].NumberInSurah,
+                                     next.Verses[^1].NumberInSurah);
+        ShowStatus(L10n.T($"Reciting… {reciting}", $"تلاوة… {reciting}"));
 
         // remember the position so playback can resume later
         SettingsService.Current.ResumeS = next.Verses[0].SurahNumber;
@@ -527,7 +531,7 @@ public partial class MainWindow : Window
             sb.AppendLine(Quran.ArabicOf(_passage));
             sb.AppendLine();
             sb.AppendLine(Quran.EnglishOf(_passage));
-            sb.Append($"— Quran, Surah {first.Surah.EnglishName} ({first.Surah.Meaning}) {_passage.Reference}");
+            sb.Append($"— Quran, Surah {first.Surah.EnglishName} ({first.Surah.Meaning}) — {L10n.AyahsLabel(first.NumberInSurah, _passage.Verses[^1].NumberInSurah)}");
             System.Windows.Clipboard.SetText(sb.ToString());
             ShowStatus(L10n.T("Copied to clipboard", "تم النسخ"));
         }
@@ -761,6 +765,10 @@ public partial class MainWindow : Window
             ApplyPassage(animate: false);
 
         // settings panel
+        // refresh the selected-value toggle buttons so they follow the UI language too
+        ReciterToggle.Content = Audio.ReciterName(_reciterIndex);
+        ThemeToggle.Content = ThemeService.NameOf(SettingsService.Current.Theme);
+        TranslationToggle.Content = TranslationName(SettingsService.Current.TranslationId);
         ReciterLabel.Text = L10n.T("RECITER", "القارئ");
         TranslationLabel.Text = L10n.T("TRANSLATION", "الترجمة");
         ThemeLabel.Text = L10n.T("THEME", "المظهر");
@@ -792,6 +800,7 @@ public partial class MainWindow : Window
             : L10n.T("Play recitation", "تشغيل التلاوة"));
         ToolTipService.SetToolTip(TtsButton, L10n.T("Read the meaning aloud", "قراءة المعنى صوتياً"));
         ToolTipService.SetToolTip(NextButton, L10n.T("Another verse", "آية أخرى"));
+        ToolTipService.SetToolTip(HifzButton, L10n.T("Memorize (Hifz)", "الحفظ"));
         ToolTipService.SetToolTip(FavoriteButton, L10n.T("Favorites — tap to save this verse", "المفضلة — اضغط لحفظ هذه الآية"));
         ToolTipService.SetToolTip(CopyButton, L10n.T("Copy", "نسخ"));
         SearchBoxHint.Text = L10n.T("Type words to search, or 2:255 to jump to a verse",
@@ -896,6 +905,8 @@ public partial class MainWindow : Window
     {
         ReciterToggle.Content = Audio.ReciterName(_reciterIndex);
     }
+
+    void Hifz_Click(object sender, RoutedEventArgs e) => App.Instance.ShowHifz();
 
     void Settings_Click(object sender, RoutedEventArgs e)
     {
@@ -1293,8 +1304,7 @@ public partial class MainWindow : Window
             if (surah == null) continue;
             string snippet = Translations.EnglishOf(Quran.GetPassage(f.S, f.A, f.A));
             if (snippet.Length > 60) snippet = snippet[..60] + "…";
-            string range = f.B > f.A ? $"{f.A}–{f.B}" : $"{f.A}";
-            FavoritesList.Items.Add($"{surah.EnglishName} {f.S}:{range}  ·  {snippet}");
+            FavoritesList.Items.Add($"{surah.EnglishName} — {L10n.AyahsLabel(f.A, f.B)}  ·  {snippet}");
         }
     }
 
@@ -1457,8 +1467,7 @@ public partial class MainWindow : Window
         if (ResumeText == null) return;
         if (s.ResumeS > 0 && s.ResumeA > 0)
         {
-            var surah = Quran.Surah(s.ResumeS);
-            string where = $"{s.ResumeS}:{s.ResumeA}" + (surah != null ? $" ({surah.EnglishName})" : "");
+            string where = L10n.SurahRef(s.ResumeS, s.ResumeA);
             ResumeText.Text = s.ContinueReading
                 ? L10n.T($"Recitation will resume from {where} the next time you press play.",
                          $"سيتم استئناف التلاوة من {where} عند التشغيل التالي.")
