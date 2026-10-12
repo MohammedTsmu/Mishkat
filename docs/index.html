@@ -133,7 +133,7 @@ footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;color
   <h1 data-i="h1">آية اليوم على سطح مكتبك — طوال اليوم</h1>
   <p class="sub" data-i="sub">ويدجت مجاني لويندوز يعرض آية كل يوم بالرسم العثماني وخط أميري، مع تلاوة من نخبة القرّاء، أوقات الصلاة، ووضع متكامل للحفظ والمراجعة — كل ذلك بدون إنترنت بعد أول تشغيل.</p>
   <div class="cta">
-    <a class="btn btn-primary" href="https://github.com/MohammedTsmu/QuranWidget/releases/latest" data-i="dlMain">⬇ تحميل لويندوز — مجاناً</a>
+    <a class="btn btn-primary" id="dlHero" href="https://github.com/MohammedTsmu/QuranWidget/releases/latest" data-i="dlMain">⬇ تحميل لويندوز — مجاناً</a>
     <a class="btn btn-ghost" href="#features" data-i="dlFeat">اكتشف المزايا</a>
   </div>
   <p class="verinfo"><span id="ver">v2.8.0</span><span class="badge" data-i="badge">مفتوح المصدر · Windows 10/11</span></p>
@@ -160,7 +160,7 @@ footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;color
   <h2 data-i="dlH">حمّله الآن</h2>
   <p class="sec-sub" data-i="dlSub">مجاني ومفتوح المصدر — خطوتان فقط</p>
   <div class="dl">
-    <a class="btn btn-primary" href="https://github.com/MohammedTsmu/QuranWidget/releases/latest" data-i="dlBtn">⬇ تحميل المثبّت لويندوز</a>
+    <a class="btn btn-primary" id="dlBtn" href="https://github.com/MohammedTsmu/QuranWidget/releases/latest" data-i="dlBtn">⬇ تحميل المثبّت لويندوز</a>
     <p class="verinfo" data-i="dlNote">نسخة محمولة (بدون تثبيت) متوفرة أيضاً في صفحة الإصدارات · الإصدار الحالي <span id="ver2">2.8.0</span></p>
     <div class="steps">
       <div class="step"><div class="n">1</div><span data-i="s1">حمّل المثبّت وشغّله</span></div>
@@ -246,7 +246,19 @@ apply(lang);
 
 fetch("https://api.github.com/repos/MohammedTsmu/QuranWidget/releases/latest")
   .then(r => r.json())
-  .then(d => { if(d.tag_name){ const v = d.tag_name.replace(/^v/,""); document.getElementById("ver").textContent = "v" + v; document.getElementById("ver2").textContent = v; } })
+  .then(d => {
+    if (!d.tag_name) return;
+    const v = d.tag_name.replace(/^v/, "");
+    document.getElementById("ver").textContent = "v" + v;
+    document.getElementById("ver2").textContent = v;
+    // point the buttons straight at the setup exe so clicking downloads it
+    const asset = (d.assets || []).find(a => /^QuranWidgetSetup-.*\.exe$/.test(a.name))
+               || (d.assets || []).find(a => a.name.endsWith(".exe"));
+    if (asset) {
+      document.getElementById("dlHero").href = asset.browser_download_url;
+      document.getElementById("dlBtn").href = asset.browser_download_url;
+    }
+  })
   .catch(() => {});
 </script>
 </body>
