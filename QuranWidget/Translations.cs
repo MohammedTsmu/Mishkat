@@ -128,20 +128,49 @@ public static class Translations
 
     public sealed record SearchHit(int S, int A, string Text);
 
+    static string[] ArabicOfSurah(int surahNo)
+    {
+        var s = Quran.Surah(surahNo);
+        return s == null ? Array.Empty<string>() : s.Ayahs.Select(a => a.Arabic).ToArray();
+    }
+
+    // Removes harakat/tanwin and other diacritics so typed Arabic without them
+    // still matches the fully vocalized Quran text.
+    static string StripArabicDiacritics(string s)
+    {
+        var sb = new System.Text.StringBuilder(s.Length);
+        foreach (var c in s)
+        {
+            if ((c >= '\u064B' && c <= '\u065F') || c == '\u0670' ||
+                (c >= '\u06D6' && c <= '\u06ED') || c == '\u0640')
+                continue;
+            sb.Append(c);
+        }
+        return sb.ToString();
+    }
+
+    // Searches the current English translation and the Arabic text; Arabic input
+    // is matched without requiring diacritics.
     public static List<SearchHit> Search(string query, int max = 12)
     {
         if (_verses == null) Load(CurrentId);
         var hits = new List<SearchHit>();
         if (string.IsNullOrWhiteSpace(query) || _verses == null) return hits;
+        bool isArabic = query.Any(c => c is >= '\u0600' and <= '\u06FF');
+        string needle = isArabic ? StripArabicDiacritics(query) : query.Trim();
+
         foreach (var (surah, texts) in _verses.OrderBy(k => k.Key))
         {
+            var arabic = isArabic ? ArabicOfSurah(surah) : null;
             for (int i = 0; i < texts.Length; i++)
             {
-                int idx = texts[i].IndexOf(query, StringComparison.OrdinalIgnoreCase);
+                string hay = isArabic ? StripArabicDiacritics(arabic![i]) : texts[i];
+                int idx = hay.IndexOf(needle, StringComparison.OrdinalIgnoreCase);
                 if (idx < 0) continue;
+                string raw = isArabic ? arabic![i] : texts[i];
                 int start = Math.Max(0, idx - 28);
-                int len = Math.Min(texts[i].Length - start, 90);
-                string snippet = (start > 0 ? "…" : "") + texts[i].Substring(start, len) + (start + len < texts[i].Length ? "…" : "");
+                int len = Math.Min(raw.Length - start, 90);
+                string snippet = (start > 0 ? "…" : "") + raw.Substring(start, len) + (start + len < raw.Length ? "…" : "");
                 hits.Add(new SearchHit(surah, i + 1, snippet));
                 if (hits.Count >= max) return hits;
             }

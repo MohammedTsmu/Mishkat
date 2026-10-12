@@ -424,9 +424,13 @@ public partial class MainWindow : Window
             ShowStatus($"Resumed from {_passage.Reference}");
         }
 
+        // remember the position so playback can resume later
+        // (set the glyph after PlayRecitation: its internal StopAll raises a status
+        // that would otherwise reset the button to the play glyph)
         PlayButton.Content = GlyphStop;
         Audio.PlayRecitation(_passage, SettingsService.Current.ReciterId,
             next: NextReadingPassage, onVerse: HighlightVerse);
+        PlayButton.Content = GlyphStop;
         UpdateResumeText();
     }
 
@@ -479,8 +483,8 @@ public partial class MainWindow : Window
             Audio.StopAll();
             return;
         }
-        TtsButton.Content = GlyphStop;
         Audio.SpeakMeaning(Quran.EnglishOf(_passage), SettingsService.Current.VoiceName);
+        TtsButton.Content = GlyphStop;
     }
 
     void NextVerse_Click(object sender, RoutedEventArgs e)
@@ -1040,14 +1044,6 @@ public partial class MainWindow : Window
         var s = SettingsService.Current;
         if (double.IsNaN(s.Latitude) || double.IsNaN(s.Longitude))
         {
-            if (!HasInternet())
-            {
-                ShowStatus("Prayer times need internet once, to find your location");
-                PrayerCheck.IsChecked = false;
-                s.PrayerEnabled = false;
-                return;
-            }
-            ShowStatus("Finding your location…");
             // visible feedback right away, so it is clear the option is working
             PrayerText.Text = "Finding your location…";
             PrayerText.Visibility = Visibility.Visible;
@@ -1055,18 +1051,18 @@ public partial class MainWindow : Window
             var loc = await PrayerTimes.LocateAsync();
             if (loc == null)
             {
-                ShowStatus("Could not find your location — try again later");
-                PrayerText.Text = "";
-                PrayerText.Visibility = Visibility.Collapsed;
-                PrayerCheck.IsChecked = false;
-                s.PrayerEnabled = false;
-                return;
+                // keep the option on and let the timer retry quietly; the location
+                // service is occasionally unavailable
+                ShowStatus("Could not find your location yet — will keep trying");
             }
-            s.Latitude = loc.Lat;
-            s.Longitude = loc.Lon;
-            s.CityName = loc.City;
-            SettingsService.Save();
-            ShowStatus($"Prayer times for {(string.IsNullOrWhiteSpace(loc.City) ? "your area" : loc.City)}");
+            else
+            {
+                s.Latitude = loc.Lat;
+                s.Longitude = loc.Lon;
+                s.CityName = loc.City;
+                SettingsService.Save();
+                ShowStatus($"Prayer times for {(string.IsNullOrWhiteSpace(loc.City) ? "your area" : loc.City)}");
+            }
         }
         _prayerTimer ??= new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
         _prayerTimer.Tick -= UpdatePrayerText;
@@ -1078,12 +1074,31 @@ public partial class MainWindow : Window
     void UpdatePrayerText(object? sender, EventArgs e)
     {
         var s = SettingsService.Current;
-        if (!s.PrayerEnabled || double.IsNaN(s.Latitude)) return;
+        if (!s.PrayerEnabled) return;
+        if (double.IsNaN(s.Latitude))
+        {
+            // still no location — retry quietly in the background
+            _ = RetryLocateAsync();
+            return;
+        }
         var next = PrayerTimes.Next(s.Latitude, s.Longitude);
         if (next == null) return;
         string city = string.IsNullOrWhiteSpace(s.CityName) ? "" : $"  ·  {s.CityName}";
         PrayerText.Text = $"Next prayer: {next.Value.Name} at {next.Value.Time}{city}";
         PrayerText.Visibility = Visibility.Visible;
+    }
+
+    async Task RetryLocateAsync()
+    {
+        var s = SettingsService.Current;
+        var loc = await PrayerTimes.LocateAsync();
+        if (loc != null && s.PrayerEnabled)
+        {
+            s.Latitude = loc.Lat;
+            s.Longitude = loc.Lon;
+            s.CityName = loc.City;
+            SettingsService.Save();
+        }
     }
 
     // ---------- sleep timer ----------
