@@ -1,118 +1,152 @@
-# Quran Widget for Windows
+<div dir="rtl" align="right">
 
-A beautiful desktop widget that shows a **verse of the Quran every day** in Arabic
-(Uthmani script, set in the Amiri Quran typeface) with its **English meaning**, a
-**recitation player**, a **voice reader** for the translation, and optional
-**prayer times** — all in a compact, themeable card that can live right on your
-desktop.
+# ويدجت القرآن الكريم لويندوز 📖
 
-![widget](https://img.shields.io/badge/platform-Windows-blue)
+**آية اليوم على سطح مكتبك — طوال اليوم.**
 
-## Run it
+ويدجت مجاني ومفتوح المصدر لويندوز يعرض آية كل يوم بالرسم العثماني وخط أميري القرآني،
+مع تلاوة من نخبة القرّاء، وأوقات الصلاة، ووضع متكامل للحفظ والمراجعة —
+وواجهة عربية كاملة من اليمين لليسار، تعمل بدون إنترنت بعد أول تشغيل.
 
-Double-click **`dist\QuranWidget.exe`** (or run `build.cmd` to rebuild it from source).
+<p align="center">
+  <a href="https://mohammedtsmu.github.io/QuranWidget/"><b>🌐 الموقع الرسمي</b></a> ·
+  <a href="https://github.com/MohammedTsmu/QuranWidget/releases/latest"><b>⬇ حمّل أحدث إصدار</b></a> ·
+  <a href="#-المزايا"><b>المزايا</b></a>
+</p>
 
-The widget appears on your desktop. It lives in the system tray — closing it just
-hides it; use the tray icon to exit.
+![platform](https://img.shields.io/badge/ويندوز-10%20%2F%2011-blue)
+![license](https://img.shields.io/badge/مفتوح_المصدر-مجاني-success)
+![i18n](https://img.shields.io/badge/العربية%20%7C%20English-دعم_كامل-gold)
 
-## Features
+---
 
-**Reading**
-- **Verse of the Day** — a hand-curated beloved verse chosen deterministically for
-  each day, so every device shows the same verse. It refreshes itself at midnight.
-- **Arabic in Amiri Quran** — proper Uthmani text; ornamental ayah-end markers
-  (`﴿٤٦﴾`) always stay intact when lines wrap.
-- **Downloads** — save recitation audio for a surah or the whole Quran to listen offline, with a progress bar and cancel.`n- **Translation picker** — Saheeh International (built in), plus Pickthall,
-  Yusuf Ali, Muhammad Asad and Hilali & Khan (downloaded on demand, cached offline).
-- **Search** — jump straight to `2:255`, or full-text search the translation
-  **and the Arabic text** (Arabic matches even without diacritics).
-- **Favorites** — tap the star to keep verses; browse them from the popup or the
-  right-click menu.
-- **Save as image** — export the verse card as a high-resolution PNG for sharing.
+## ⬇ التحميل
 
-**Listening**
-- **Recitation** — verse-by-verse audio from 7 reciters (Alafasy, Abdul Basit,
-  Husary, Minshawy, Sudais, Shatri, Hudhaify), cached locally after first listen.
-- **Continuous reading** — keeps going through the following verses, rolls into
-  the next surah, and stops where you tell it (end of surah / 10–50 verses / until
-  you stop). The widget follows along and **highlights the verse being recited**.
-- **Resume** — the reading position is remembered between sessions.
-- **Sleep timer** — stop the recitation after 10 / 20 / 30 / 60 minutes, with a
-  live countdown so you always know when it will stop.
-- **Read the meaning** — reads the translation aloud with your Windows voices.
+1. ادخل إلى [صفحة الإصدارات](https://github.com/MohammedTsmu/QuranWidget/releases/latest).
+2. حمّل **`QuranWidgetSetup-x.x.x.exe`** (مثبّت مع اختصار قائمة ابدأ وتشغيل تلقائي اختياري)
+   أو **`QuranWidget.exe`** (نسخة محمولة بدون تثبيت — تحتاج .NET Desktop Runtime).
+3. شغّله — يظهر الويدجت على سطح مكتبك فوراً. يبقى في شريط المهام؛ الإغلاق يخفيه فقط.
 
-**Look & feel**
-- **4 themes** — Emerald Night, Parchment Light, Midnight Blue, Desert Sepia.
-- **Font size** slider for the Arabic text (translation scales with it).
-- **Opacity** slider, always-on-top, and a refined **pin to desktop** mode that
-  holds the widget at the bottom of your desktop, behind every window.
+> 💡 بعد أول تشغيل: اختر اللغة والثيم والقارئ من زر ⚙ الإعدادات.
 
-**Utility**
-- **Prayer times** — next prayer in the header, computed locally from your
-  location (located once via IP, then fully offline).
-- **Offline aware** — a colored wifi-off indicator appears the moment internet is
-  gone (recitation stops cleanly, the play button disables) and disappears when
-  it's back. Reading, searching and copying always work offline.
-- **Multiple widgets** — right-click → *New Verse Widget* (up to 5).
-- **Two UI languages** — English or Arabic (with right-to-left layout), chosen in
-  Settings; non-Arabic speakers keep English.
-- **Optional translation** — hide the translation panel entirely if you only want
-  the Arabic text.
-- **Hijri date** using the Umm al-Qura calendar.
-- **Multi-monitor aware** — widgets remember which screen they were on.
+## ✨ المزايا
 
-## Controls
+### القراءة
+- **آية اليوم** — آية مختارة من كنز من الآيات الكريمة، تتغير كل منتصف ليل وتبقى ثابتة طوال اليوم (نفس الآية على كل الأجهزة).
+- **خط أميري عثماني** — نص عثماني كامل مع علامات نهاية الآية ﴿٢٧٤﴾ التي لا تنكسر أبداً عند التفاف الأسطر.
+- **اختيار الترجمة** — Saheeh International مدمجة، إضافة إلى Pickthall وYusuf Ali وMuhammad Asad وHilali & Khan (تُنزَّل عند الطلب وتُخزَّن دون اتصال).
+- **بحث** — انتقال مباشر إلى `2:255`، أو بحث نصي في الترجمة **والنص العربي** (يطابق حتى بدون تشكيل).
+- **مفضلة** — علّم الآيات بنجمة وتصفّحها من القائمة.
+- **حفظ كصورة** — صدّر بطاقة الآية كصورة PNG عالية الدقة للمشاركة.
+- **تاريخ هجري** بتقويم أم القرى + التاريخ الميلادي.
 
-| Action | How |
+### الاستماع
+- **تلاوة من 7 قرّاء** — العفاسي، عبد الباسط، الحصري، المنشاوي، السديس، الشاطري، الحذيفي؛ تُخزَّن محلياً بعد أول استماع.
+- **قراءة متصلة** — تكمل الآيات التالية وتنتقل إلى السورة الموالية، وتتوقف حيث تحدد (نهاية السورة / 10–50 آية / حتى توقفها) مع **تمييز الآية التي تُتلى الآن**.
+- **استئناف** — يتذكّر موضع القراءة بين الجلسات.
+- **مؤقّت نوم** — إيقاف التلاوة بعد 10/20/30/60 دقيقة مع عدّاد تنازلي.
+- **قراءة المعنى** — يقرأ الترجمة بصوت ويندوز.
+- **تنزيلات دون اتصال** — نزّل تلاوة سورة أو المصحف كاملاً بشريط تقدم وإمكانية إلغاء.
+
+### الحفظ (جديد في 2.8.0)
+- **وضع الحفظ** — اختر نطاقاً من سورة، استمع لكل آية عدة مرات، أخفِ النص وأعده من حفظك، ثم علّم المجموعة محفوظة.
+- **سلّم مراجعة متباعد** — الآيات المحفوظة تعود للمراجعة يومياً وفق جدول (1، 3، 7، 14، 30، 60، 120 يوماً) مع تذكير بآيات اليوم المستحقة.
+- **تابع تقدمك** — إحصاءات لكل سورة: عدد الآيات المحفوظة والمستحقة للمراجعة.
+
+### المظهر والواجهة
+- **4 ثيمات** — ليلة زمرّدية، ورق فاتح، أزرق منتصف الليل، سيما صحراوي.
+- **اللغة** — عربية (يمين-ليسار) أو إنجليزية، بضغطة واحدة.
+- **حجم الخط** و**الشفافية** قابلان للضبط، ودائماً في المقدمة، ووضع **تثبيت على المكتب** يبقي الويدجت خلف كل النوافذ.
+- **عدة ويدجت** — حتى 5 ويدجت، كل منها يتذكّر شاشته.
+
+### أدوات
+- **أوقات الصلاة** — الصلاة القادمة في الواجهة، تُحسب محلياً من موقعك وتعمل دون إنترنت.
+- **إدراك دون اتصال** — مؤشر انقطاع الإنترنت يظهر لحظياً؛ القراءة والبحث والنسخ تعمل دائماً دون اتصال.
+- **مراجع مفهومة** — كل الأرقام مكتوبة بالكلمات («سورة البقرة — الآية ٢٧٤») بأرقام عربية في الواجهة العربية.
+- **تحديثات** — يفحص أحدث إصدار تلقائياً من هذه الصفحة.
+
+## 🕹 الاستخدام
+
+| الإجراء | كيف |
 |---|---|
-| Move the widget | Drag it anywhere |
-| Settings (search, reciter, translation, theme, sizes, timers…) | Gear button |
-| Favorites / Save as image / Pin / more | Right-click the widget |
-| Hide to tray | ✕ button (or tray icon) |
-| Verse of the Day / New widget / Updates / Log / Exit | Tray icon menu |
+| نقل الويدجت | اسحبه لأي مكان |
+| الإعدادات (البحث، القارئ، الترجمة، الثيم، المؤقتات…) | زر ⚙ |
+| المفضلة / حفظ صورة / التثبيت / المزيد | زر أيمن على الويدجت |
+| الإخفاء إلى الشريط | زر ✕ (أيقونة الشريط أيضاً) |
+| آية اليوم / ويدجت جديد / التحديثات / الخروج | قائمة أيقونة الشريط |
+| الحفظ والمراجعة | نافذة «الحفظ» — اختر نطاقاً واضغط «ابدأ الحفظ» |
 
-## Settings & data files
+## 📁 ملفات البيانات
 
-| Data | Location |
+| البيانات | المكان |
 |---|---|
-| Settings | `%APPDATA%\QuranWidget\settings.json` |
-| Translations cache | `%APPDATA%\QuranWidget\translations\` |
-| Prayer location cache | `%APPDATA%\QuranWidget\location.json` |
-| Audio cache | `%LOCALAPPDATA%\QuranWidget\audio\` |
-| Diagnostics log | `%LOCALAPPDATA%\QuranWidget\log.txt` (tray → *Open Log File*) |
+| الإعدادات | `%APPDATA%\QuranWidget\settings.json` |
+| الترجمات المخزنة | `%APPDATA%\QuranWidget\translations\` |
+| موقع الصلاة | `%APPDATA%\QuranWidget\location.json` |
+| التلاوات المخزنة | `%LOCALAPPDATA%\QuranWidget\audio\` |
+| سجل التشخيص | `%LOCALAPPDATA%\QuranWidget\log.txt` |
 
-## Install & distribute
+## 🔨 البناء من المصدر
 
-- Portable: ship `dist\QuranWidget.exe` (needs the .NET Desktop Runtime), or run
-  `build.cmd portable` for a self-contained single exe.
-- Installer: install [Inno Setup 6](https://jrsoftware.org/isinfo.php), then
-
-  ```cmd
-  ISCC.exe installer\QuranWidget.iss
-  ```
-
-  which produces `QuranWidgetSetup-2.7.0.exe` with Start-menu shortcut, optional
-  autostart and a clean uninstaller.
-
-## Updates
-
-Set `UpdateRepo` (`"owner/repo"`) in `settings.json` to point at your GitHub
-repository; the tray's *Check for Updates* compares the latest release tag against
-the running version. Left empty, the check is disabled.
-
-## Build from source
-
-Requires the .NET SDK (10+):
+يتطلب .NET SDK 10+:
 
 ```cmd
-build.cmd           :: framework-dependent exe (needs .NET Desktop Runtime installed)
-build.cmd portable  :: fully self-contained single exe
+build.cmd           :: ملف تنفيذي (يحتاج .NET Desktop Runtime)
+build.cmd portable  :: ملف واحد مستقل تماماً
+ISCC.exe installer\QuranWidget.iss   :: مثبّت ويندوز (يتطلب Inno Setup 6)
 ```
 
-## Credits
+## 🙏 صُنع بـ ❤ بواسطة
 
-- Quran text: [Tanzil Uthmani](https://tanzil.net), served by
-  [alquran.cloud](https://alquran.cloud) API (translations too).
-- Recitations: [cdn.islamic.network](https://alquran.cloud/cdn) (128 kbit/s).
-- Arabic fonts: [Amiri](https://www.amirifont.org) family (SIL Open Font License) —
-  see `QuranWidget\Assets\OFL-Amiri.txt`.
+**[MohammedTsmu](https://github.com/MohammedTsmu)** — إن نفعك هذا العمل فادعُ له.
+
+## 📚 الشكر
+
+- النص القرآني: [Tanzil Uthmani](https://tanzil.net) عبر [alquran.cloud](https://alquran.cloud)
+- التلاوات: [cdn.islamic.network](https://alquran.cloud/cdn) (128 kbit/s)
+- الخط: عائلة [أميري](https://www.amirifont.org) (رخصة SIL OFL)
+
+</div>
+
+---
+
+<div dir="ltr" align="left">
+
+# Quran Widget for Windows
+
+**The daily Ayah, living on your desktop.**
+
+A free, open-source Windows widget that shows a verse of the Quran every day in
+Uthmani script (Amiri Quran typeface) with its English meaning, recitation from
+7 renowned reciters, prayer times, and a complete memorization & review mode —
+with a full Arabic (RTL) or English interface, fully offline after first run.
+
+**[⬇ Download the latest release](https://github.com/MohammedTsmu/QuranWidget/releases/latest)** ·
+[Website](https://mohammedtsmu.github.io/QuranWidget/)
+
+### Features at a glance
+- **Verse of the Day** — a curated verse that changes every midnight (same on every device), with translation and Hijri + Gregorian dates.
+- **Uthmani Amiri script** — ayah-end markers ﴿٢٧٤﴾ never break across lines; adjustable font size.
+- **Recitation** — 7 reciters (Alafasy, Abdul Basit, Husary, Minshawy, Sudais, Shatri, Hudhaify), cached locally; download whole surahs or the entire Quran for offline listening.
+- **Memorization mode** — pick a range, loop each verse, recite from memory with the text hidden, then the group joins a spaced review ladder (1, 3, 7, 14, 30, 60, 120 days) with progress stats per surah.
+- **Prayer times** — next prayer in the header, computed locally, works offline.
+- **Search** — jump to `2:255`, or full-text search the Arabic (even without diacritics) and the translation.
+- **Favorites, save as image, sleep timer, read-the-meaning TTS, resume position.**
+- **4 themes**, Arabic/English UI, opacity & font-size sliders, always-on-top, pin-to-desktop mode, up to 5 widgets (multi-monitor aware).
+- **Offline-aware** — clear indicator when internet drops; reading, search and copy always work offline.
+
+### Install
+Grab **`QuranWidgetSetup-x.x.x.exe`** from the [releases page](https://github.com/MohammedTsmu/QuranWidget/releases/latest) (installer with Start-menu shortcut and optional autostart), or the portable **`QuranWidget.exe`** (needs the .NET Desktop Runtime).
+
+### Build from source
+```cmd
+build.cmd           :: framework-dependent exe
+build.cmd portable  :: self-contained single exe
+ISCC.exe installer\QuranWidget.iss  :: Windows installer (Inno Setup 6)
+```
+
+**Built with ❤ by [MohammedTsmu](https://github.com/MohammedTsmu)** — if it benefits you, keep him in your prayers.
+
+*Quran text: [Tanzil](https://tanzil.net) · Recitations: [cdn.islamic.network](https://alquran.cloud/cdn) · Font: [Amiri](https://www.amirifont.org) (SIL OFL)*
+
+</div>

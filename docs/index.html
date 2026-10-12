@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آية اليوم على سطح مكتبك — Quran Widget | ويدجت القرآن الكريم لويندوز</title>
+<meta name="description" content="ويدجت القرآن الكريم لويندوز: آية كل يوم بالخط العثماني، تلاوة من 7 قراء، أوقات الصلاة، الحفظ والمراجعة، واجهة عربية وإنجليزية، 4 ثيمات. تحميل مجاني لويندوز. Free Quran desktop widget for Windows: daily verse, recitation, prayer times, memorization.">
+<meta name="keywords" content="القرآن الكريم, ويدجت القرآن, آية اليوم, تطبيق القرآن لويندوز, تلاوة, أوقات الصلاة, حفظ القرآن, Quran widget, Quran Windows, daily ayah, verse of the day, Quran memorization, prayer times, desktop widget">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#12211b">
+<link rel="canonical" href="https://mohammedtsmu.github.io/QuranWidget/">
+<link rel="alternate" hreflang="ar" href="https://mohammedtsmu.github.io/QuranWidget/?lang=ar">
+<link rel="alternate" hreflang="en" href="https://mohammedtsmu.github.io/QuranWidget/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://mohammedtsmu.github.io/QuranWidget/">
+<link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/MohammedTsmu/QuranWidget/main/QuranWidget/Assets/app.ico">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Quran Widget — ويدجت القرآن">
+<meta property="og:title" content="ويدجت القرآن الكريم لويندوز — آية اليوم على سطح مكتبك">
+<meta property="og:description" content="آية كل يوم بالخط العثماني، تلاوة من 7 قراء، أوقات صلاة، وضع الحفظ والمراجعة — مجاناً لويندوز. Free Quran widget for Windows.">
+<meta property="og:url" content="https://mohammedtsmu.github.io/QuranWidget/">
+<meta property="og:locale" content="ar_AR">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Quran Widget for Windows — ويدجت القرآن">
+<meta name="twitter:description" content="Daily verse, recitation, prayer times & memorization — free desktop widget for Windows.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Quran Widget — ويدجت القرآن الكريم",
+  "operatingSystem": "Windows 10, Windows 11",
+  "applicationCategory": "MultimediaApplication",
+  "inLanguage": ["ar", "en"],
+  "description": "Free Windows desktop widget showing a daily Quran verse in Uthmani script with recitation from 7 reciters, prayer times, memorization mode and offline support. ويدجت مجاني يعرض آية كل يوم مع التلاوة وأوقات الصلاة ووضع الحفظ.",
+  "url": "https://mohammedtsmu.github.io/QuranWidget/",
+  "downloadUrl": "https://github.com/MohammedTsmu/QuranWidget/releases/latest",
+  "softwareVersion": "2.8.0",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Person", "name": "MohammedTsmu", "url": "https://github.com/MohammedTsmu" },
+  "license": "https://github.com/MohammedTsmu/QuranWidget#readme"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "ما هو ويدجت القرآن الكريم؟", "acceptedAnswer": { "@type": "Answer", "text": "تطبيق مكتبي مجاني لويندوز يعرض آية كل يوم بالرسم العثماني مع ترجمتها وتلاوتها، وأوقات الصلاة، ووضع خاص للحفظ والمراجعة." } },
+    { "@type": "Question", "name": "Is Quran Widget free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, Quran Widget is completely free and open source for Windows 10 and 11." } },
+    { "@type": "Question", "name": "هل يعمل بدون إنترنت؟", "acceptedAnswer": { "@type": "Answer", "text": "نعم، يمكنك تنزيل التلاوات والترجمات مسبقاً والاستماع والقراءة دون اتصال." } },
+    { "@type": "Question", "name": "Does it support Arabic interface?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, the entire interface switches to Arabic with full right-to-left layout." } }
+  ]
+}
+</script>
+
+<style>
+:root{
+  --bg:#0d1712; --bg2:#12211b; --card:#182b23; --border:#24403466;
+  --gold:#d4b169; --gold-dim:#8f7b4e; --text:#e8e4d8; --muted:#9aa89f;
+  --green:#2e5c48;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',Tahoma,system-ui,sans-serif;background:linear-gradient(160deg,var(--bg),var(--bg2) 60%,#152820);color:var(--text);line-height:1.7;min-height:100vh}
+a{color:var(--gold);text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+
+nav{position:sticky;top:0;z-index:10;background:#0d1712e8;backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.brand{font-weight:700;font-size:1.05rem;display:flex;gap:10px;align-items:center}
+.brand .bismillah{color:var(--gold);font-size:1.25rem}
+.navlinks{display:flex;gap:22px;align-items:center;font-size:.92rem}
+.navlinks a{color:var(--muted)}
+.navlinks a:hover{color:var(--gold)}
+.langbtn{border:1px solid var(--gold-dim);color:var(--gold);background:none;border-radius:20px;padding:5px 16px;cursor:pointer;font-size:.9rem}
+.langbtn:hover{background:#d4b16918}
+
+header.hero{text-align:center;padding:78px 0 60px}
+.ayah{font-family:'Traditional Arabic','Amiri',serif;font-size:clamp(1.5rem,4vw,2.3rem);color:var(--gold);margin-bottom:26px}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.35;margin-bottom:18px}
+.hero p.sub{color:var(--muted);font-size:1.12rem;max-width:640px;margin:0 auto 34px}
+.cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 30px;border-radius:12px;font-weight:600;font-size:1rem;transition:.2s}
+.btn-primary{background:var(--gold);color:#1a1508}
+.btn-primary:hover{background:#e3c47e;transform:translateY(-2px)}
+.btn-ghost{border:1px solid var(--gold-dim);color:var(--gold)}
+.btn-ghost:hover{background:#d4b16915}
+.verinfo{margin-top:16px;color:var(--muted);font-size:.88rem}
+.badge{display:inline-block;background:var(--green);color:#dfeee6;border-radius:20px;padding:3px 14px;font-size:.8rem;margin-inline-start:8px;vertical-align:middle}
+
+section{padding:56px 0}
+h2{font-size:1.7rem;text-align:center;margin-bottom:8px}
+.sec-sub{text-align:center;color:var(--muted);margin-bottom:40px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;transition:.25s}
+.card:hover{transform:translateY(-4px);border-color:#d4b16955}
+.card .ic{font-size:1.9rem;margin-bottom:12px}
+.card h3{font-size:1.12rem;margin-bottom:8px;color:var(--gold)}
+.card p{color:var(--muted);font-size:.95rem}
+
+.dl{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:44px 30px;text-align:center}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:34px;text-align:center}
+.step .n{width:38px;height:38px;border-radius:50%;background:var(--gold);color:#1a1508;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+
+.faq details{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:12px}
+.faq summary{cursor:pointer;font-weight:600;font-size:1.02rem}
+.faq p{color:var(--muted);margin-top:10px}
+
+footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;color:var(--muted);font-size:.92rem}
+.love{color:var(--gold);font-size:1.05rem;margin:10px 0}
+@media(max-width:640px){.navlinks a:not(.langbtn){display:none}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav">
+    <div class="brand"><span class="bismillah">۞</span><span data-i="brand">ويدجت القرآن</span></div>
+    <div class="navlinks">
+      <a href="#features" data-i="navFeat">المزايا</a>
+      <a href="#download" data-i="navDl">التحميل</a>
+      <a href="#faq" data-i="navFaq">أسئلة شائعة</a>
+      <a href="https://github.com/MohammedTsmu/QuranWidget" target="_blank" rel="noopener">GitHub</a>
+      <button class="langbtn" id="langBtn" onclick="toggleLang()">English</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <p class="ayah">إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ ﴿٩﴾</p>
+  <h1 data-i="h1">آية اليوم على سطح مكتبك — طوال اليوم</h1>
+  <p class="sub" data-i="sub">ويدجت مجاني لويندوز يعرض آية كل يوم بالرسم العثماني وخط أميري، مع تلاوة من نخبة القرّاء، أوقات الصلاة، ووضع متكامل للحفظ والمراجعة — كل ذلك بدون إنترنت بعد أول تشغيل.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="https://github.com/MohammedTsmu/QuranWidget/releases/latest" data-i="dlMain">⬇ تحميل لويندوز — مجاناً</a>
+    <a class="btn btn-ghost" href="#features" data-i="dlFeat">اكتشف المزايا</a>
+  </div>
+  <p class="verinfo"><span id="ver">v2.8.0</span><span class="badge" data-i="badge">مفتوح المصدر · Windows 10/11</span></p>
+</header>
+
+<main class="wrap">
+<section id="features">
+  <h2 data-i="featH">كل ما تحتاجه للقرآن في بطاقة واحدة</h2>
+  <p class="sec-sub" data-i="featSub">أكثر من 20 ميزة مدروسة، عربية أولاً</p>
+  <div class="grid">
+    <div class="card"><div class="ic">🌅</div><h3 data-i="f1h">آية اليوم</h3><p data-i="f1p">آية مختارة من كنز من الآيات الكريمة تتغير كل منتصف ليل، مع الترجمة الإنجليزية والتاريخ الهجري والميلادي.</p></div>
+    <div class="card"><div class="ic">📖</div><h3 data-i="f2h">خط أميري عثماني</h3><p data-i="f2p">نص عثماني كامل الحركات مع علامات نهاية الآية ﴿٢٧٤﴾ التي لا تنكسر أبداً، وحجم خط قابل للضبط.</p></div>
+    <div class="card"><div class="ic">🎧</div><h3 data-i="f3h">تلاوة من 7 قرّاء</h3><p data-i="f3p">مشاري العفاسي، عبد الباسط، الحصري، المنشاوي، السديس، الشاطري والحذيفي — مع تنزيل كامل السور للاستماع دون إنترنت.</p></div>
+    <div class="card"><div class="ic">🧠</div><h3 data-i="f4h">وضع الحفظ والمراجعة</h3><p data-i="f4p">اختر نطاقاً، استمع للآية عدة مرات، أخفِ النص وأعده من حفظك — ثم يدخل مجموعة الحفظ سلّم مراجعة يومي (1، 3، 7، 14، 30، 60، 120 يوماً).</p></div>
+    <div class="card"><div class="ic">🕌</div><h3 data-i="f5h">أوقات الصلاة</h3><p data-i="f5p">الصلاة القادمة في الواجهة، تُحسب محلياً من موقعك وتعمل دون إنترنت بعد أول تحديد للموقع.</p></div>
+    <div class="card"><div class="ic">🔎</div><h3 data-i="f6h">بحث ذكي</h3><p data-i="f6p">انتقل مباشرة إلى 2:255، أو ابحث في النص العربي حتى بدون تشكيل وفي الترجمة الإنجليزية.</p></div>
+    <div class="card"><div class="ic">⭐</div><h3 data-i="f7h">مفضلة وحفظ كصورة</h3><p data-i="f7p">احفظ الآيات المفضلة بضغطة نجمة، وصدّر البطاقة كصورة PNG عالية الدقة للمشاركة.</p></div>
+    <div class="card"><div class="ic">🎨</div><h3 data-i="f8h">4 ثيمات وتثبيت على المكتب</h3><p data-i="f8p">ليلة زمرّدية، ورق فاتح، أزرق منتصف الليل، وسيما صحراوي — مع وضع تثبيت يبقي الويدجت خلف كل النوافذ.</p></div>
+    <div class="card"><div class="ic">🌙</div><h3 data-i="f9h">عربي أولاً</h3><p data-i="f9p">واجهة عربية كاملة من اليمين لليسار وواجهة إنجليزية، والتاريخ الهجري بتقويم أم القرى.</p></div>
+  </div>
+</section>
+
+<section id="download">
+  <h2 data-i="dlH">حمّله الآن</h2>
+  <p class="sec-sub" data-i="dlSub">مجاني ومفتوح المصدر — خطوتان فقط</p>
+  <div class="dl">
+    <a class="btn btn-primary" href="https://github.com/MohammedTsmu/QuranWidget/releases/latest" data-i="dlBtn">⬇ تحميل المثبّت لويندوز</a>
+    <p class="verinfo" data-i="dlNote">نسخة محمولة (بدون تثبيت) متوفرة أيضاً في صفحة الإصدارات · الإصدار الحالي <span id="ver2">2.8.0</span></p>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><span data-i="s1">حمّل المثبّت وشغّله</span></div>
+      <div class="step"><div class="n">2</div><span data-i="s2">يظهر الويدجت على سطح المكتب فوراً</span></div>
+      <div class="step"><div class="n">3</div><span data-i="s3">اختر اللغة والثيم والقارئ من ⚙ الإعدادات</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <h2 data-i="faqH">أسئلة شائعة</h2>
+  <p class="sec-sub" data-i="faqSub">كل ما قد تسأل عنه</p>
+  <div class="faq">
+    <details><summary data-i="q1">هل التطبيق مجاني؟</summary><p data-i="a1">نعم، مجاني بالكامل ومفتوح المصدر لويندوز 10 و11.</p></details>
+    <details><summary data-i="q2">هل يعمل بدون إنترنت؟</summary><p data-i="a2">القراءة والبحث والنسخ تعمل دائماً بدون إنترنت، ويمكن تنزيل التلاوات والترجمات مسبقاً للاستماع والترجمة دون اتصال.</p></details>
+    <details><summary data-i="q3">هل الواجهة بالعربية؟</summary><p data-i="a3">نعم، الواجهة كاملة بالعربية مع اتجاه يمين-لليسار، واللغة الافتراضية للموقع عربية.</p></details>
+    <details><summary data-i="q4">كيف يحسب أوقات الصلاة؟</summary><p data-i="a4">تُحسب محلياً على جهازك من موقعك التقريبي (يُحدد مرة واحدة ثم يعمل دون إنترنت).</p></details>
+    <details><summary data-i="q5">Does it work on Windows 10 and 11?</summary><p data-i="a5">Yes — Windows 10 and 11, both 64-bit. It needs the .NET Desktop Runtime (the installer offers guidance if missing).</p></details>
+    <details><summary data-i="q6">Is the memorization mode suitable for beginners?</summary><p data-i="a6">Absolutely — you pick a small range of verses, listen to each one several times, then recite it from memory with the text hidden. Reviewed verses come back automatically on a spaced schedule.</p></details>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p data-i="footer">ويدجت القرآن الكريم — مجاني ومفتوح المصدر · النص القرآني: Tanzil · التلاوات: cdn.islamic.network · خط أميري</p>
+    <p class="love">صُنع بـ ❤ بواسطة <a href="https://github.com/MohammedTsmu" target="_blank" rel="noopener">MohammedTsmu</a></p>
+    <p>© 2026 <a href="https://github.com/MohammedTsmu/QuranWidget" target="_blank" rel="noopener">Quran Widget</a></p>
+  </div>
+</footer>
+
+<script>
+const I18N = {
+  en: {
+    brand:"Quran Widget", navFeat:"Features", navDl:"Download", navFaq:"FAQ",
+    h1:"The daily Ayah, living on your desktop",
+    sub:"A free Windows widget that shows a verse of the Quran every day in Uthmani script (Amiri Quran typeface), with recitation from 7 reciters, prayer times, and a full memorization & review mode — fully offline after first run.",
+    dlMain:"⬇ Download for Windows — free", dlFeat:"Explore features",
+    badge:"Open source · Windows 10/11",
+    featH:"Everything you need for the Quran in one card", featSub:"20+ thoughtful features, Arabic-first",
+    f1h:"Verse of the Day", f1p:"A beloved verse from a curated collection that changes every midnight, with English meaning and Hijri + Gregorian dates.",
+    f2h:"Uthmani Amiri script", f2p:"Proper Uthmani text with ayah-end markers ﴿٢٧٤﴾ that never break across lines, plus an adjustable font size.",
+    f3h:"7 reciters", f3p:"Alafasy, Abdul Basit, Husary, Minshawy, Sudais, Shatri and Hudhaify — download whole surahs for offline listening.",
+    f4h:"Memorization & review", f4p:"Pick a range, loop each verse, hide the text and recite from memory — then the group joins a spaced review ladder (1, 3, 7, 14, 30, 60, 120 days).",
+    f5h:"Prayer times", f5p:"The next prayer right in the widget header, computed locally from your location and fully offline afterwards.",
+    f6h:"Smart search", f6p:"Jump straight to 2:255, or search the Arabic text even without diacritics, and the English translation.",
+    f7h:"Favorites & save as image", f7p:"Star verses to keep them, and export the card as a high-resolution PNG to share.",
+    f8h:"4 themes & desktop pinning", f8p:"Emerald Night, Parchment, Midnight Blue and Desert Sepia — plus a pin mode that keeps the widget behind every window.",
+    f9h:"Arabic first", f9p:"A complete right-to-left Arabic UI and an English UI, with the Hijri date from Umm al-Qura.",
+    dlH:"Get it now", dlSub:"Free & open source — just two steps",
+    dlBtn:"⬇ Download Windows installer", dlNote:"A portable (no-install) exe is also on the releases page · Current version ",
+    s1:"Download and run the installer", s2:"The widget appears on your desktop instantly", s3:"Pick language, theme & reciter in ⚙ Settings",
+    faqH:"Frequently asked questions", faqSub:"Everything you might ask",
+    q1:"Is the app free?", a1:"Yes — completely free and open source for Windows 10 and 11.",
+    q2:"Does it work offline?", a2:"Reading, search and copying always work offline, and you can pre-download recitations and translations for offline listening too.",
+    q3:"Is there an Arabic interface?", a3:"Yes — the whole UI switches to Arabic with right-to-left layout; this website is Arabic-first by default.",
+    q4:"How are prayer times computed?", a4:"Locally on your machine from an approximate location (detected once, then fully offline).",
+    q5:"هل يعمل على ويندوز 10 و11؟", a5:"نعم — ويندوز 10 و11 بنظام 64 بت، ويحتاج .NET Desktop Runtime (المثبّت يرشدك إن كان ناقصاً).",
+    q6:"هل وضع الحفظ مناسب للمبتدئين؟", a6:"بالتأكيد — تختار عدداً قليلاً من الآيات، تستمع لكل آية عدة مرات، ثم تعيدها من حفظك والنص مخفي، وتعود الآيات تلقائياً حسب جدول المراجعة.",
+    footer:"Quran Widget — free & open source · Quran text: Tanzil · Recitations: cdn.islamic.network · Amiri font",
+  },
+  ar: null
+};
+let ar = {};
+document.querySelectorAll("[data-i]").forEach(el => ar[el.dataset.i] = el.textContent);
+I18N.ar = ar;
+
+const params = new URLSearchParams(location.search);
+let lang = params.get("lang") || (navigator.language && navigator.language.startsWith("ar") ? "ar" : "ar");
+function apply(l){
+  lang = l;
+  const dict = l === "ar" ? I18N.ar : I18N.en;
+  document.documentElement.lang = l;
+  document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i]").forEach(el => { if(dict[el.dataset.i] != null) el.textContent = dict[el.dataset.i]; });
+  document.getElementById("langBtn").textContent = l === "ar" ? "English" : "العربية";
+  document.title = l === "ar"
+    ? "آية اليوم على سطح مكتبك — Quran Widget | ويدجت القرآن الكريم لويندوز"
+    : "Quran Widget for Windows — Daily Ayah, Recitation & Memorization | ويدجت القرآن";
+}
+function toggleLang(){ apply(lang === "ar" ? "en" : "ar"); history.replaceState(null,"", "?lang=" + lang); }
+apply(lang);
+
+fetch("https://api.github.com/repos/MohammedTsmu/QuranWidget/releases/latest")
+  .then(r => r.json())
+  .then(d => { if(d.tag_name){ const v = d.tag_name.replace(/^v/,""); document.getElementById("ver").textContent = "v" + v; document.getElementById("ver2").textContent = v; } })
+  .catch(() => {});
+</script>
+</body>
+</html>

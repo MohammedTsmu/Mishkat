@@ -815,6 +815,9 @@ public partial class MainWindow : Window
         CreditsText.Text = L10n.T(
             "Recitation: cdn.islamic.network  ·  Translations: api.alquran.cloud",
             "التلاوة: cdn.islamic.network  ·  الترجمات: api.alquran.cloud");
+        MadeWithLoveText.Text = L10n.T(
+            "Built with ❤ by MohammedTsmu",
+            "صُنع بـ ❤ بواسطة MohammedTsmu");
     }
 
     void Language_Click(object sender, RoutedEventArgs e)

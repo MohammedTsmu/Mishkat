@@ -470,6 +470,9 @@
 
                             <TextBlock x:Name="CreditsText" Text="Recitation: cdn.islamic.network  ·  Translations: api.alquran.cloud"
                                        FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,0" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="MadeWithLoveText" Text="Built with ❤ by MohammedTsmu"
+                                       FontSize="11" Foreground="{DynamicResource Gold}" Margin="0,10,0,4"
+                                       TextAlignment="Center" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </ScrollViewer>
                     <!-- bottom fade: signals there is more to scroll below -->
