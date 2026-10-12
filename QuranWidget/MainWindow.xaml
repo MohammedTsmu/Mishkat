@@ -404,11 +404,47 @@
                                     <ColumnDefinition Width="8"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Button x:Name="DownloadSurahButton" Style="{StaticResource ComboButton}"
-                                        Grid.Column="0" Click="DownloadSurah_Click"/>
-                                <Button x:Name="DownloadQuranButton" Style="{StaticResource ComboButton}"
-                                        Grid.Column="2" Click="DownloadQuran_Click"/>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock x:Name="DlReciterCaption" Text="Reciter" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,0,0,3"/>
+                                    <ToggleButton x:Name="DlReciterToggle" Style="{StaticResource ComboToggle}"
+                                                  Checked="DlReciterToggle_Changed" Unchecked="DlReciterToggle_Changed"/>
+                                    <Popup x:Name="DlReciterPopup" PlacementTarget="{Binding ElementName=DlReciterToggle}"
+                                           Placement="Top" StaysOpen="False" AllowsTransparency="True"
+                                           PopupAnimation="Fade" Closed="DlReciterPopup_Closed">
+                                        <Border Background="{DynamicResource Surface}" BorderBrush="{DynamicResource SurfaceBorder}" BorderThickness="1"
+                                                CornerRadius="10" Padding="4" Margin="10" MinWidth="215" MaxHeight="300">
+                                            <Border.Effect>
+                                                <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="16" ShadowDepth="3" Opacity="0.45"/>
+                                            </Border.Effect>
+                                            <ListBox x:Name="DlReciterList" Background="Transparent" BorderThickness="0"
+                                                     ItemContainerStyle="{StaticResource DarkListBoxItem}"
+                                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                     SelectionChanged="DlReciterList_SelectionChanged"/>
+                                        </Border>
+                                    </Popup>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock x:Name="DlScopeCaption" Text="Content" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,0,0,3"/>
+                                    <ToggleButton x:Name="DlScopeToggle" Style="{StaticResource ComboToggle}"
+                                                  Checked="DlScopeToggle_Changed" Unchecked="DlScopeToggle_Changed"/>
+                                    <Popup x:Name="DlScopePopup" PlacementTarget="{Binding ElementName=DlScopeToggle}"
+                                           Placement="Top" StaysOpen="False" AllowsTransparency="True"
+                                           PopupAnimation="Fade" Closed="DlScopePopup_Closed">
+                                        <Border Background="{DynamicResource Surface}" BorderBrush="{DynamicResource SurfaceBorder}" BorderThickness="1"
+                                                CornerRadius="10" Padding="4" Margin="10" MinWidth="215" MaxHeight="340">
+                                            <Border.Effect>
+                                                <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="16" ShadowDepth="3" Opacity="0.45"/>
+                                            </Border.Effect>
+                                            <ListBox x:Name="DlScopeList" Background="Transparent" BorderThickness="0"
+                                                     ItemContainerStyle="{StaticResource DarkListBoxItem}"
+                                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                     SelectionChanged="DlScopeList_SelectionChanged"/>
+                                        </Border>
+                                    </Popup>
+                                </StackPanel>
                             </Grid>
+                            <Button x:Name="DownloadStartButton" Style="{StaticResource ComboButton}" Margin="0,8,0,0"
+                                    Click="DownloadStart_Click"/>
                             <Grid x:Name="DownloadsProgressPanel" Visibility="Collapsed" Margin="0,8,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>

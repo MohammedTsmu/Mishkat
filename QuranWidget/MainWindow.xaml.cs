@@ -536,6 +536,7 @@ public partial class MainWindow : Window
         Topmost = s.AlwaysOnTop && !s.PinToDesktop;
         _reciterIndex = Array.FindIndex(Audio.Reciters, r => r.Id == s.ReciterId);
         if (_reciterIndex < 0) _reciterIndex = 0;
+        _dlReciterIndex = _reciterIndex;
         UpdateReciterButton();
         ContinueCheck.IsChecked = s.ContinueReading;
         StopAtToggle.Content = StopAtLabel(s.StopAt);
@@ -558,20 +559,117 @@ public partial class MainWindow : Window
 
     // ---------- downloads (offline audio) ----------
 
-    void UpdateDownloadsUi()
+    int _dlReciterIndex;
+    int _dlScope;          // 0 = current surah, 1 = a chosen surah, 2 = whole Quran
+    int _dlSurah = 1;      // surah chosen for scope 1
+    bool _pickingDl;
+
+    string DlReciterName => Audio.Reciters[_dlReciterIndex].Name;
+
+    string DlScopeLabel(int scope)
     {
-        var s = SettingsService.Current;
-        string reciter = Audio.Reciters[_reciterIndex].Name;
-        DownloadSurahButton.Content = L10n.T("Download this surah", "تنزيل هذه السورة");
-        DownloadQuranButton.Content = L10n.T("Download whole Quran", "تنزيل المصحف كاملاً");
-        DownloadsHint.Text = L10n.T(
-            $"Save recitation audio ({reciter}) to your device, so it plays without internet. Translations are downloaded automatically when you pick them.",
-            $"احفظ صوت التلاوة ({reciter}) على جهازك ليعمل بدون إنترنت. تُنزَّل الترجمات تلقائياً عند اختيارها.");
-        DownloadSurahButton.IsEnabled = !Audio.Downloading;
-        DownloadQuranButton.IsEnabled = !Audio.Downloading;
+        var cur = _passage.Verses.Count > 0 ? Quran.Surah(_passage.Verses[0].SurahNumber) : null;
+        string current = cur != null
+            ? L10n.T($"Current surah ({cur.EnglishName})", $"السورة الحالية ({cur.Name})")
+            : L10n.T("Current surah", "السورة الحالية");
+        return scope switch
+        {
+            0 => current,
+            1 => L10n.T($"Surah {Quran.Surah(_dlSurah)?.Number}: {Quran.Surah(_dlSurah)?.EnglishName}",
+                        $"سورة {Quran.Surah(_dlSurah)?.Name}"),
+            _ => L10n.T("Whole Quran (114 surahs)", "المصحف كاملاً (114 سورة)"),
+        };
     }
 
-    async void StartAudioDownload(IEnumerable<int> surahs)
+    void UpdateDownloadsUi()
+    {
+        DlReciterCaption.Text = L10n.T("Reciter", "القارئ");
+        DlScopeCaption.Text = L10n.T("Content", "المحتوى");
+        if (DlReciterToggle.IsChecked != true) DlReciterToggle.Content = DlReciterName;
+        if (DlScopeToggle.IsChecked != true) DlScopeToggle.Content = DlScopeLabel(_dlScope);
+        DownloadsHint.Text = L10n.T(
+            "Save recitation audio to your device for the reciter and content chosen above, so it plays without internet. Translations are downloaded automatically when you pick them.",
+            "احفظ صوت التلاوة للقارئ والمحتوى المختارين أعلاه ليعمل بدون إنترنت. تُنزَّل الترجمات تلقائياً عند اختيارها.");
+        DownloadStartButton.Content = L10n.T("Download", "تنزيل");
+        DownloadStartButton.IsEnabled = !Audio.Downloading;
+    }
+
+    void DlReciterToggle_Changed(object sender, RoutedEventArgs e)
+    {
+        if (!_ready) return;
+        if (DlReciterToggle.IsChecked == true)
+        {
+            _pickingDl = true;
+            DlReciterList.ItemsSource = Audio.Reciters.Select(r => r.Name).ToList();
+            DlReciterList.SelectedIndex = _dlReciterIndex;
+            DlReciterList.ScrollIntoView(DlReciterList.SelectedItem);
+            _pickingDl = false;
+            DlReciterPopup.IsOpen = true;
+        }
+        else DlReciterPopup.IsOpen = false;
+    }
+
+    void DlReciterPopup_Closed(object? sender, EventArgs e) => DlReciterToggle.IsChecked = false;
+
+    void DlReciterList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_ready || _pickingDl) return;
+        if (DlReciterList.SelectedIndex >= 0) _dlReciterIndex = DlReciterList.SelectedIndex;
+        DlReciterPopup.IsOpen = false;
+        UpdateDownloadsUi();
+    }
+
+    void DlScopeToggle_Changed(object sender, RoutedEventArgs e)
+    {
+        if (!_ready) return;
+        if (DlScopeToggle.IsChecked == true)
+        {
+            _pickingDl = true;
+            _dlScopePhase = false;
+            DlScopeList.ItemsSource = new List<string> { DlScopeLabel(0), DlScopeLabel(2) };
+            DlScopeList.SelectedIndex = -1;
+            _pickingDl = false;
+            DlScopePopup.IsOpen = true;
+        }
+        else DlScopePopup.IsOpen = false;
+    }
+
+    void DlScopePopup_Closed(object? sender, EventArgs e)
+    {
+        DlScopeToggle.IsChecked = false;
+        _dlScopePhase = false;
+    }
+
+    bool _dlScopePhase; // false = choose kind, true = choose a surah
+
+    void DlScopeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_ready || _pickingDl) return;
+        int i = DlScopeList.SelectedIndex;
+        if (i < 0) return;
+
+        if (!_dlScopePhase)
+        {
+            if (i == 1) { _dlScope = 2; DlScopePopup.IsOpen = false; UpdateDownloadsUi(); return; }
+            // open the surah list
+            _pickingDl = true;
+            _dlScopePhase = true;
+            DlScopeList.ItemsSource = Enumerable.Range(1, 114).Select(n =>
+                L10n.T($"{n}. {Quran.Surah(n)?.EnglishName} — {Quran.Surah(n)?.Meaning}",
+                       $"{n}. {Quran.Surah(n)?.Name}")).ToList();
+            DlScopeList.SelectedIndex = _dlSurah - 1;
+            DlScopeList.ScrollIntoView(DlScopeList.SelectedItem);
+            _pickingDl = false;
+            return;
+        }
+
+        _dlScope = 1;
+        _dlSurah = i + 1;
+        DlScopePopup.IsOpen = false;
+        UpdateDownloadsUi();
+    }
+
+    async void DownloadStart_Click(object sender, RoutedEventArgs e)
     {
         if (Audio.Downloading) return;
         if (!HasInternet())
@@ -579,6 +677,30 @@ public partial class MainWindow : Window
             ShowStatus(L10n.T("No internet — downloads are unavailable", "لا يوجد إنترنت — التنزيل غير متاح"));
             return;
         }
+
+        IEnumerable<int> surahs;
+        if (_dlScope == 2)
+        {
+            var r = System.Windows.MessageBox.Show(this,
+                L10n.T($"Download the whole Quran recited by {DlReciterName} (~2.5 GB)?\nThis needs a while and a stable connection.",
+                       $"تنزيل المصحف كاملاً بصوت {DlReciterName} (~2.5 جيجابايت)؟\nقد يستغرق وقتاً طويلاً ويتطلب اتصالاً مستقراً."),
+                "Quran Widget", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (r != MessageBoxResult.Yes) return;
+            surahs = Enumerable.Range(1, 114);
+        }
+        else
+        {
+            if (_dlScope == 0)
+            {
+                if (_passage.Verses.Count == 0) return;
+                _dlSurah = _passage.Verses[0].SurahNumber;
+                UpdateDownloadsUi();
+            }
+            surahs = new[] { _dlSurah };
+        }
+
+        string reciterId = Audio.Reciters[_dlReciterIndex].Id;
+
         UpdateDownloadsUi();
         DownloadsProgressPanel.Visibility = Visibility.Visible;
         DownloadsStatus.Text = L10n.T("Downloading…", "جارٍ التنزيل…");
@@ -604,25 +726,8 @@ public partial class MainWindow : Window
             }
         }
         Audio.DownloadPercent += OnPercent;
-        string reciter = SettingsService.Current.ReciterId;
-        await Audio.DownloadAudioAsync(reciter, surahs);
+        await Audio.DownloadAudioAsync(reciterId, surahs);
         Audio.DownloadPercent -= OnPercent;
-    }
-
-    void DownloadSurah_Click(object sender, RoutedEventArgs e)
-    {
-        if (_passage.Verses.Count == 0) return;
-        StartAudioDownload(new[] { _passage.Verses[0].SurahNumber });
-    }
-
-    void DownloadQuran_Click(object sender, RoutedEventArgs e)
-    {
-        var r = System.Windows.MessageBox.Show(this,
-            L10n.T("Download the recitation of the whole Quran (~2.5 GB)?\nThis needs a while and a stable connection.",
-                   "تنزيل تلاوة المصحف كاملاً (~2.5 جيجابايت)؟\nقد يستغرق وقتاً طويلاً ويتطلب اتصالاً مستقراً."),
-            "Quran Widget", MessageBoxButton.YesNo, MessageBoxImage.Question);
-        if (r != MessageBoxResult.Yes) return;
-        StartAudioDownload(Enumerable.Range(1, 114));
     }
 
     void DownloadCancel_Click(object sender, RoutedEventArgs e) => Audio.CancelDownload();
