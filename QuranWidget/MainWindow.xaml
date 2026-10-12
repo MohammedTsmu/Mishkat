@@ -253,18 +253,25 @@
                 <!-- settings overlay -->
                 <Border x:Name="SettingsPanel" Grid.Row="0" Grid.RowSpan="5" CornerRadius="16"
                         Background="{DynamicResource Surface}" BorderBrush="{DynamicResource SurfaceBorder}" BorderThickness="1"
-                        Padding="18,14,18,16" Visibility="Collapsed">
+                        Padding="18,10,18,14" Visibility="Collapsed">
                     <Grid>
-                    <ScrollViewer MaxHeight="560" VerticalScrollBarVisibility="Auto"
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!-- fixed header: the close ✕ never scrolls away, so it can't be
+                         confused with the widget's own hide ✕ underneath -->
+                    <Grid Grid.Row="0" Margin="0,4,0,6">
+                        <TextBlock x:Name="SettingsTitle" Text="Settings" FontSize="13.5" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
+                        <Button Style="{StaticResource IconButton}" Width="28" Height="28" FontSize="11"
+                                Content="&#xE711;" HorizontalAlignment="Right" Click="SettingsClose_Click"/>
+                    </Grid>
+                    <ScrollViewer Grid.Row="1" MaxHeight="540" VerticalScrollBarVisibility="Auto"
                                   Style="{StaticResource ThinScrollViewer}"
                                   ScrollChanged="SettingsScroll_Changed">
                         <StackPanel>
-                            <Grid>
-                                <TextBlock Text="Settings" FontSize="13.5" FontWeight="SemiBold"
-                                           Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
-                                <Button Style="{StaticResource IconButton}" Width="28" Height="28" FontSize="11"
-                                        Content="&#xE711;" HorizontalAlignment="Right" Click="SettingsClose_Click"/>
-                            </Grid>
+
 
                             <TextBlock x:Name="ReciterLabel" Text="RECITER" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
                             <ToggleButton x:Name="ReciterToggle" Style="{StaticResource ComboToggle}"
@@ -388,6 +395,34 @@
                                 </Border>
                             </Popup>
 
+                            <TextBlock x:Name="DownloadsLabel" Text="DOWNLOADS" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
+                            <TextBlock x:Name="DownloadsHint" Text="" FontSize="11" TextWrapping="Wrap"
+                                       Foreground="{DynamicResource TextFaint}" Margin="0,0,0,8"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="DownloadSurahButton" Style="{StaticResource ComboButton}"
+                                        Grid.Column="0" Click="DownloadSurah_Click"/>
+                                <Button x:Name="DownloadQuranButton" Style="{StaticResource ComboButton}"
+                                        Grid.Column="2" Click="DownloadQuran_Click"/>
+                            </Grid>
+                            <Grid x:Name="DownloadsProgressPanel" Visibility="Collapsed" Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ProgressBar x:Name="DownloadsProgress" Height="8" Minimum="0" Maximum="100"
+                                             Foreground="{DynamicResource Gold}" Background="{DynamicResource A26}"
+                                             BorderThickness="0" VerticalAlignment="Center"/>
+                                <Button x:Name="DownloadCancelButton" Grid.Column="1" Style="{StaticResource IconButton}"
+                                        Content="&#xE711;" Margin="8,0,0,0" Click="DownloadCancel_Click"/>
+                            </Grid>
+                            <TextBlock x:Name="DownloadsStatus" Text="" FontSize="11" TextWrapping="Wrap"
+                                       Foreground="{DynamicResource TextFaint}" Margin="0,6,0,0"/>
+
                             <TextBlock x:Name="UpdatesLabel" Text="UPDATES" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
                             <Button x:Name="CheckUpdatesButton" Style="{StaticResource ComboButton}"
                                     Content="Check for updates now" Click="CheckUpdates_Click"/>
@@ -400,7 +435,7 @@
                         </StackPanel>
                     </ScrollViewer>
                     <!-- bottom fade: signals there is more to scroll below -->
-                    <Border x:Name="SettingsFade" IsHitTestVisible="False" Height="34"
+                    <Border x:Name="SettingsFade" Grid.Row="1" IsHitTestVisible="False" Height="34"
                             VerticalAlignment="Bottom" Margin="0,0,0,-6">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -409,7 +444,7 @@
                             </LinearGradientBrush>
                         </Border.Background>
                     </Border>
-                    <TextBlock x:Name="SettingsScrollHint" IsHitTestVisible="False" Text="Scroll for more ↓"
+                    <TextBlock x:Name="SettingsScrollHint" Grid.Row="1" IsHitTestVisible="False" Text="Scroll for more ↓"
                                FontSize="10" Foreground="{DynamicResource TextFaint}"
                                HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-16"/>
                     </Grid>

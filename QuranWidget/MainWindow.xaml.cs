@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
@@ -357,7 +357,7 @@ public partial class MainWindow : Window
         if (Audio.PlayingRecitation)
         {
             Audio.StopAll();
-            ShowStatus("Recitation stopped — no internet");
+            ShowStatus(L10n.T("Recitation stopped — no internet", "أُوقفت التلاوة — لا يوجد إنترنت"));
         }
     }
 
@@ -368,7 +368,7 @@ public partial class MainWindow : Window
         OfflineIcon.BeginAnimation(OpacityProperty, null);
         OfflineIcon.Visibility = Visibility.Collapsed;
         PlayButton.IsEnabled = true;
-        ShowStatus("Back online — recitation is available again");
+        ShowStatus(L10n.T("Back online — recitation is available again", "عاد الاتصال — التلاوة متاحة مجدداً"));
     }
 
     // ---------- skeleton shimmer ----------
@@ -415,7 +415,7 @@ public partial class MainWindow : Window
         }
         if (!HasInternet())
         {
-            ShowStatus("No internet — recitation is unavailable");
+            ShowStatus(L10n.T("No internet — recitation is unavailable", "لا يوجد إنترنت — التلاوة غير متاحة"));
             return;
         }
         _versesPlayed = 0;
@@ -427,7 +427,7 @@ public partial class MainWindow : Window
         {
             _passage = Quran.GetPassage(s.ResumeS, s.ResumeA, s.ResumeA + 2);
             ApplyPassage(animate: false);
-            ShowStatus($"Resumed from {_passage.Reference}");
+            ShowStatus(L10n.T($"Resumed from {_passage.Reference}", $"استؤنف من {_passage.Reference}"));
         }
 
         // remember the position so playback can resume later
@@ -472,7 +472,7 @@ public partial class MainWindow : Window
 
         _passage = next;
         ApplyPassage(animate: true);
-        ShowStatus($"Reciting… {next.Reference}");
+        ShowStatus(L10n.T($"Reciting… {next.Reference}", $"تلاوة… {next.Reference}"));
 
         // remember the position so playback can resume later
         SettingsService.Current.ResumeS = next.Verses[0].SurahNumber;
@@ -515,7 +515,7 @@ public partial class MainWindow : Window
         }
         catch
         {
-            ShowStatus("Could not copy");
+            ShowStatus(L10n.T("Could not copy", "تعذر النسخ"));
         }
     }
 
@@ -555,6 +555,77 @@ public partial class MainWindow : Window
 
     static string TranslationName(string id) =>
         Array.Find(Translations.Available, t => t.Id == id).Name ?? "Saheeh International";
+
+    // ---------- downloads (offline audio) ----------
+
+    void UpdateDownloadsUi()
+    {
+        var s = SettingsService.Current;
+        string reciter = Audio.Reciters[_reciterIndex].Name;
+        DownloadSurahButton.Content = L10n.T("Download this surah", "تنزيل هذه السورة");
+        DownloadQuranButton.Content = L10n.T("Download whole Quran", "تنزيل المصحف كاملاً");
+        DownloadsHint.Text = L10n.T(
+            $"Save recitation audio ({reciter}) to your device, so it plays without internet. Translations are downloaded automatically when you pick them.",
+            $"احفظ صوت التلاوة ({reciter}) على جهازك ليعمل بدون إنترنت. تُنزَّل الترجمات تلقائياً عند اختيارها.");
+        DownloadSurahButton.IsEnabled = !Audio.Downloading;
+        DownloadQuranButton.IsEnabled = !Audio.Downloading;
+    }
+
+    async void StartAudioDownload(IEnumerable<int> surahs)
+    {
+        if (Audio.Downloading) return;
+        if (!HasInternet())
+        {
+            ShowStatus(L10n.T("No internet — downloads are unavailable", "لا يوجد إنترنت — التنزيل غير متاح"));
+            return;
+        }
+        UpdateDownloadsUi();
+        DownloadsProgressPanel.Visibility = Visibility.Visible;
+        DownloadsStatus.Text = L10n.T("Downloading…", "جارٍ التنزيل…");
+        DownloadCancelButton.ToolTip = L10n.T("Cancel download", "إلغاء التنزيل");
+
+        void OnPercent(int pct)
+        {
+            if (pct >= 0)
+            {
+                DownloadsProgress.Value = pct;
+                DownloadsStatus.Text = L10n.T($"Downloading… {pct}%", $"جارٍ التنزيل… {pct}٪");
+            }
+            else
+            {
+                DownloadsProgressPanel.Visibility = Visibility.Collapsed;
+                DownloadsStatus.Text = pct switch
+                {
+                    -1 => L10n.T("Download complete — recitation now works offline", "اكتمل التنزيل — تعمل التلاوة بدون إنترنت"),
+                    -2 => L10n.T("Download cancelled", "أُلغي التنزيل"),
+                    _ => L10n.T("Download failed — check your internet", "فشل التنزيل — تحقق من الإنترنت"),
+                };
+                UpdateDownloadsUi();
+            }
+        }
+        Audio.DownloadPercent += OnPercent;
+        string reciter = SettingsService.Current.ReciterId;
+        await Audio.DownloadAudioAsync(reciter, surahs);
+        Audio.DownloadPercent -= OnPercent;
+    }
+
+    void DownloadSurah_Click(object sender, RoutedEventArgs e)
+    {
+        if (_passage.Verses.Count == 0) return;
+        StartAudioDownload(new[] { _passage.Verses[0].SurahNumber });
+    }
+
+    void DownloadQuran_Click(object sender, RoutedEventArgs e)
+    {
+        var r = System.Windows.MessageBox.Show(this,
+            L10n.T("Download the recitation of the whole Quran (~2.5 GB)?\nThis needs a while and a stable connection.",
+                   "تنزيل تلاوة المصحف كاملاً (~2.5 جيجابايت)؟\nقد يستغرق وقتاً طويلاً ويتطلب اتصالاً مستقراً."),
+            "Quran Widget", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (r != MessageBoxResult.Yes) return;
+        StartAudioDownload(Enumerable.Range(1, 114));
+    }
+
+    void DownloadCancel_Click(object sender, RoutedEventArgs e) => Audio.CancelDownload();
 
     // ---------- language (English / Arabic UI) ----------
 
@@ -605,6 +676,9 @@ public partial class MainWindow : Window
 
         ApplyTranslationVisibility();
         UpdateResumeText();
+        UpdateDownloadsUi();
+        SettingsTitle.Text = L10n.T("Settings", "الإعدادات");
+        DownloadsLabel.Text = L10n.T("DOWNLOADS", "التنزيلات");
     }
 
     void Language_Click(object sender, RoutedEventArgs e)
@@ -720,7 +794,7 @@ public partial class MainWindow : Window
 
     void CheckUpdates_Click(object sender, RoutedEventArgs e)
     {
-        ShowStatus("Checking for updates…");
+        ShowStatus(L10n.T("Checking for updates…", "جارٍ التحقق من التحديثات…"));
         App.Instance.CheckForUpdates();
     }
 
@@ -781,7 +855,7 @@ public partial class MainWindow : Window
         if (on == SettingsService.Current.ContinueReading) return;
         SettingsService.Current.ContinueReading = on;
         SettingsService.Save();
-        PlayButton.ToolTip = on ? "Play recitation (continuous reading)" : "Play recitation";
+        PlayButton.ToolTip = on ? L10n.T("Play recitation (continuous reading)","تشغيل التلاوة (متابعة القراءة)") : L10n.T("Play recitation","تشغيل التلاوة");
         ShowStatus(on ? "Continuous reading on — the recitation will continue to the next verses"
                       : "Continuous reading off");
     }
@@ -921,15 +995,15 @@ public partial class MainWindow : Window
         {
             if (!HasInternet())
             {
-                ShowStatus("Needs internet to download this translation");
+                ShowStatus(L10n.T("Needs internet to download this translation", "يلزم إنترنت لتنزيل هذه الترجمة"));
                 SyncTranslationToggle();
                 return;
             }
-            ShowStatus($"Downloading {name}…");
+            ShowStatus(L10n.T($"Downloading {name}…", $"جارٍ تنزيل {name}…"));
             bool ok = await Translations.DownloadAsync(id);
             if (!ok)
             {
-                ShowStatus("Could not download the translation");
+                ShowStatus(L10n.T("Could not download the translation", "تعذر تنزيل الترجمة"));
                 SyncTranslationToggle();
                 return;
             }
@@ -939,7 +1013,7 @@ public partial class MainWindow : Window
         Translations.Load(id);
         SyncTranslationToggle();
         ApplyPassage(animate: true);
-        ShowStatus($"Translation: {name}");
+        ShowStatus(L10n.T($"Translation: {name}", $"الترجمة: {name}"));
     }
 
     void SyncTranslationToggle() =>
@@ -1033,7 +1107,7 @@ public partial class MainWindow : Window
         SearchBox.Clear();
         SearchList.Visibility = Visibility.Collapsed;
         SearchPopup.IsOpen = false;
-        ShowStatus($"Jumped to {hit.S}:{hit.A}");
+        ShowStatus(L10n.T($"Jumped to {hit.S}:{hit.A}", $"انتقل إلى {hit.S}:{hit.A}"));
     }
 
     // ---------- favorites ----------
@@ -1062,7 +1136,7 @@ public partial class MainWindow : Window
         if (existing != null)
         {
             s.Favorites.Remove(existing);
-            ShowStatus("Removed from favorites");
+            ShowStatus(L10n.T("Removed from favorites", "أُزيلت من المفضلة"));
         }
         else
         {
@@ -1072,7 +1146,7 @@ public partial class MainWindow : Window
                 A = first.NumberInSurah,
                 B = _passage.Verses[^1].NumberInSurah,
             });
-            ShowStatus("Saved to favorites");
+            ShowStatus(L10n.T("Saved to favorites", "حُفظت في المفضلة"));
         }
         SettingsService.Save();
         SyncFavoriteStar();
@@ -1139,13 +1213,13 @@ public partial class MainWindow : Window
             // visible feedback right away, so it is clear the option is working
             PrayerText.Text = "Finding your location…";
             PrayerText.Visibility = Visibility.Visible;
-            ShowStatus("Finding your location for prayer times…");
+            ShowStatus(L10n.T("Finding your location for prayer times…", "جارٍ تحديد موقعك لأوقات الصلاة…"));
             var loc = await PrayerTimes.LocateAsync();
             if (loc == null)
             {
                 // keep the option on and let the timer retry quietly; the location
                 // service is occasionally unavailable
-                ShowStatus("Could not find your location yet — will keep trying");
+                ShowStatus(L10n.T("Could not find your location yet — will keep trying", "لم نحدد موقعك بعد — سنحاول مجدداً"));
             }
             else
             {
@@ -1153,7 +1227,7 @@ public partial class MainWindow : Window
                 s.Longitude = loc.Lon;
                 s.CityName = loc.City;
                 SettingsService.Save();
-                ShowStatus($"Prayer times for {(string.IsNullOrWhiteSpace(loc.City) ? "your area" : loc.City)}");
+                ShowStatus(L10n.T($"Prayer times for {(string.IsNullOrWhiteSpace(loc.City) ? "your area" : loc.City)}", $"أوقات الصلاة لـ {(string.IsNullOrWhiteSpace(loc.City) ? "منطقتك" : loc.City)}"));
             }
         }
         _prayerTimer ??= new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
@@ -1232,7 +1306,7 @@ public partial class MainWindow : Window
             Audio.SetSleepTimer(minutes);
             SyncSleepCountdown();
             SettingsService.Save();
-            ShowStatus(minutes > 0 ? $"Sleep timer: recitation stops after {minutes} min" : "Sleep timer off");
+            ShowStatus(minutes > 0 ? L10n.T($"Sleep timer: recitation stops after {minutes} min", $"مؤقت النوم: تتوقف التلاوة بعد {minutes} دقيقة") : L10n.T("Sleep timer off", "مؤقت النوم متوقف"));
         }
         SleepPopup.IsOpen = false;
     }
@@ -1243,7 +1317,7 @@ public partial class MainWindow : Window
         SettingsService.Current.ResumeA = -1;
         SettingsService.Save();
         UpdateResumeText();
-        ShowStatus("Reading position cleared");
+        ShowStatus(L10n.T("Reading position cleared", "مُسح موضع القراءة"));
     }
 
     // Shows where continuous reading would resume, so the saved position is
@@ -1295,7 +1369,7 @@ public partial class MainWindow : Window
         Autostart.Set(on);
         SettingsService.Current.LaunchAtStartup = on;
         SettingsService.Save();
-        ShowStatus(on ? "Quran Widget will start with Windows" : "Autostart disabled");
+        ShowStatus(on ? L10n.T("Quran Widget will start with Windows", "سيبدأ Quran Widget مع Windows") : L10n.T("Autostart disabled", "أُلغي البدء التلقائي"));
     }
 
     void SetAlwaysOnTop(bool on)
@@ -1326,7 +1400,7 @@ public partial class MainWindow : Window
             WindowEffects.UnpinFromDesktop(Handle);
             SettingsService.Current.PinToDesktop = false;
             WindowEffects.EnableAcrylic(this);
-            ShowStatus("Unpinned from the desktop");
+            ShowStatus(L10n.T("Unpinned from the desktop", "أُلغي التثبيت من سطح المكتب"));
         }
         SettingsService.Save();
         SyncSettingsChecks();
@@ -1402,11 +1476,11 @@ public partial class MainWindow : Window
             encoder.Frames.Add(BitmapFrame.Create(rtb));
             using var stream = File.Create(dlg.FileName);
             encoder.Save(stream);
-            ShowStatus("Verse image saved");
+            ShowStatus(L10n.T("Verse image saved", "حُفظت صورة الآية"));
         }
         catch
         {
-            ShowStatus("Could not save the image");
+            ShowStatus(L10n.T("Could not save the image", "تعذر حفظ الصورة"));
         }
     }
 
@@ -1481,11 +1555,11 @@ public partial class MainWindow : Window
             WindowEffects.EnableAcrylic(this);
             SyncSettingsChecks();
             SyncMenuChecks();
-            ShowStatus("Could not pin — right-click and try again");
+            ShowStatus(L10n.T("Could not pin — right-click and try again", "تعذر التثبيت — انقر بزر الفأرة الأيمن وحاول مجدداً"));
             return;
         }
         WindowEffects.DisableAcrylic(this);
-        ShowStatus("Pinned — the widget sits behind all windows");
+        ShowStatus(L10n.T("Pinned — the widget sits behind all windows", "تم التثبيت — الأداة خلف جميع النوافذ"));
         StartBottomLoop();
     }
 

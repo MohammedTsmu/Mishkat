@@ -60,7 +60,7 @@ public static class Audio
             _sleepTimer = null;
             SleepEnd = null;
             StopAll();
-            Status?.Invoke("Sleep timer ended the recitation");
+            Status?.Invoke(L10n.T("Sleep timer ended the recitation","أنهى مؤقت النوم التلاوة"));
         }, null, minutes * 60_000, System.Threading.Timeout.Infinite);
     }
 
@@ -75,7 +75,7 @@ public static class Audio
         if (passage.Verses.Count == 0) return;
         int session = _session;
         PlayingRecitation = true;
-        Status?.Invoke("Preparing recitation…");
+        Status?.Invoke(L10n.T("Preparing recitation…","جارٍ تحضير التلاوة…"));
         try
         {
             while (true)
@@ -89,14 +89,14 @@ public static class Audio
                 for (int i = 0; i < files.Count; i++)
                 {
                     if (session != _session || !PlayingRecitation) return;
-                    Status?.Invoke("Reciting…");
+                    Status?.Invoke(L10n.T("Reciting…","تلاوة…"));
                     onVerse?.Invoke(i);
                     var ok = await PlayFileAsync(files[i]);
                     if (session != _session) return;
                     if (!ok)
                     {
                         PlayingRecitation = false;
-                        Status?.Invoke("Could not play the recitation");
+                        Status?.Invoke(L10n.T("Could not play the recitation","تعذر تشغيل التلاوة"));
                         return;
                     }
                 }
@@ -114,7 +114,7 @@ public static class Audio
         {
             if (session != _session) return;
             PlayingRecitation = false;
-            Status?.Invoke("Recitation needs an internet connection");
+            Status?.Invoke(L10n.T("Recitation needs an internet connection","تحتاج التلاوة إلى اتصال بالإنترنت"));
         }
     }
 
@@ -132,6 +132,60 @@ public static class Audio
         File.Move(tmp, path, overwrite: true);
         return path;
     }
+
+    // ---------- audio downloads (listen offline) ----------
+
+    public static bool Downloading { get; private set; }
+
+    // Progress of a bulk download: 0..100 percent; -1 done, -2 cancelled, -3 failed.
+    public static event Action<int>? DownloadPercent;
+
+    static CancellationTokenSource? _dlCts;
+
+    // Downloads the recitation audio of the given surahs for a reciter, so it
+    // plays back offline later.
+    public static async Task<bool> DownloadAudioAsync(string reciter, IEnumerable<int> surahNumbers)
+    {
+        if (Downloading) return false;
+        Downloading = true;
+        _dlCts = new CancellationTokenSource();
+        var ct = _dlCts.Token;
+        try
+        {
+            var list = surahNumbers.Select(n => Quran.Surah(n)).Where(s => s != null).Cast<Surah>().ToList();
+            int total = list.Sum(s => s.Ayahs.Count);
+            int done = 0;
+            foreach (var surah in list)
+            {
+                foreach (var v in surah.Ayahs)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    await CacheAsync(reciter, v.Global);
+                    done++;
+                    DownloadPercent?.Invoke(done * 100 / Math.Max(1, total));
+                }
+            }
+            DownloadPercent?.Invoke(-1);
+            return true;
+        }
+        catch (OperationCanceledException)
+        {
+            DownloadPercent?.Invoke(-2);
+            return false;
+        }
+        catch
+        {
+            DownloadPercent?.Invoke(-3);
+            return false;
+        }
+        finally
+        {
+            Downloading = false;
+            _dlCts = null;
+        }
+    }
+
+    public static void CancelDownload() => _dlCts?.Cancel();
 
     static Task<bool> PlayFileAsync(string file)
     {
@@ -155,7 +209,7 @@ public static class Audio
         StopAll();
         if (string.IsNullOrWhiteSpace(text)) return;
         ReadingMeaning = true;
-        Status?.Invoke("Reading the meaning…");
+        Status?.Invoke(L10n.T("Reading the meaning…","جارٍ قراءة المعنى…"));
 
         var synth = new SpeechSynthesizer();
         _tts = synth;

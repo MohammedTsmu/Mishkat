@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.IO.Pipes;
 using System.Windows;
 using System.Windows.Threading;
@@ -87,7 +87,7 @@ public partial class App : System.Windows.Application
         if (!smoke && !hidden)
         {
             _tray?.ShowBalloonTip(2500, "Quran Widget",
-                "Your verse of the day is on the desktop.\nRight-click it for more options.",
+                L10n.T("Your verse of the day is on the desktop.\nRight-click it for more options.","آية اليوم على سطح مكتبك.\nانقر بزر الفأرة الأيمن للمزيد من الخيارات."),
                 WinForms.ToolTipIcon.Info);
         }
 

@@ -22,7 +22,7 @@ hides it; use the tray icon to exit.
   each day, so every device shows the same verse. It refreshes itself at midnight.
 - **Arabic in Amiri Quran** — proper Uthmani text; ornamental ayah-end markers
   (`﴿٤٦﴾`) always stay intact when lines wrap.
-- **Translation picker** — Saheeh International (built in), plus Pickthall,
+- **Downloads** — save recitation audio for a surah or the whole Quran to listen offline, with a progress bar and cancel.`n- **Translation picker** — Saheeh International (built in), plus Pickthall,
   Yusuf Ali, Muhammad Asad and Hilali & Khan (downloaded on demand, cached offline).
 - **Search** — jump straight to `2:255`, or full-text search the translation
   **and the Arabic text** (Arabic matches even without diacritics).
@@ -91,7 +91,7 @@ hides it; use the tray icon to exit.
   ISCC.exe installer\QuranWidget.iss
   ```
 
-  which produces `QuranWidgetSetup-2.6.3.exe` with Start-menu shortcut, optional
+  which produces `QuranWidgetSetup-2.7.0.exe` with Start-menu shortcut, optional
   autostart and a clean uninstaller.
 
 ## Updates
