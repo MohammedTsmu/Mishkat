@@ -8,14 +8,20 @@ namespace QuranWidget;
 // downloaded once from api.alquran.cloud, cached locally and parsed into memory.
 public static class Translations
 {
-    public static readonly (string Id, string Name)[] Available =
+    public static readonly (string Id, string Name, string ArName)[] Available =
     {
-        ("en.sahih", "Saheeh International"),
-        ("en.pickthall", "Pickthall"),
-        ("en.yusufali", "Yusuf Ali"),
-        ("en.asad", "Muhammad Asad"),
-        ("en.hilali", "Hilali & Khan"),
+        ("en.sahih", "Saheeh International", "الترجمة الصحيحة"),
+        ("en.pickthall", "Pickthall", "بيكثال"),
+        ("en.yusufali", "Yusuf Ali", "يوسف علي"),
+        ("en.asad", "Muhammad Asad", "محمد أسد"),
+        ("en.hilali", "Hilali & Khan", "الهلالي وخان"),
     };
+
+    public static string DisplayName(int index)
+    {
+        var t = Available[Math.Clamp(index, 0, Available.Length - 1)];
+        return L10n.T(t.Name, t.ArName);
+    }
 
     static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(60) };
     static Dictionary<int, string[]>? _verses;

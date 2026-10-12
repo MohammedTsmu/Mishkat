@@ -7,16 +7,20 @@ namespace QuranWidget;
 
 public static class Audio
 {
-    public static readonly (string Id, string Name)[] Reciters =
+    public static readonly (string Id, string Name, string ArName)[] Reciters =
     {
-        ("ar.alafasy", "Mishary Alafasy"),
-        ("ar.abdulbasitmurattal", "Abdul Basit (Murattal)"),
-        ("ar.husary", "Mahmoud Al-Husary"),
-        ("ar.minshawi", "Muhammad Al-Minshawi"),
-        ("ar.abdurrahmaansudais", "Abdurrahman As-Sudais"),
-        ("ar.shaatree", "Abu Bakr Ash-Shaatree"),
-        ("ar.hudhaify", "Ali Al-Hudhaify"),
+        ("ar.alafasy", "Mishary Alafasy", "مشاري العفاسي"),
+        ("ar.abdulbasitmurattal", "Abdul Basit (Murattal)", "عبد الباسط (مرتل)"),
+        ("ar.husary", "Mahmoud Al-Husary", "محمود الحصري"),
+        ("ar.minshawi", "Muhammad Al-Minshawi", "محمد المنشاوي"),
+        ("ar.abdurrahmaansudais", "Abdurrahman As-Sudais", "عبد الرحمن السديس"),
+        ("ar.shaatree", "Abu Bakr Ash-Shaatree", "أبو بكر الشاطري"),
+        ("ar.hudhaify", "Ali Al-Hudhaify", "علي الحذيفي"),
     };
+
+    public static string ReciterName(int i) =>
+        L10n.T(Reciters[Math.Clamp(i, 0, Reciters.Length - 1)].Name,
+               Reciters[Math.Clamp(i, 0, Reciters.Length - 1)].ArName);
 
     public static event Action<string>? Status;
     public static bool PlayingRecitation { get; private set; }

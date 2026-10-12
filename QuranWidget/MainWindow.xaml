@@ -466,7 +466,7 @@
                             <Button x:Name="LangButton" Style="{StaticResource ComboButton}"
                                     Click="Language_Click"/>
 
-                            <TextBlock Text="Recitation: cdn.islamic.network  ·  Translations: api.alquran.cloud"
+                            <TextBlock x:Name="CreditsText" Text="Recitation: cdn.islamic.network  ·  Translations: api.alquran.cloud"
                                        FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,0" TextWrapping="Wrap"/>
                         </StackPanel>
                     </ScrollViewer>

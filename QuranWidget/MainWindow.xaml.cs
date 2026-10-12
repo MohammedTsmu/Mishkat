@@ -133,8 +133,8 @@ public partial class MainWindow : Window
         {
             ModeText.Text = L10n.T("VERSE OF THE DAY", "آية اليوم");
             DateText.Text = L10n.T(
-                $"{DateTime.Today:dddd, d MMMM yyyy}  ·  {HijriToday()}",
-                $"{HijriToday()}  ·  {DateTime.Today:dddd, d MMMM yyyy}");
+                $"{GregorianToday()}  ·  {HijriToday()}",
+                $"{HijriToday()}  ·  {GregorianToday()}");
         }
         else
         {
@@ -155,17 +155,35 @@ public partial class MainWindow : Window
             var cal = new UmAlQuraCalendar();
             var now = DateTime.Today;
             int y = cal.GetYear(now), m = cal.GetMonth(now), d = cal.GetDayOfMonth(now);
-            string[] months =
-            {
-                "Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani",
-                "Jumada al-Ula", "Jumada al-Akhirah", "Rajab", "Sha'ban",
-                "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah",
-            };
-            return $"{d} {months[Math.Min(m, 12) - 1]} {y} AH";
+            string[] en = { "Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani",
+                            "Jumada al-Ula", "Jumada al-Akhirah", "Rajab", "Sha'ban",
+                            "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah" };
+            string[] ar = { "محرم", "صفر", "ربيع الأول", "ربيع الآخر",
+                            "جمادى الأولى", "جمادى الآخرة", "رجب", "شعبان",
+                            "رمضان", "شوال", "ذو القعدة", "ذو الحجة" };
+            int i = Math.Min(m, 12) - 1;
+            return L10n.T($"{d} {en[i]} {y} AH", $"{d} {ar[i]} {y} هـ");
         }
         catch
         {
             return "";
+        }
+    }
+
+    // Gregorian date formatted in the UI language; in Arabic this avoids mixing
+    // English text into the right-to-left header, which scrambled the line.
+    static string GregorianToday()
+    {
+        if (!L10n.ArabicUI)
+            return DateTime.Today.ToString("dddd, d MMMM yyyy");
+        try
+        {
+            var ar = System.Globalization.CultureInfo.GetCultureInfo("ar");
+            return DateTime.Today.ToString("dddd، d MMMM yyyy", ar);
+        }
+        catch
+        {
+            return DateTime.Today.ToString("dddd, d MMMM yyyy");
         }
     }
 
@@ -182,8 +200,8 @@ public partial class MainWindow : Window
         else
         {
             DateText.Text = L10n.T(
-                $"{today:dddd, d MMMM yyyy}  ·  {HijriToday()}",
-                $"{HijriToday()}  ·  {today:dddd, d MMMM yyyy}");
+                $"{GregorianToday()}  ·  {HijriToday()}",
+                $"{HijriToday()}  ·  {GregorianToday()}");
         }
     }
 
@@ -555,7 +573,7 @@ public partial class MainWindow : Window
     }
 
     static string TranslationName(string id) =>
-        Array.Find(Translations.Available, t => t.Id == id).Name ?? "Saheeh International";
+        Translations.DisplayName(Array.FindIndex(Translations.Available, t => t.Id == id));
 
     // ---------- downloads (offline audio) ----------
 
@@ -564,7 +582,7 @@ public partial class MainWindow : Window
     int _dlSurah = 1;      // surah chosen for scope 1
     bool _pickingDl;
 
-    string DlReciterName => Audio.Reciters[_dlReciterIndex].Name;
+    string DlReciterName => Audio.ReciterName(_dlReciterIndex);
 
     string DlScopeLabel(int scope)
     {
@@ -600,7 +618,7 @@ public partial class MainWindow : Window
         if (DlReciterToggle.IsChecked == true)
         {
             _pickingDl = true;
-            DlReciterList.ItemsSource = Audio.Reciters.Select(r => r.Name).ToList();
+            DlReciterList.ItemsSource = Enumerable.Range(0, Audio.Reciters.Length).Select(Audio.ReciterName).ToList();
             DlReciterList.SelectedIndex = _dlReciterIndex;
             DlReciterList.ScrollIntoView(DlReciterList.SelectedItem);
             _pickingDl = false;
@@ -784,6 +802,10 @@ public partial class MainWindow : Window
         UpdateDownloadsUi();
         SettingsTitle.Text = L10n.T("Settings", "الإعدادات");
         DownloadsLabel.Text = L10n.T("DOWNLOADS", "التنزيلات");
+        SettingsScrollHint.Text = L10n.T("Scroll for more ↓", "مرّر للمزيد ↓");
+        CreditsText.Text = L10n.T(
+            "Recitation: cdn.islamic.network  ·  Translations: api.alquran.cloud",
+            "التلاوة: cdn.islamic.network  ·  الترجمات: api.alquran.cloud");
     }
 
     void Language_Click(object sender, RoutedEventArgs e)
@@ -872,7 +894,7 @@ public partial class MainWindow : Window
 
     void UpdateReciterButton()
     {
-        ReciterToggle.Content = Audio.Reciters[_reciterIndex].Name;
+        ReciterToggle.Content = Audio.ReciterName(_reciterIndex);
     }
 
     void Settings_Click(object sender, RoutedEventArgs e)
@@ -918,7 +940,7 @@ public partial class MainWindow : Window
         if (ReciterToggle.IsChecked == true)
         {
             _pickingReciter = true;
-            ReciterList.ItemsSource = Audio.Reciters.Select(r => r.Name).ToList();
+            ReciterList.ItemsSource = Enumerable.Range(0, Audio.Reciters.Length).Select(Audio.ReciterName).ToList();
             ReciterList.SelectedIndex = _reciterIndex;
             ReciterList.ScrollIntoView(ReciterList.SelectedItem);
             _pickingReciter = false;
@@ -1028,7 +1050,7 @@ public partial class MainWindow : Window
         if (ThemeToggle.IsChecked == true)
         {
             _pickingTheme = true;
-            ThemeList.ItemsSource = ThemeService.Themes.Select(t => t.Name).ToList();
+            ThemeList.ItemsSource = Enumerable.Range(0, ThemeService.Themes.Length).Select(ThemeService.DisplayName).ToList();
             ThemeList.SelectedIndex = Array.FindIndex(ThemeService.Themes, t => t.Id == SettingsService.Current.Theme);
             if (ThemeList.SelectedIndex < 0) ThemeList.SelectedIndex = 0;
             ThemeList.ScrollIntoView(ThemeList.SelectedItem);
@@ -1072,7 +1094,8 @@ public partial class MainWindow : Window
         {
             _pickingTranslation = true;
             TranslationList.ItemsSource = Translations.Available
-                .Select(t => t.Name + (Translations.IsDownloaded(t.Id) ? "" : "  (download)")).ToList();
+                .Select(t => Translations.DisplayName(Array.FindIndex(Translations.Available, a => a.Id == t.Id))
+                             + (Translations.IsDownloaded(t.Id) ? "" : L10n.T("  (download)", "  (تنزيل)"))).ToList();
             TranslationList.SelectedIndex = Array.FindIndex(Translations.Available, t => t.Id == SettingsService.Current.TranslationId);
             if (TranslationList.SelectedIndex < 0) TranslationList.SelectedIndex = 0;
             TranslationList.ScrollIntoView(TranslationList.SelectedItem);
@@ -1092,7 +1115,8 @@ public partial class MainWindow : Window
         if (!_ready || _pickingTranslation) return;
         int i = TranslationList.SelectedIndex;
         if (i < 0 || i >= Translations.Available.Length) return;
-        var (id, name) = Translations.Available[i];
+        var id = Translations.Available[i].Id;
+        var name = Translations.DisplayName(i);
         TranslationPopup.IsOpen = false;
         if (id == SettingsService.Current.TranslationId) return;
 

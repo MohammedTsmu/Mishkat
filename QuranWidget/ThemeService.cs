@@ -7,13 +7,19 @@ namespace QuranWidget;
 // Every themed surface in the XAML references these via DynamicResource.
 public static class ThemeService
 {
-    public static readonly (string Id, string Name)[] Themes =
+    public static readonly (string Id, string Name, string ArName)[] Themes =
     {
-        ("emerald", "Emerald Night"),
-        ("parchment", "Parchment Light"),
-        ("midnight", "Midnight Blue"),
-        ("sepia", "Desert Sepia"),
+        ("emerald", "Emerald Night", "ليل زمردي"),
+        ("parchment", "Parchment Light", "رقّ فاتح"),
+        ("midnight", "Midnight Blue", "أزرق ليلي"),
+        ("sepia", "Desert Sepia", "سيبيا صحراوي"),
     };
+
+    public static string DisplayName(int index) =>
+        L10n.T(Themes[Math.Clamp(index, 0, Themes.Length - 1)].Name,
+               Themes[Math.Clamp(index, 0, Themes.Length - 1)].ArName);
+
+    public static string NameOf(string id) => DisplayName(Array.FindIndex(Themes, t => t.Id == id));
 
     sealed class Palette
     {
@@ -69,9 +75,6 @@ public static class ThemeService
     static Palette Current = Emerald;
 
     public static uint AcrylicTint => Current.AcrylicTint;
-
-    public static string NameOf(string id) =>
-        Themes.FirstOrDefault(t => t.Id == id).Name ?? Themes[0].Name;
 
     static Palette For(string id) => id switch
     {
