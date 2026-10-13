@@ -65,6 +65,20 @@ public sealed class Settings
     public int HifzTo { get; set; } = 3;
     public int HifzReps { get; set; } = 7;
 
+    // Daily plan: new verses to memorize per day (0 = free-form)
+    public int HifzDailyNew { get; set; } = 5;
+
+    // Daily cap for old-hifz (قديم) review so the load stays manageable
+    public int HifzMaxOldReview { get; set; } = 30;
+
+    // Test gate: false = recite-with-text-hidden test, true = fill-in-the-blank
+    public bool HifzTestBlank { get; set; }
+
+    // Daily review reminder via the tray icon
+    public bool HifzReminder { get; set; }
+    public int HifzReminderHour { get; set; } = 20;
+    public string HifzLastReminderDay { get; set; } = "";
+
     // Last continuous-reading position, for resume
     public int ResumeS { get; set; } = -1;
     public int ResumeA { get; set; } = -1;

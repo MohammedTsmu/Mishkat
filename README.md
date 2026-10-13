@@ -1,4 +1,4 @@
-<div dir="rtl" align="right">
+﻿<div dir="rtl" align="right">
 
 # ويدجت القرآن الكريم لويندوز 📖
 
@@ -48,10 +48,15 @@
 - **قراءة المعنى** — يقرأ الترجمة بصوت ويندوز.
 - **تنزيلات دون اتصال** — نزّل تلاوة سورة أو المصحف كاملاً بشريط تقدم وإمكانية إلغاء.
 
-### الحفظ (جديد في 2.8.0)
+### الحفظ (جديد في 2.9.0)
 - **وضع الحفظ** — اختر نطاقاً من سورة، استمع لكل آية عدة مرات، أخفِ النص وأعده من حفظك، ثم علّم المجموعة محفوظة.
-- **سلّم مراجعة متباعد** — الآيات المحفوظة تعود للمراجعة يومياً وفق جدول (1، 3، 7، 14، 30، 60، 120 يوماً) مع تذكير بآيات اليوم المستحقة.
-- **تابع تقدمك** — إحصاءات لكل سورة: عدد الآيات المحفوظة والمستحقة للمراجعة.
+- **الربط** — بعد كل آية تُعيد التلاوة من أول المجموعة إلى هذه الآية، ثم ربط كامل قبل الاختبار.
+- **الامتحان** — اختبار المجموعة (تلاوة مخفية أو أكمل الفراغ) قبل دخولها جدول المراجعة.
+- **سلّم مراجعة متباعد** — جدول (1، 3، 7، 14، 30، 60، 120 يوماً) يتكيف مع سهولة أو صعوبة كل آية، والنسيان يعيدها في اليوم نفسه.
+- **مراجعة الحديث والقديم** — مراجعة متصلة للمقاطع كاملة، مع فصل مراجعة الجديد عن القديم وسقف يومي للقديم.
+- **سجّل صوتك** — سجّل تلاوتك وقارنها بتلاوة القارئ.
+- **تابع تقدمك** — إحصاءات لكل سورة، جزء يومي، سلسلة الأيام، وتذكير يومي بالمراجعة.
+- **نسخ احتياطي** — انسخ تقدمك أو استعده أو صدّره CSV.
 
 ### المظهر والواجهة
 - **4 ثيمات** — ليلة زمرّدية، ورق فاتح، أزرق منتصف الليل، سيما صحراوي.
@@ -128,7 +133,7 @@ with a full Arabic (RTL) or English interface, fully offline after first run.
 - **Verse of the Day** — a curated verse that changes every midnight (same on every device), with translation and Hijri + Gregorian dates.
 - **Uthmani Amiri script** — ayah-end markers ﴿٢٧٤﴾ never break across lines; adjustable font size.
 - **Recitation** — 7 reciters (Alafasy, Abdul Basit, Husary, Minshawy, Sudais, Shatri, Hudhaify), cached locally; download whole surahs or the entire Quran for offline listening.
-- **Memorization mode** — pick a range, loop each verse, recite from memory with the text hidden, then the group joins a spaced review ladder (1, 3, 7, 14, 30, 60, 120 days) with progress stats per surah.
+- **Memorization mode** — pick a range, loop each verse, recite it hidden, then link it to the verses before it (الربط); a final test gates the group into a spaced review ladder (1, 3, 7, 14, 30, 60, 120 days) that adapts to how well you know each verse. Connected group review, separate new/old review loads, self-recording with A-B compare, a daily portion & streak, a daily review reminder, and backup/restore/CSV export of your progress.
 - **Prayer times** — next prayer in the header, computed locally, works offline.
 - **Search** — jump to `2:255`, or full-text search the Arabic (even without diacritics) and the translation.
 - **Favorites, save as image, sleep timer, read-the-meaning TTS, resume position.**

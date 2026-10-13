@@ -64,7 +64,11 @@
                             <Grid>
                                 <TextBlock x:Name="SessionStep" FontSize="11.5" Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Left"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Button x:Name="LoopButton" Style="{StaticResource IconButton}" Content="&#xE768;" Click="LoopPlay_Click"/>
+                                    <Button x:Name="RecordButton" Style="{StaticResource IconButton}" Content="&#xE720;" Click="Record_Click"
+                                            ToolTip="Record your recitation"/>
+                                    <Button x:Name="PlayMineButton" Style="{StaticResource IconButton}" Content="&#xE8D6;" Margin="6,0,0,0" Click="PlayMine_Click"
+                                            ToolTip="Play your recording" IsEnabled="False"/>
+                                    <Button x:Name="LoopButton" Style="{StaticResource IconButton}" Content="&#xE768;" Margin="6,0,0,0" Click="LoopPlay_Click"/>
                                     <Button x:Name="HideButton" Style="{StaticResource IconButton}" Content="&#xE7B3;" Margin="6,0,0,0" Click="HideText_Click"/>
                                     <Button x:Name="PrevVerseButton" Style="{StaticResource IconButton}" Content="&#xE76B;" Margin="6,0,0,0" Click="PrevVerse_Click"/>
                                     <Button x:Name="NextVerseButton" Style="{StaticResource IconButton}" Content="&#xE76C;" Margin="6,0,0,0" Click="NextVerse_Click"/>
@@ -88,6 +92,15 @@
                             </StackPanel>
                             <TextBlock x:Name="SessionStatus" FontSize="12" Foreground="{DynamicResource TextFaint}" HorizontalAlignment="Center" Margin="0,12,0,0"
                                        TextWrapping="Wrap" TextAlignment="Center"/>
+                            <!-- test gate (الامتحان): shown instead of saving right away -->
+                            <StackPanel x:Name="TestPanel" Visibility="Collapsed" Margin="0,14,0,0">
+                                <TextBlock x:Name="TestHint" FontSize="12.5" Foreground="{DynamicResource GoldDim}" TextAlignment="Center"
+                                           TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button x:Name="TestPassButton" Style="{StaticResource GoldButton}" Click="TestPass_Click"/>
+                                    <Button x:Name="TestRepeatButton" Style="{StaticResource GoldButton}" Margin="10,0,0,0" Click="TestRepeat_Click"/>
+                                </StackPanel>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -125,7 +138,11 @@
                         </StackPanel>
                         <StackPanel x:Name="ReviewCard" Visibility="Collapsed">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button x:Name="ReviewPlayButton" Style="{StaticResource IconButton}" Content="&#xE768;" Click="ReviewPlay_Click"/>
+                                <Button x:Name="ReviewRecordButton" Style="{StaticResource IconButton}" Content="&#xE720;" Click="ReviewRecord_Click"
+                                        ToolTip="Record your recitation"/>
+                                <Button x:Name="ReviewPlayMineButton" Style="{StaticResource IconButton}" Content="&#xE8D6;" Margin="6,0,0,0" Click="ReviewPlayMine_Click"
+                                        ToolTip="Play your recording" IsEnabled="False"/>
+                                <Button x:Name="ReviewPlayButton" Style="{StaticResource IconButton}" Content="&#xE768;" Margin="6,0,0,0" Click="ReviewPlay_Click"/>
                                 <Button x:Name="ReviewRevealButton" Style="{StaticResource IconButton}" Content="&#xE7B3;" Margin="6,0,0,0" Click="ReviewReveal_Click"/>
                             </StackPanel>
                             <Border x:Name="ReviewCover" Background="{DynamicResource Card1}" CornerRadius="8" Padding="14,30" Margin="0,10,0,0"
@@ -140,6 +157,10 @@
                             <TextBlock x:Name="ReviewTranslation" FontSize="14.5" Foreground="{DynamicResource TextSecondary}"
                                        TextAlignment="Center" TextWrapping="Wrap" Margin="20,0,20,16"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="GroupPassButton" Style="{StaticResource GoldButton}" Click="GroupPass_Click"
+                                        Visibility="Collapsed"/>
+                                <Button x:Name="GroupStumbledButton" Style="{StaticResource GoldButton}" Margin="10,0,0,0" Click="GroupStumbled_Click"
+                                        Visibility="Collapsed"/>
                                 <Button x:Name="RememberedButton" Style="{StaticResource GoldButton}" Click="Remembered_Click"/>
                                 <Button x:Name="ForgotButton" Style="{StaticResource GoldButton}" Margin="10,0,0,0" Click="Forgot_Click"/>
                             </StackPanel>
@@ -157,10 +178,23 @@
                 </Grid.RowDefinitions>
                 <Border Grid.Row="0" Background="{DynamicResource Card2}" BorderBrush="{DynamicResource Border2}"
                         BorderThickness="1" CornerRadius="12" Padding="16,12" Margin="0,0,0,12">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="ProgressTotal" FontSize="14" Foreground="{DynamicResource Gold}" FontWeight="Bold"/>
-                        <TextBlock x:Name="ProgressDue" FontSize="14" Foreground="{DynamicResource TextSecondary}" Margin="22,0,0,0"/>
-                        <TextBlock x:Name="ProgressSurahs" FontSize="14" Foreground="{DynamicResource TextSecondary}" Margin="22,0,0,0"/>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="ProgressTotal" FontSize="14" Foreground="{DynamicResource Gold}" FontWeight="Bold"/>
+                            <TextBlock x:Name="ProgressDue" FontSize="14" Foreground="{DynamicResource TextSecondary}" Margin="22,0,0,0"/>
+                            <TextBlock x:Name="ProgressSurahs" FontSize="14" Foreground="{DynamicResource TextSecondary}" Margin="22,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <TextBlock x:Name="ProgressPlan" FontSize="12.5" Foreground="{DynamicResource TextSecondary}"/>
+                            <TextBlock x:Name="ProgressStreak" FontSize="12.5" Foreground="{DynamicResource GoldDim}" Margin="22,0,0,0"/>
+                        </StackPanel>
+                        <TextBlock x:Name="ProgressStrip" FontSize="13" Foreground="{DynamicResource TextFaint}" Margin="0,6,0,0"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <Button x:Name="ReminderButton" Style="{StaticResource ComboButton}" Click="Reminder_Click"/>
+                            <Button x:Name="BackupButton" Style="{StaticResource ComboButton}" Margin="10,0,0,0" Click="Backup_Click"/>
+                            <Button x:Name="RestoreButton" Style="{StaticResource ComboButton}" Margin="10,0,0,0" Click="Restore_Click"/>
+                            <Button x:Name="ExportCsvButton" Style="{StaticResource ComboButton}" Margin="10,0,0,0" Click="ExportCsv_Click"/>
+                        </StackPanel>
                     </StackPanel>
                 </Border>
                 <ScrollViewer Grid.Row="1" Style="{StaticResource ThinScrollViewer}" VerticalScrollBarVisibility="Auto"

@@ -86,6 +86,7 @@ public partial class App : System.Windows.Application
             new MouseWheelEventHandler(OnScrollPreviewMouseWheel), true);
 
         BuildTray();
+        StartHifzReminder();
 
         var daily = new MainWindow("daily", daily: true);
         _widgets.Add(daily);
@@ -302,6 +303,47 @@ public partial class App : System.Windows.Application
     }
 
     HifzWindow? _hifz;
+
+    // ---------- daily review reminder ----------
+    // Once a day at the configured hour, if verses are due, a tray balloon points
+    // at the review; clicking it opens the hifz window on the review tab.
+    DispatcherTimer? _reminderTimer;
+    bool _reminderArmed;
+
+    void StartHifzReminder()
+    {
+        _reminderTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(1) };
+        _reminderTimer.Tick += (_, _) => CheckHifzReminder();
+        _reminderTimer.Start();
+        _tray!.BalloonTipClicked += (_, _) => { if (_reminderArmed) { _reminderArmed = false; ShowHifz(); } };
+        CheckHifzReminder();
+    }
+
+    void CheckHifzReminder()
+    {
+        try
+        {
+            var s = SettingsService.Current;
+            if (!s.HifzReminder) return;
+            string today = DateTime.Now.ToString("yyyy-MM-dd");
+            if (s.HifzLastReminderDay == today) return;
+            if (DateTime.Now.Hour != Math.Clamp(s.HifzReminderHour, 0, 23)) return;
+            HifzStore.RefreshClock();
+            int due = HifzStore.DueCount();
+            if (due <= 0) return;
+            s.HifzLastReminderDay = today;
+            SettingsService.Save();
+            _reminderArmed = true;
+            _tray?.ShowBalloonTip(8000, "Quran Widget",
+                L10n.T($"{due} verse(s) are due for review today. Tap to review.",
+                       $"{L10n.Ar(due)} آية مستحقة للمراجعة اليوم. اضغط للمراجعة."),
+                WinForms.ToolTipIcon.Info);
+        }
+        catch
+        {
+            // the reminder is best-effort; never let it break the app
+        }
+    }
 
     // Opens (or focuses) the memorization window; it outlives individual widgets.
     public void ShowHifz()

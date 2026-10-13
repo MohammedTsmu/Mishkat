@@ -4,26 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>آية اليوم على سطح مكتبك — Quran Widget | ويدجت القرآن الكريم لويندوز</title>
-<meta name="description" content="ويدجت القرآن الكريم لويندوز: آية كل يوم بالخط العثماني، تلاوة من 7 قراء، أوقات الصلاة، الحفظ والمراجعة، واجهة عربية وإنجليزية، 4 ثيمات. تحميل مجاني لويندوز. Free Quran desktop widget for Windows: daily verse, recitation, prayer times, memorization.">
-<meta name="keywords" content="القرآن الكريم, ويدجت القرآن, آية اليوم, تطبيق القرآن لويندوز, تلاوة, أوقات الصلاة, حفظ القرآن, Quran widget, Quran Windows, daily ayah, verse of the day, Quran memorization, prayer times, desktop widget">
+<meta name="description" content="ويدجت مجاني لويندوز يعرض آية كل يوم بالرسم العثماني، مع تلاوة من نخبة القرّاء وأوقات الصلاة، ووضع حفظ يسير على الطريقة المتعارف عليها: الربط، ثم الامتحان، ثم المراجعة المتباعدة. Free Quran desktop widget for Windows: daily verse, recitation, prayer times and a memorization mode built on the classic hifz method.">
+<meta name="keywords" content="القرآن الكريم, ويدجت القرآن, آية اليوم, تطبيق القرآن لويندوز, تلاوة, أوقات الصلاة, حفظ القرآن, برنامج حفظ القرآن, المراجعة المتباعدة, Quran widget, Quran Windows, daily ayah, verse of the day, Quran memorization, hifz, spaced repetition, prayer times, desktop widget">
 <meta name="robots" content="index, follow, max-image-preview:large">
-<meta name="theme-color" content="#12211b">
+<meta name="theme-color" content="#101d17">
 <link rel="canonical" href="https://mohammedtsmu.github.io/QuranWidget/">
 <link rel="alternate" hreflang="ar" href="https://mohammedtsmu.github.io/QuranWidget/?lang=ar">
 <link rel="alternate" hreflang="en" href="https://mohammedtsmu.github.io/QuranWidget/?lang=en">
 <link rel="alternate" hreflang="x-default" href="https://mohammedtsmu.github.io/QuranWidget/">
 <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/MohammedTsmu/QuranWidget/main/QuranWidget/Assets/app.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Quran Widget — ويدجت القرآن">
 <meta property="og:title" content="ويدجت القرآن الكريم لويندوز — آية اليوم على سطح مكتبك">
-<meta property="og:description" content="آية كل يوم بالخط العثماني، تلاوة من 7 قراء، أوقات صلاة، وضع الحفظ والمراجعة — مجاناً لويندوز. Free Quran widget for Windows.">
+<meta property="og:description" content="آية كل يوم بالرسم العثماني، تلاوة من 7 قراء، أوقات صلاة، ووضع حفظ بالطريقة المتعارف عليها: ربط ثم امتحان ثم مراجعة متباعدة — مجاناً لويندوز. Free Quran widget for Windows.">
 <meta property="og:url" content="https://mohammedtsmu.github.io/QuranWidget/">
-<meta property="og:locale" content="ar_AR">
-<meta property="og:locale:alternate" content="en_US">
+<meta property="og.locale" content="ar_AR">
+<meta property="og.locale:alternate" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Quran Widget for Windows — ويدجت القرآن">
-<meta name="twitter:description" content="Daily verse, recitation, prayer times & memorization — free desktop widget for Windows.">
+<meta name="twitter:description" content="Daily verse, recitation, prayer times & the classic hifz method — free desktop widget for Windows.">
 
 <script type="application/ld+json">
 {
@@ -33,10 +36,10 @@
   "operatingSystem": "Windows 10, Windows 11",
   "applicationCategory": "MultimediaApplication",
   "inLanguage": ["ar", "en"],
-  "description": "Free Windows desktop widget showing a daily Quran verse in Uthmani script with recitation from 7 reciters, prayer times, memorization mode and offline support. ويدجت مجاني يعرض آية كل يوم مع التلاوة وأوقات الصلاة ووضع الحفظ.",
+  "description": "Free Windows desktop widget showing a daily Quran verse in Uthmani script with recitation from 7 reciters, prayer times, offline support, and a memorization mode built on the classic hifz method: verse linking, a test before review, connected group review and adaptive spaced repetition. ويدجت مجاني يعرض آية كل يوم مع التلاوة وأوقات الصلاة ووضع حفظ يسير على الطريقة المتعارف عليها.",
   "url": "https://mohammedtsmu.github.io/QuranWidget/",
   "downloadUrl": "https://github.com/MohammedTsmu/QuranWidget/releases/latest",
-  "softwareVersion": "2.8.0",
+  "softwareVersion": "2.9.0",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "author": { "@type": "Person", "name": "MohammedTsmu", "url": "https://github.com/MohammedTsmu" },
   "license": "https://github.com/MohammedTsmu/QuranWidget#readme"
@@ -47,79 +50,109 @@
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    { "@type": "Question", "name": "ما هو ويدجت القرآن الكريم؟", "acceptedAnswer": { "@type": "Answer", "text": "تطبيق مكتبي مجاني لويندوز يعرض آية كل يوم بالرسم العثماني مع ترجمتها وتلاوتها، وأوقات الصلاة، ووضع خاص للحفظ والمراجعة." } },
+    { "@type": "Question", "name": "ما هو ويدجت القرآن الكريم؟", "acceptedAnswer": { "@type": "Answer", "text": "تطبيق مكتبي مجاني لويندوز يعرض آية كل يوم بالرسم العثماني مع ترجمتها وتلاوتها، وأوقات الصلاة، ووضع حفظ ومراجعة يسير على الطريقة المتعارف عليها في حفظ القرآن." } },
     { "@type": "Question", "name": "Is Quran Widget free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, Quran Widget is completely free and open source for Windows 10 and 11." } },
     { "@type": "Question", "name": "هل يعمل بدون إنترنت؟", "acceptedAnswer": { "@type": "Answer", "text": "نعم، يمكنك تنزيل التلاوات والترجمات مسبقاً والاستماع والقراءة دون اتصال." } },
-    { "@type": "Question", "name": "Does it support Arabic interface?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, the entire interface switches to Arabic with full right-to-left layout." } }
+    { "@type": "Question", "name": "كيف يعمل وضع الحفظ؟", "acceptedAnswer": { "@type": "Answer", "text": "تستمع إلى كل آية عدة مرات وتعيدها والنص مخفي، ثم تربطها بما قبلها من المجموعة، وتختم باختبار كامل قبل أن تدخل الآيات جدول مراجعة متباعد يتكيف مع سهولتها أو صعوبتها." } },
+    { "@type": "Question", "name": "Does the memorization mode follow the traditional hifz method?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — repetition with the text hidden, linking each verse to everything before it, a test before a group is considered memorized, connected review of whole passages, and separate daily loads for new and old hifz." } }
   ]
 }
 </script>
 
 <style>
 :root{
-  --bg:#0d1712; --bg2:#12211b; --card:#182b23; --border:#24403466;
-  --gold:#d4b169; --gold-dim:#8f7b4e; --text:#e8e4d8; --muted:#9aa89f;
-  --green:#2e5c48;
+  --ink:#0c1511; --ink2:#111f18; --card:#16261f; --card2:#1a2d24;
+  --border:#2a463a55;
+  --gold:#cfb071; --gold-soft:#a48c5e; --gold-faint:#6e6244;
+  --paper:#e9e2d0; --muted:#93a398; --green:#2e5c48;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Segoe UI',Tahoma,system-ui,sans-serif;background:linear-gradient(160deg,var(--bg),var(--bg2) 60%,#152820);color:var(--text);line-height:1.7;min-height:100vh}
+body{
+  font-family:'Segoe UI',Tahoma,system-ui,sans-serif;
+  background:
+    radial-gradient(1100px 500px at 50% -120px, #1a3227 0%, transparent 60%),
+    linear-gradient(165deg,var(--ink),var(--ink2) 55%,#132219);
+  color:var(--paper); line-height:1.85; min-height:100vh;
+}
 a{color:var(--gold);text-decoration:none}
-.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+.wrap{max-width:1020px;margin:0 auto;padding:0 22px}
+.amiri{font-family:'Amiri','Traditional Arabic',serif}
 
-nav{position:sticky;top:0;z-index:10;background:#0d1712e8;backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
-.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+nav{position:sticky;top:0;z-index:10;background:#0c1511ea;backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:13px 0}
 .brand{font-weight:700;font-size:1.05rem;display:flex;gap:10px;align-items:center}
-.brand .bismillah{color:var(--gold);font-size:1.25rem}
+.brand .mark{color:var(--gold);font-size:1.3rem;line-height:1}
 .navlinks{display:flex;gap:22px;align-items:center;font-size:.92rem}
 .navlinks a{color:var(--muted)}
 .navlinks a:hover{color:var(--gold)}
-.langbtn{border:1px solid var(--gold-dim);color:var(--gold);background:none;border-radius:20px;padding:5px 16px;cursor:pointer;font-size:.9rem}
-.langbtn:hover{background:#d4b16918}
+.langbtn{border:1px solid var(--gold-soft);color:var(--gold);background:none;border-radius:20px;padding:5px 16px;cursor:pointer;font-size:.9rem}
+.langbtn:hover{background:#cfb07114}
 
-header.hero{text-align:center;padding:78px 0 60px}
-.ayah{font-family:'Traditional Arabic','Amiri',serif;font-size:clamp(1.5rem,4vw,2.3rem);color:var(--gold);margin-bottom:26px}
-h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.35;margin-bottom:18px}
-.hero p.sub{color:var(--muted);font-size:1.12rem;max-width:640px;margin:0 auto 34px}
+header.hero{text-align:center;padding:64px 0 58px}
+.basmala{font-family:'Amiri',serif;color:var(--gold-faint);font-size:1.15rem;margin-bottom:34px;letter-spacing:.5px}
+.hero .ayah{font-family:'Amiri',serif;font-size:clamp(1.6rem,4.2vw,2.5rem);color:var(--gold);line-height:2;margin-bottom:30px}
+.surah-of-ayah{font-family:'Amiri',serif;color:var(--muted);font-size:.95rem;margin:-22px 0 34px}
+h1{font-family:'Amiri',serif;font-size:clamp(2rem,5.2vw,3.1rem);line-height:1.5;margin-bottom:16px;font-weight:700}
+.hero p.sub{color:var(--muted);font-size:1.1rem;max-width:620px;margin:0 auto 36px}
 .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 30px;border-radius:12px;font-weight:600;font-size:1rem;transition:.2s}
-.btn-primary{background:var(--gold);color:#1a1508}
-.btn-primary:hover{background:#e3c47e;transform:translateY(-2px)}
-.btn-ghost{border:1px solid var(--gold-dim);color:var(--gold)}
-.btn-ghost:hover{background:#d4b16915}
-.verinfo{margin-top:16px;color:var(--muted);font-size:.88rem}
+.btn-primary{background:var(--gold);color:#191305}
+.btn-primary:hover{background:#e0c487;transform:translateY(-2px)}
+.btn-ghost{border:1px solid var(--gold-soft);color:var(--gold)}
+.btn-ghost:hover{background:#cfb07112}
+.verinfo{margin-top:18px;color:var(--muted);font-size:.88rem}
 .badge{display:inline-block;background:var(--green);color:#dfeee6;border-radius:20px;padding:3px 14px;font-size:.8rem;margin-inline-start:8px;vertical-align:middle}
 
-section{padding:56px 0}
-h2{font-size:1.7rem;text-align:center;margin-bottom:8px}
-.sec-sub{text-align:center;color:var(--muted);margin-bottom:40px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+/* ornament divider: a thin rule with a centered rosette */
+.orn{display:flex;align-items:center;gap:18px;max-width:520px;margin:0 auto}
+.orn::before,.orn::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-faint));}
+.orn::after{background:linear-gradient(90deg,var(--gold-faint),transparent)}
+.orn span{color:var(--gold-soft);font-size:1.05rem}
+
+section{padding:58px 0}
+h2{font-family:'Amiri',serif;font-size:1.9rem;text-align:center;margin-bottom:6px;font-weight:700}
+.sec-sub{text-align:center;color:var(--muted);margin-bottom:42px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;transition:.25s}
-.card:hover{transform:translateY(-4px);border-color:#d4b16955}
-.card .ic{font-size:1.9rem;margin-bottom:12px}
-.card h3{font-size:1.12rem;margin-bottom:8px;color:var(--gold)}
+.card:hover{transform:translateY(-3px);border-color:#cfb07145}
+.card h3{font-family:'Amiri',serif;font-size:1.25rem;margin-bottom:8px;color:var(--gold);font-weight:700}
 .card p{color:var(--muted);font-size:.95rem}
+
+/* hifz method: the way it has always been taught */
+#method{background:#0f1b15;border-block:1px solid var(--border)}
+.method-steps{max-width:760px;margin:0 auto}
+.mstep{display:flex;gap:20px;padding:22px 0;border-bottom:1px dashed #2a463a66}
+.mstep:last-child{border-bottom:none}
+.mstep .k{font-family:'Amiri',serif;color:var(--gold);font-size:1.35rem;min-width:120px;font-weight:700}
+.mstep .k small{display:block;color:var(--gold-faint);font-size:.8rem;font-weight:400}
+.mstep p{color:var(--muted);font-size:.97rem}
+.mstep p b{color:var(--paper);font-weight:600}
+.method-note{text-align:center;color:var(--muted);font-size:.92rem;margin-top:26px;max-width:640px;margin-inline:auto}
+.method-note .amiri{color:var(--gold-soft);font-size:1.05rem}
 
 .dl{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:44px 30px;text-align:center}
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:34px;text-align:center}
-.step .n{width:38px;height:38px;border-radius:50%;background:var(--gold);color:#1a1508;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.step .n{width:38px;height:38px;border-radius:50%;background:var(--gold);color:#191305;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-family:'Segoe UI',sans-serif}
 
 .faq details{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:12px}
 .faq summary{cursor:pointer;font-weight:600;font-size:1.02rem}
 .faq p{color:var(--muted);margin-top:10px}
 
-footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;color:var(--muted);font-size:.92rem}
-.love{color:var(--gold);font-size:1.05rem;margin:10px 0}
-@media(max-width:640px){.navlinks a:not(.langbtn){display:none}}
+footer{border-top:1px solid var(--border);padding:38px 0 42px;text-align:center;color:var(--muted);font-size:.92rem}
+.dua{font-family:'Amiri',serif;color:var(--gold-soft);font-size:1.1rem;margin-bottom:14px}
+.love{margin:10px 0}
+@media(max-width:640px){.navlinks a:not(.langbtn){display:none}.mstep{flex-direction:column;gap:6px}}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="wrap nav">
-    <div class="brand"><span class="bismillah">۞</span><span data-i="brand">ويدجت القرآن</span></div>
+    <div class="brand"><span class="mark">۞</span><span data-i="brand">ويدجت القرآن</span></div>
     <div class="navlinks">
       <a href="#features" data-i="navFeat">المزايا</a>
+      <a href="#method" data-i="navMethod">طريقة الحفظ</a>
       <a href="#download" data-i="navDl">التحميل</a>
       <a href="#faq" data-i="navFaq">أسئلة شائعة</a>
       <a href="https://github.com/MohammedTsmu/QuranWidget" target="_blank" rel="noopener">GitHub</a>
@@ -129,39 +162,60 @@ footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;color
 </nav>
 
 <header class="hero wrap">
-  <p class="ayah">إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ ﴿٩﴾</p>
+  <p class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+  <p class="ayah">وَلَقَدْ يَسَّرْنَا الْقُرْآنَ لِلذِّكْرِ ﴿١٧﴾</p>
+  <p class="surah-of-ayah">سورة القمر</p>
   <h1 data-i="h1">آية اليوم على سطح مكتبك — طوال اليوم</h1>
-  <p class="sub" data-i="sub">ويدجت مجاني لويندوز يعرض آية كل يوم بالرسم العثماني وخط أميري، مع تلاوة من نخبة القرّاء، أوقات الصلاة، ووضع متكامل للحفظ والمراجعة — كل ذلك بدون إنترنت بعد أول تشغيل.</p>
+  <p class="sub" data-i="sub">فكرتُ في كيف أجعل وِرد القرآن أقرب إلى يومي، فجاءت هذه الأداة: آية كل فجر بالرسم العثماني وخط أميري، تلاوة من نخبة القرّاء، أوقات الصلاة، ووضع حفظ يسير على الطريقة التي حُفظ بها القرآن جيلاً بعد جيل — كل ذلك بلا إنترنت بعد أول تشغيل.</p>
   <div class="cta">
     <a class="btn btn-primary" id="dlHero" href="https://github.com/MohammedTsmu/QuranWidget/releases/latest" data-i="dlMain">⬇ تحميل لويندوز — مجاناً</a>
-    <a class="btn btn-ghost" href="#features" data-i="dlFeat">اكتشف المزايا</a>
+    <a class="btn btn-ghost" href="#method" data-i="dlFeat">كيف يعمل الحفظ؟</a>
   </div>
-  <p class="verinfo"><span id="ver">v2.8.0</span><span class="badge" data-i="badge">مفتوح المصدر · Windows 10/11</span></p>
+  <p class="verinfo"><span id="ver">v2.9.0</span><span class="badge" data-i="badge">مفتوح المصدر · Windows 10/11</span></p>
 </header>
 
 <main class="wrap">
+<div class="orn"><span>۞</span></div>
+
 <section id="features">
-  <h2 data-i="featH">كل ما تحتاجه للقرآن في بطاقة واحدة</h2>
-  <p class="sec-sub" data-i="featSub">أكثر من 20 ميزة مدروسة، عربية أولاً</p>
+  <h2 data-i="featH">رِفق ببالي، وصبرٌ على التفاصيل</h2>
+  <p class="sec-sub" data-i="featSub">ما يقدّمه الويدجت — عربي أولاً، وبلا إنترنت بعد أول تشغيل</p>
   <div class="grid">
-    <div class="card"><div class="ic">🌅</div><h3 data-i="f1h">آية اليوم</h3><p data-i="f1p">آية مختارة من كنز من الآيات الكريمة تتغير كل منتصف ليل، مع الترجمة الإنجليزية والتاريخ الهجري والميلادي.</p></div>
-    <div class="card"><div class="ic">📖</div><h3 data-i="f2h">خط أميري عثماني</h3><p data-i="f2p">نص عثماني كامل الحركات مع علامات نهاية الآية ﴿٢٧٤﴾ التي لا تنكسر أبداً، وحجم خط قابل للضبط.</p></div>
-    <div class="card"><div class="ic">🎧</div><h3 data-i="f3h">تلاوة من 7 قرّاء</h3><p data-i="f3p">مشاري العفاسي، عبد الباسط، الحصري، المنشاوي، السديس، الشاطري والحذيفي — مع تنزيل كامل السور للاستماع دون إنترنت.</p></div>
-    <div class="card"><div class="ic">🧠</div><h3 data-i="f4h">وضع الحفظ والمراجعة</h3><p data-i="f4p">اختر نطاقاً، استمع للآية عدة مرات، أخفِ النص وأعده من حفظك — ثم يدخل مجموعة الحفظ سلّم مراجعة يومي (1، 3، 7، 14، 30، 60، 120 يوماً).</p></div>
-    <div class="card"><div class="ic">🕌</div><h3 data-i="f5h">أوقات الصلاة</h3><p data-i="f5p">الصلاة القادمة في الواجهة، تُحسب محلياً من موقعك وتعمل دون إنترنت بعد أول تحديد للموقع.</p></div>
-    <div class="card"><div class="ic">🔎</div><h3 data-i="f6h">بحث ذكي</h3><p data-i="f6p">انتقل مباشرة إلى 2:255، أو ابحث في النص العربي حتى بدون تشكيل وفي الترجمة الإنجليزية.</p></div>
-    <div class="card"><div class="ic">⭐</div><h3 data-i="f7h">مفضلة وحفظ كصورة</h3><p data-i="f7p">احفظ الآيات المفضلة بضغطة نجمة، وصدّر البطاقة كصورة PNG عالية الدقة للمشاركة.</p></div>
-    <div class="card"><div class="ic">🎨</div><h3 data-i="f8h">4 ثيمات وتثبيت على المكتب</h3><p data-i="f8p">ليلة زمرّدية، ورق فاتح، أزرق منتصف الليل، وسيما صحراوي — مع وضع تثبيت يبقي الويدجت خلف كل النوافذ.</p></div>
-    <div class="card"><div class="ic">🌙</div><h3 data-i="f9h">عربي أولاً</h3><p data-i="f9p">واجهة عربية كاملة من اليمين لليسار وواجهة إنجليزية، والتاريخ الهجري بتقويم أم القرى.</p></div>
+    <div class="card"><h3 data-i="f1h">آية اليوم</h3><p data-i="f1p">آية مختارة من كنزٍ من الآيات الكريمة، تتغير كل منتصف ليل وتبقى ثابتة طوال اليوم، مع معناها بالإنجليزية والتاريخ الهجري والميلادي.</p></div>
+    <div class="card"><h3 data-i="f2h">خط أميري عثماني</h3><p data-i="f2p">نص عثماني كامل الحركات بخط أميري القرآني، وعلامات نهاية الآية ﴿٢٧٤﴾ لا تنكسر عند التفاف الأسطر أبداً، وحجم الخط بيدك.</p></div>
+    <div class="card"><h3 data-i="f3h">تلاوة من 7 قرّاء</h3><p data-i="f3p">العفاسي، عبد الباسط، الحصري، المنشاوي، السديس، الشاطري، الحذيفي — ونزّل السور كاملة لتستمع دون إنترنت.</p></div>
+    <div class="card"><h3 data-i="f4h">أوقات الصلاة</h3><p data-i="f4p">الصلاة القادمة في رأس الويدجت، تُحسب محلياً من موقعك وتعمل دون إنترنت بعد أول تحديد.</p></div>
+    <div class="card"><h3 data-i="f5h">بحث يفهمك</h3><p data-i="f5p">اكتب 2:255 فانتقل إليها، أو ابحث في النص العربي حتى بدون تشكيل، وفي الترجمة الإنجليزية.</p></div>
+    <div class="card"><h3 data-i="f6h">مفضلة وحفظ كصورة</h3><p data-i="f6p">علّم الآيات بنجمة لتعود إليها، وصدّر بطاقة الآية صورةً عالية الدقة تُرسلها لمن تحب.</p></div>
+    <div class="card"><h3 data-i="f7h">أربع ثيمات</h3><p data-i="f7p">ليلة زمرّدية، ورق فاتح، أزرق منتصف الليل، وسيما صحراوي — ووضع تثبيت يُبقي الويدجت خلف كل النوافذ.</p></div>
+    <div class="card"><h3 data-i="f8h">عربي أولاً</h3><p data-i="f8p">واجهة عربية كاملة من اليمين لليسار بضغطة زر، وواجهة إنجليزية لمن أرادها، والتاريخ الهجري بتقويم أم القرى.</p></div>
   </div>
 </section>
+</main>
 
+<section id="method">
+  <main class="wrap">
+    <h2 data-i="mH">الحفظ كما يُحفظ منذ العهد الأول</h2>
+    <p class="sec-sub" data-i="mSub">لم أخترع شيئاً — رتّبتُ ما تعلمته عن طريقة الحفظ إلى خطوات تسير بها الأداة معك</p>
+    <div class="method-steps">
+      <div class="mstep"><div class="k" data-i="m1k">التسميع<small data-i="m1s">سماع وترديد</small></div><p data-i="m1p">تختار نطاقاً قصيراً من سورة، فتستمع إلى كل آية عدة مرات بشيخ تختاره، ثم <b>تُخفي النص وتعيده من حفظك</b> — هذه هي الحاضنة الأولى للحفظ، لا يُستعجل فيها.</p></div>
+      <div class="mstep"><div class="k" data-i="m2k">الربط<small data-i="m2s">لا تترك الآيات جزراً</small></div><p data-i="m2p">بعد كل آية، تعيد التلاوة <b>من أول المجموعة إلى هذه الآية</b> والنص مخفي. فلا تحفظ الآيات جزراً متفرقة، وإنما وتراً واحداً متصلاً — وهذه هي الخطوة التي يُهملها أكثر من حفظ فيتفرق حفظه.</p></div>
+      <div class="mstep"><div class="k" data-i="m3k">الامتحان<small data-i="m3s">لا شيء يدخل الجدول قبل أن يُمتحن</small></div><p data-i="m3p">لا تدخل المجموعة جدول المراجعة إلا بعد <b>اختبار كامل</b>: تلاوة المجموعة من حفظك والنص مخفي، أو اختبار أكمل الفراغ تختبئ فيه آيتان وتقولانهما. إن تعثرت، أعد التدريب — ولا حرج، فالشيخ نفسه يعيد عليك.</p></div>
+      <div class="mstep"><div class="k" data-i="m4k">المراجعة<small data-i="m4s">حديثاً وقديماً</small></div><p data-i="m4p">المراجعة <b>متصلة لا متفرقة</b>: تعود المجموعة كاملة وتردها وتراً واحداً. ويفصل البرنامج بين مراجعة الحديث — ما حفظته مؤخراً ويستحق عناية يومية — ومراجعة القديم بسقف يومي معقول لا يثقل ظهرك.</p></div>
+      <div class="mstep"><div class="k" data-i="m5k">الجدول<small data-i="m5s">يتكيف معك</small></div><p data-i="m5p">الآية المستقرة تبتعد قليلاً كل مرة (يوم، ثلاثة، سبعة، أربعة عشر، ثلاثون…)، والآية التي تنساها تعود <b>في اليوم نفسه</b> حتى تستقر. فالجدول ليس حكماً ثابتاً عليك، بل يتبع حفظك أنت.</p></div>
+      <div class="mstep"><div class="k" data-i="m6k">سمّع نفسك<small data-i="m6s">سجّل وقارن</small></div><p data-i="m6p">في وضع الحفظ والمراجعة، <b>سجّل تلاوتك بصوتك</b> ثم شغّل تسجيلك وتلاوة الشيخ واحدًا بعد الآخر. أذنك تلتقط ما لا تلتقطه عينك.</p></div>
+    </div>
+    <p class="method-note"><span class="amiri">﴿ وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا ﴾</span><br><span data-i="mNote">وتقدمك كله محفوظ على جهازك، ويمكنك أخذ نسخة احتياطية منه متى شئت — فالحفظ ثمرة شهور، ولا يليق أن تضيع.</span></p>
+  </main>
+</section>
+
+<main class="wrap">
 <section id="download">
   <h2 data-i="dlH">حمّله الآن</h2>
-  <p class="sec-sub" data-i="dlSub">مجاني ومفتوح المصدر — خطوتان فقط</p>
+  <p class="sec-sub" data-i="dlSub">مجاني ومفتوح المصدر — لن يدفعَ أحدٌ قرشاً ليقرأ كتاب الله</p>
   <div class="dl">
     <a class="btn btn-primary" id="dlBtn" href="https://github.com/MohammedTsmu/QuranWidget/releases/latest" data-i="dlBtn">⬇ تحميل المثبّت لويندوز</a>
-    <p class="verinfo" data-i="dlNote">نسخة محمولة (بدون تثبيت) متوفرة أيضاً في صفحة الإصدارات · الإصدار الحالي <span id="ver2">2.8.0</span></p>
+    <p class="verinfo" data-i="dlNote">نسخة محمولة (بدون تثبيت) متوفرة أيضاً في صفحة الإصدارات · الإصدار الحالي <span id="ver2">2.9.0</span></p>
     <div class="steps">
       <div class="step"><div class="n">1</div><span data-i="s1">حمّل المثبّت وشغّله</span></div>
       <div class="step"><div class="n">2</div><span data-i="s2">يظهر الويدجت على سطح المكتب فوراً</span></div>
@@ -174,20 +228,22 @@ footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;color
   <h2 data-i="faqH">أسئلة شائعة</h2>
   <p class="sec-sub" data-i="faqSub">كل ما قد تسأل عنه</p>
   <div class="faq">
-    <details><summary data-i="q1">هل التطبيق مجاني؟</summary><p data-i="a1">نعم، مجاني بالكامل ومفتوح المصدر لويندوز 10 و11.</p></details>
-    <details><summary data-i="q2">هل يعمل بدون إنترنت؟</summary><p data-i="a2">القراءة والبحث والنسخ تعمل دائماً بدون إنترنت، ويمكن تنزيل التلاوات والترجمات مسبقاً للاستماع والترجمة دون اتصال.</p></details>
-    <details><summary data-i="q3">هل الواجهة بالعربية؟</summary><p data-i="a3">نعم، الواجهة كاملة بالعربية مع اتجاه يمين-لليسار، واللغة الافتراضية للموقع عربية.</p></details>
-    <details><summary data-i="q4">كيف يحسب أوقات الصلاة؟</summary><p data-i="a4">تُحسب محلياً على جهازك من موقعك التقريبي (يُحدد مرة واحدة ثم يعمل دون إنترنت).</p></details>
-    <details><summary data-i="q5">Does it work on Windows 10 and 11?</summary><p data-i="a5">Yes — Windows 10 and 11, both 64-bit. It needs the .NET Desktop Runtime (the installer offers guidance if missing).</p></details>
-    <details><summary data-i="q6">Is the memorization mode suitable for beginners?</summary><p data-i="a6">Absolutely — you pick a small range of verses, listen to each one several times, then recite it from memory with the text hidden. Reviewed verses come back automatically on a spaced schedule.</p></details>
+    <details><summary data-i="q1">هل التطبيق مجاني؟</summary><p data-i="a1">نعم، مجاني بالكامل ومفتوح المصدر لويندوز 10 و11، ولا يوجد فيه شيء مدفوع ولا إعلانات.</p></details>
+    <details><summary data-i="q2">هل يعمل بدون إنترنت؟</summary><p data-i="a2">القراءة والبحث والنسخ تعمل دائماً بدون إنترنت، ويمكنك تنزيل التلاوات والترجمات مسبقاً للاستماع والترجمة دون اتصال. أما أول تحميل للتلاوة فيحتاج اتصالاً.</p></details>
+    <details><summary data-i="q3">هل وضع الحفظ يتبع الطريقة المتعارف عليها؟</summary><p data-i="a3">نعم: تكرار بالنص المخفي، ثم ربط كل آية بما قبلها، ثم امتحان للمجموعة قبل دخولها الجدول، ثم مراجعة متصلة للمقاطع كاملة، مع فصل مراجعة الجديد عن القديم. وإن نسيتَ آية فهي تعود في اليوم نفسه، والآيات المستقرة تتباعد.</p></details>
+    <details><summary data-i="q4">هل يُحفظ تقدمي في الحفظ؟</summary><p data-i="a4">تقدمك يُخزَّن محلياً على جهازك في قاعدة بيانات آمنة، ويمكنك من شاشة التقدم أخذ نسخة احتياطية أو استعادتها أو تصدير قائمة ما حفظت ملف CSV.</p></details>
+    <details><summary data-i="q5">هل الواجهة بالعربية؟</summary><p data-i="a5">نعم، الواجهة كاملة بالعربية مع اتجاه يمين-لليسار، وهذه الصفحة نفسها عربية أولاً.</p></details>
+    <details><summary data-i="q6">كيف يحسب أوقات الصلاة؟</summary><p data-i="a6">تُحسب محلياً على جهازك من موقعك التقريبي (يُحدد مرة واحدة ثم يعمل دون إنترنت).</p></details>
+    <details><summary data-i="q7">هل يعمل على ويندوز 10 و11؟</summary><p data-i="a7">نعم — ويندوز 10 و11 بنظام 64 بت، ويحتاج .NET Desktop Runtime (المثبّت يرشدك إن كان ناقصاً).</p></details>
   </div>
 </section>
 </main>
 
 <footer>
   <div class="wrap">
+    <p class="dua">اللهم اجعل عملي هذا خالصاً لوجهك، وانفع به من يقرأه</p>
     <p data-i="footer">ويدجت القرآن الكريم — مجاني ومفتوح المصدر · النص القرآني: Tanzil · التلاوات: cdn.islamic.network · خط أميري</p>
-    <p class="love">صُنع بـ ❤ بواسطة <a href="https://github.com/MohammedTsmu" target="_blank" rel="noopener">MohammedTsmu</a></p>
+    <p class="love">صُنع بـ ❤ بواسطة <a href="https://github.com/MohammedTsmu" target="_blank" rel="noopener">MohammedTsmu</a> — إن نفعك هذا العمل فادعُ له</p>
     <p>© 2026 <a href="https://github.com/MohammedTsmu/QuranWidget" target="_blank" rel="noopener">Quran Widget</a></p>
   </div>
 </footer>
@@ -195,31 +251,40 @@ footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;color
 <script>
 const I18N = {
   en: {
-    brand:"Quran Widget", navFeat:"Features", navDl:"Download", navFaq:"FAQ",
+    brand:"Quran Widget", navFeat:"Features", navMethod:"How hifz works", navDl:"Download", navFaq:"FAQ",
     h1:"The daily Ayah, living on your desktop",
-    sub:"A free Windows widget that shows a verse of the Quran every day in Uthmani script (Amiri Quran typeface), with recitation from 7 reciters, prayer times, and a full memorization & review mode — fully offline after first run.",
-    dlMain:"⬇ Download for Windows — free", dlFeat:"Explore features",
+    sub:"I built this because I wanted the Quran closer to my day: a verse every dawn in Uthmani script (Amiri Quran typeface), recitation from seven renowned reciters, prayer times, and a memorization mode that walks the path hifz has always been walked — fully offline after first run.",
+    dlMain:"⬇ Download for Windows — free", dlFeat:"How does hifz work?",
     badge:"Open source · Windows 10/11",
-    featH:"Everything you need for the Quran in one card", featSub:"20+ thoughtful features, Arabic-first",
-    f1h:"Verse of the Day", f1p:"A beloved verse from a curated collection that changes every midnight, with English meaning and Hijri + Gregorian dates.",
-    f2h:"Uthmani Amiri script", f2p:"Proper Uthmani text with ayah-end markers ﴿٢٧٤﴾ that never break across lines, plus an adjustable font size.",
-    f3h:"7 reciters", f3p:"Alafasy, Abdul Basit, Husary, Minshawy, Sudais, Shatri and Hudhaify — download whole surahs for offline listening.",
-    f4h:"Memorization & review", f4p:"Pick a range, loop each verse, hide the text and recite from memory — then the group joins a spaced review ladder (1, 3, 7, 14, 30, 60, 120 days).",
-    f5h:"Prayer times", f5p:"The next prayer right in the widget header, computed locally from your location and fully offline afterwards.",
-    f6h:"Smart search", f6p:"Jump straight to 2:255, or search the Arabic text even without diacritics, and the English translation.",
-    f7h:"Favorites & save as image", f7p:"Star verses to keep them, and export the card as a high-resolution PNG to share.",
-    f8h:"4 themes & desktop pinning", f8p:"Emerald Night, Parchment, Midnight Blue and Desert Sepia — plus a pin mode that keeps the widget behind every window.",
-    f9h:"Arabic first", f9p:"A complete right-to-left Arabic UI and an English UI, with the Hijri date from Umm al-Qura.",
-    dlH:"Get it now", dlSub:"Free & open source — just two steps",
+    featH:"Carefully made, patiently polished", featSub:"What the widget offers — Arabic first, offline after first run",
+    f1h:"Verse of the Day", f1p:"A beloved verse from a curated collection, changing every midnight and staying with you all day, with its English meaning and Hijri + Gregorian dates.",
+    f2h:"Uthmani Amiri script", f2p:"Proper Uthmani text in the Amiri Quran typeface, with ayah-end markers ﴿٢٧٤﴾ that never break across lines, and a font size that obeys you.",
+    f3h:"7 reciters", f3p:"Alafasy, Abdul Basit, Husary, Minshawy, Sudais, Shatri and Hudhaify — download whole surahs and listen without a connection.",
+    f4h:"Prayer times", f4p:"The next prayer right in the widget header, computed locally from your location and fully offline afterwards.",
+    f5h:"Search that understands you", f5p:"Type 2:255 to jump straight there, search the Arabic even without diacritics, or search the English translation.",
+    f6h:"Favorites & save as image", f6p:"Star verses to return to them, and export the card as a high-resolution PNG to share.",
+    f7h:"Four themes", f7p:"Emerald Night, Parchment, Midnight Blue and Desert Sepia — plus a pin mode that keeps the widget behind every window.",
+    f8h:"Arabic first", f8p:"A complete right-to-left Arabic UI one tap away, an English UI for those who want it, and the Hijri date from Umm al-Qura.",
+    mH:"Hifz, the way it has always been taught",
+    mSub:"I invented nothing here — I arranged what the classic method does into steps the tool walks with you",
+    m1k:"Recitation", m1s:"listen & repeat", m1p:"Pick a short range from a surah. Listen to each verse several times by a reciter you choose, then hide the text and recite it from memory. This is the first anchor of hifz — no rushing it.",
+    m2k:"Linking", m2s:"verses are not islands", m2p:"After each verse, recite from the start of the group through it, text hidden. Verses stay a single connected thread, not scattered islands — the step most people skip, and why their hifz falls apart.",
+    m3k:"The test", m3s:"nothing enters the schedule untested", m3p:"A group joins the review schedule only after a full test: recite it from memory with the text hidden, or a fill-in-the-blank test with two verses hidden. Stumble, and you rehearse again — a teacher would do the same.",
+    m4k:"Review", m4s:"new and old, kept apart", m4p:"Review is connected, not fragmented: the group comes back whole and you recite it as one passage. New hifz gets daily care; old hifz gets a sane daily cap so it never buries you.",
+    m5k:"The schedule", m5s:"it adapts to you", m5p:"A verse that stays solid moves further away each time (a day, three, seven, fourteen, thirty…); a verse you forget comes back the same day until it settles. The schedule follows your memory, not the other way round.",
+    m6k:"Hear yourself", m6s:"record & compare", m6p:"In memorize and review, record your own recitation, then play yours and the reciter's back to back. Your ear catches what your eye misses.",
+    mNote:"Your progress lives on your machine, and you can back it up whenever you like — months of hifz should never be lost.",
+    dlH:"Get it now", dlSub:"Free & open source — no one should pay a cent to read the Book of Allah",
     dlBtn:"⬇ Download Windows installer", dlNote:"A portable (no-install) exe is also on the releases page · Current version ",
     s1:"Download and run the installer", s2:"The widget appears on your desktop instantly", s3:"Pick language, theme & reciter in ⚙ Settings",
     faqH:"Frequently asked questions", faqSub:"Everything you might ask",
-    q1:"Is the app free?", a1:"Yes — completely free and open source for Windows 10 and 11.",
-    q2:"Does it work offline?", a2:"Reading, search and copying always work offline, and you can pre-download recitations and translations for offline listening too.",
-    q3:"Is there an Arabic interface?", a3:"Yes — the whole UI switches to Arabic with right-to-left layout; this website is Arabic-first by default.",
-    q4:"How are prayer times computed?", a4:"Locally on your machine from an approximate location (detected once, then fully offline).",
-    q5:"هل يعمل على ويندوز 10 و11؟", a5:"نعم — ويندوز 10 و11 بنظام 64 بت، ويحتاج .NET Desktop Runtime (المثبّت يرشدك إن كان ناقصاً).",
-    q6:"هل وضع الحفظ مناسب للمبتدئين؟", a6:"بالتأكيد — تختار عدداً قليلاً من الآيات، تستمع لكل آية عدة مرات، ثم تعيدها من حفظك والنص مخفي، وتعود الآيات تلقائياً حسب جدول المراجعة.",
+    q1:"Is the app free?", a1:"Yes — completely free and open source for Windows 10 and 11. Nothing paid, no ads.",
+    q2:"Does it work offline?", a2:"Reading, search and copying always work offline, and you can pre-download recitations and translations. Only the first fetch of a recitation needs a connection.",
+    q3:"Does the memorization mode follow the traditional method?", a3:"Yes: repetition with the text hidden, linking each verse to everything before it, a test before a group enters the schedule, connected review of whole passages, and separate daily loads for new and old hifz. A forgotten verse returns the same day; settled verses spread further apart.",
+    q4:"Is my memorization progress saved?", a4:"Progress is stored locally on your machine in a safe database. From the Progress screen you can back it up, restore it, or export your memorized list as CSV.",
+    q5:"Is there an Arabic interface?", a5:"Yes — the whole UI switches to Arabic with right-to-left layout; this website itself is Arabic-first.",
+    q6:"How are prayer times computed?", a6:"Locally on your machine from an approximate location (detected once, then fully offline).",
+    q7:"Does it work on Windows 10 and 11?", a7:"Yes — Windows 10 and 11, 64-bit. It needs the .NET Desktop Runtime (the installer guides you if it's missing).",
     footer:"Quran Widget — free & open source · Quran text: Tanzil · Recitations: cdn.islamic.network · Amiri font",
   },
   ar: null
@@ -239,7 +304,7 @@ function apply(l){
   document.getElementById("langBtn").textContent = l === "ar" ? "English" : "العربية";
   document.title = l === "ar"
     ? "آية اليوم على سطح مكتبك — Quran Widget | ويدجت القرآن الكريم لويندوز"
-    : "Quran Widget for Windows — Daily Ayah, Recitation & Memorization | ويدجت القرآن";
+    : "Quran Widget for Windows — Daily Ayah, Recitation & Hifz | ويدجت القرآن";
 }
 function toggleLang(){ apply(lang === "ar" ? "en" : "ar"); history.replaceState(null,"", "?lang=" + lang); }
 apply(lang);
