@@ -13,9 +13,13 @@
 <link rel="alternate" hreflang="en" href="https://mohammedtsmu.github.io/QuranWidget/?lang=en">
 <link rel="alternate" hreflang="x-default" href="https://mohammedtsmu.github.io/QuranWidget/">
 <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/MohammedTsmu/QuranWidget/main/QuranWidget/Assets/app.ico">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+<!-- Amiri self-hosted (the full font files, not a webfont subset) so every
+     Arabic letter and ligature renders, even offline or behind a blocked CDN -->
+<style>
+@font-face{font-family:'Amiri';src:url('fonts/Amiri-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Amiri';src:url('fonts/Amiri-Bold.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap}
+</style>
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Quran Widget — ويدجت القرآن">
@@ -75,6 +79,13 @@ body{
     linear-gradient(165deg,var(--ink),var(--ink2) 55%,#132219);
   color:var(--paper); line-height:1.85; min-height:100vh;
 }
+/* a faint khatam (eight-point star) lattice over the whole page */
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23cfb071' stroke-opacity='.045'%3E%3Cpath d='M36 6l8 14 16-4-4 16 14 8-14 8 4 16-16-4-8 14-8-14-16 4 4-16-14-8 14-8-4-16 16 4z'/%3E%3Ccircle cx='36' cy='36' r='5'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:72px 72px;
+}
+nav,header,main,section,footer{position:relative;z-index:1}
 a{color:var(--gold);text-decoration:none}
 .wrap{max-width:1020px;margin:0 auto;padding:0 22px}
 .amiri{font-family:'Amiri','Traditional Arabic',serif}
@@ -89,10 +100,19 @@ nav{position:sticky;top:0;z-index:10;background:#0c1511ea;backdrop-filter:blur(1
 .langbtn{border:1px solid var(--gold-soft);color:var(--gold);background:none;border-radius:20px;padding:5px 16px;cursor:pointer;font-size:.9rem}
 .langbtn:hover{background:#cfb07114}
 
-header.hero{text-align:center;padding:64px 0 58px}
-.basmala{font-family:'Amiri',serif;color:var(--gold-faint);font-size:1.15rem;margin-bottom:34px;letter-spacing:.5px}
-.hero .ayah{font-family:'Amiri',serif;font-size:clamp(1.6rem,4.2vw,2.5rem);color:var(--gold);line-height:2;margin-bottom:30px}
-.surah-of-ayah{font-family:'Amiri',serif;color:var(--muted);font-size:.95rem;margin:-22px 0 34px}
+header.hero{text-align:center;padding:56px 0 58px}
+/* mihrab: the prayer-niche arch that frames the opening ayah */
+.mihrab{
+  max-width:760px;margin:0 auto;padding:38px 28px 30px;
+  border:1px solid #cfb07138;border-bottom-color:#cfb07122;
+  border-radius:340px 340px 18px 18px / 300px 300px 18px 18px;
+  background:linear-gradient(180deg,#cfb07108,transparent 65%);
+  box-shadow:inset 0 0 40px #00000030;
+}
+.mihrab .finial{color:var(--gold-soft);font-size:1.5rem;line-height:1;margin-bottom:14px}
+.basmala{font-family:'Amiri',serif;color:var(--gold-soft);font-size:1.15rem;margin-bottom:30px;letter-spacing:.5px}
+.hero .ayah{font-family:'Amiri',serif;font-size:clamp(1.6rem,4.2vw,2.5rem);color:var(--gold);line-height:2;margin-bottom:26px}
+.surah-of-ayah{font-family:'Amiri',serif;color:var(--muted);font-size:.95rem;margin:-18px 0 0}
 h1{font-family:'Amiri',serif;font-size:clamp(2rem,5.2vw,3.1rem);line-height:1.5;margin-bottom:16px;font-weight:700}
 .hero p.sub{color:var(--muted);font-size:1.1rem;max-width:620px;margin:0 auto 36px}
 .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
@@ -114,13 +134,26 @@ section{padding:58px 0}
 h2{font-family:'Amiri',serif;font-size:1.9rem;text-align:center;margin-bottom:6px;font-weight:700}
 .sec-sub{text-align:center;color:var(--muted);margin-bottom:42px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;transition:.25s}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;transition:.25s;position:relative;overflow:hidden}
 .card:hover{transform:translateY(-3px);border-color:#cfb07145}
+/* a small corner arabesque on every card */
+.card::after{
+  content:"";position:absolute;top:0;inset-inline-end:0;width:56px;height:56px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23cfb071' stroke-opacity='.14'%3E%3Cpath d='M56 0C42 0 30 10 28 24 24 22 20 22 16 24 18 14 12 4 0 0'/%3E%3Ccircle cx='34' cy='34' r='3'/%3E%3C/g%3E%3C/svg%3E") no-repeat top right;
+  background-size:56px 56px;pointer-events:none;
+}
 .card h3{font-family:'Amiri',serif;font-size:1.25rem;margin-bottom:8px;color:var(--gold);font-weight:700}
 .card p{color:var(--muted);font-size:.95rem}
 
 /* hifz method: the way it has always been taught */
 #method{background:#0f1b15;border-block:1px solid var(--border)}
+/* a denser star lattice behind the method section, like a carved screen (مشربية) */
+#method .wrap{position:relative}
+#method::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23cfb071' stroke-opacity='.06'%3E%3Cpath d='M36 6l8 14 16-4-4 16 14 8-14 8 4 16-16-4-8 14-8-14-16 4 4-16-14-8 14-8-4-16 16 4z'/%3E%3Ccircle cx='36' cy='36' r='5'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:72px 72px;
+}
 .method-steps{max-width:760px;margin:0 auto}
 .mstep{display:flex;gap:20px;padding:22px 0;border-bottom:1px dashed #2a463a66}
 .mstep:last-child{border-bottom:none}
@@ -131,7 +164,7 @@ h2{font-family:'Amiri',serif;font-size:1.9rem;text-align:center;margin-bottom:6p
 .method-note{text-align:center;color:var(--muted);font-size:.92rem;margin-top:26px;max-width:640px;margin-inline:auto}
 .method-note .amiri{color:var(--gold-soft);font-size:1.05rem}
 
-.dl{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:44px 30px;text-align:center}
+.dl{background:var(--card);border:1px solid var(--border);border-radius:340px 340px 20px 20px / 150px 150px 20px 20px;padding:52px 30px 44px;text-align:center}
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:34px;text-align:center}
 .step .n{width:38px;height:38px;border-radius:50%;background:var(--gold);color:#191305;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-family:'Segoe UI',sans-serif}
 
@@ -162,10 +195,13 @@ footer{border-top:1px solid var(--border);padding:38px 0 42px;text-align:center;
 </nav>
 
 <header class="hero wrap">
-  <p class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-  <p class="ayah">وَلَقَدْ يَسَّرْنَا الْقُرْآنَ لِلذِّكْرِ ﴿١٧﴾</p>
-  <p class="surah-of-ayah">سورة القمر</p>
-  <h1 data-i="h1">آية اليوم على سطح مكتبك — طوال اليوم</h1>
+  <div class="mihrab">
+    <div class="finial">۞</div>
+    <p class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+    <p class="ayah">وَلَقَدْ يَسَّرْنَا الْقُرْآنَ لِلذِّكْرِ ﴿١٧﴾</p>
+    <p class="surah-of-ayah">سورة القمر</p>
+  </div>
+  <h1 data-i="h1" style="margin-top:34px">آية اليوم على سطح مكتبك — طوال اليوم</h1>
   <p class="sub" data-i="sub">فكرتُ في كيف أجعل وِرد القرآن أقرب إلى يومي، فجاءت هذه الأداة: آية كل فجر بالرسم العثماني وخط أميري، تلاوة من نخبة القرّاء، أوقات الصلاة، ووضع حفظ يسير على الطريقة التي حُفظ بها القرآن جيلاً بعد جيل — كل ذلك بلا إنترنت بعد أول تشغيل.</p>
   <div class="cta">
     <a class="btn btn-primary" id="dlHero" href="https://github.com/MohammedTsmu/QuranWidget/releases/latest" data-i="dlMain">⬇ تحميل لويندوز — مجاناً</a>

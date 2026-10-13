@@ -143,7 +143,7 @@ public static class Translations
     // Removes harakat/tanwin and normalizes letter variants (alef wasla, hamza
     // seats, alif maqsura, ta marbuta) so Arabic typed on a normal keyboard —
     // without any harakat — still matches the vocalized Quran text.
-    static string StripArabicDiacritics(string s)
+    public static string StripArabicDiacritics(string s)
     {
         var sb = new System.Text.StringBuilder(s.Length);
         foreach (var c in s)

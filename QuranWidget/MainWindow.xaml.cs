@@ -794,7 +794,7 @@ public partial class MainWindow : Window
         SyncTranslationToggle();
 
         // tooltips
-        ToolTipService.SetToolTip(SearchButton, L10n.T("Search the Quran (text or verse number like 2:255)", "ابحث في القرآن (نص أو رقم آية مثل 2:255)"));
+        ToolTipService.SetToolTip(SearchButton, L10n.T("Search the Quran (text, verse number like 2:255, or surah name)", "ابحث في القرآن (نص، أو رقم آية مثل 2:255، أو اسم سورة)"));
         ToolTipService.SetToolTip(PlayButton, SettingsService.Current.ContinueReading
             ? L10n.T("Play recitation (continuous reading)", "تشغيل التلاوة (متابعة القراءة)")
             : L10n.T("Play recitation", "تشغيل التلاوة"));
@@ -803,8 +803,8 @@ public partial class MainWindow : Window
         ToolTipService.SetToolTip(HifzButton, L10n.T("Memorize (Hifz)", "الحفظ"));
         ToolTipService.SetToolTip(FavoriteButton, L10n.T("Favorites — tap to save this verse", "المفضلة — اضغط لحفظ هذه الآية"));
         ToolTipService.SetToolTip(CopyButton, L10n.T("Copy", "نسخ"));
-        SearchBoxHint.Text = L10n.T("Type words to search, or 2:255 to jump to a verse",
-                                    "اكتب كلمات للبحث، أو 2:255 للانتقال إلى آية");
+        SearchBoxHint.Text = L10n.T("Type words, a surah name (البقرة / Kahf), or 2:255",
+                                    "اكتب كلمات، أو اسم سورة (البقرة / Kahf)، أو 2:255 للانتقال إلى آية");
 
         ApplyTranslationVisibility();
         UpdateResumeText();
@@ -1228,6 +1228,10 @@ public partial class MainWindow : Window
                 SearchList.Items.Add($"{s}:{a} — {surah.EnglishName} · jump to verse");
             }
         }
+        else
+        {
+            TryMatchSurah(q);
+        }
 
         foreach (var hit in Translations.Search(q, 10))
         {
@@ -1236,6 +1240,77 @@ public partial class MainWindow : Window
         }
 
         SearchList.Visibility = SearchList.Items.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    // Surah-name jump: "البقرة", "سورة البقرة 255", "Al-Fatihah 7", "kahf", or a
+    // bare surah number "2" (opens its first verse). An optional trailing number
+    // is the ayah within that surah. Matching is forgiving: harakat, hamza seats,
+    // alef wasla, ta marbuta and the "سورة"/"Al-" prefixes are all normalized
+    // away, and English names compare on their consonant skeleton so
+    // "Fatihah" still finds "Al-Faatiha".
+    void TryMatchSurah(string query)
+    {
+        string q = query.Trim();
+        // Arabic-Indic digits (٢٥٥) behave like Latin ones here
+        q = new string(q.Select(c => c >= '\u0660' && c <= '\u0669' ? (char)('0' + c - '\u0660') : c).ToArray());
+        bool arabic = q.Any(c => c >= '\u0600' && c <= '\u06FF');
+
+        string Norm(string s)
+        {
+            if (arabic) s = Translations.StripArabicDiacritics(s);
+            s = System.Text.RegularExpressions.Regex.Replace(s, @"(surah|sura|سوره)\s*", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            s = System.Text.RegularExpressions.Regex.Replace(s, @"^(al[- ]?|ال)", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            s = s.Trim().ToLowerInvariant();
+            if (!arabic)
+            {
+                // consonant skeleton with doubled letters collapsed, so
+                // "Fatihah" matches "Al-Faatiha" and "Yaseen" matches "Ya-Sin"
+                var sb = new System.Text.StringBuilder();
+                foreach (var c in s)
+                {
+                    if (!char.IsLetter(c) || "aeiou".Contains(c)) continue;
+                    if (sb.Length == 0 || sb[^1] != c) sb.Append(c);
+                }
+                s = sb.ToString();
+            }
+            return s;
+        }
+
+        var m = System.Text.RegularExpressions.Regex.Match(q, @"^(.*?)\s*(\d{1,3})$");
+        string namePart = m.Success ? m.Groups[1].Value.Trim() : q;
+        int ayah = m.Success && int.TryParse(m.Groups[2].Value, out int a) ? a : 0;
+
+        Surah? found = null;
+        if (namePart.Length > 0)
+        {
+            string needle = Norm(namePart);
+            if (needle.Length > 0)
+            {
+                // prefix matches win over substring matches (so "taha" finds
+                // Taa-Haa, not a surah whose name merely contains "th")
+                found = Quran.Data.Surahs.FirstOrDefault(s => Norm(arabic ? s.Name : s.EnglishName).StartsWith(needle))
+                     ?? (needle.Length >= 3
+                        ? Quran.Data.Surahs.FirstOrDefault(s =>
+                          {
+                              string hay = Norm(arabic ? s.Name : s.EnglishName);
+                              // either direction: "Al-Baqarah" must find "Al-Baqara"
+                              return hay.Contains(needle) || (hay.Length >= 3 && needle.Contains(hay));
+                          })
+                        : null);
+            }
+        }
+        else if (ayah >= 1 && ayah <= 114)
+        {
+            found = Quran.Surah(ayah); ayah = 0; // bare number = the surah itself
+        }
+        if (found == null) return;
+
+        int target = Math.Max(1, ayah);
+        if (target > found.Ayahs.Count) return;
+        _searchHits.Insert(0, new Translations.SearchHit(found.Number, target, "Jump to verse"));
+        SearchList.Items.Insert(0, L10n.T(
+            $"{found.Number}:{target} — {found.EnglishName} · jump to verse",
+            $"{found.Number}:{target} — {found.Name} · انتقل إلى الآية"));
     }
 
     void SearchList_SelectionChanged(object sender, SelectionChangedEventArgs e)
