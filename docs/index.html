@@ -158,7 +158,10 @@ h2{font-family:'Amiri',serif;font-size:1.9rem;text-align:center;margin-bottom:6p
 .mstep{display:flex;gap:20px;padding:22px 0;border-bottom:1px dashed #2a463a66}
 .mstep:last-child{border-bottom:none}
 .mstep .k{font-family:'Amiri',serif;color:var(--gold);font-size:1.35rem;min-width:120px;font-weight:700}
-.mstep .k small{display:block;color:var(--gold-faint);font-size:.8rem;font-weight:400}
+.mstep .k small{display:block;color:var(--gold-faint);font-size:.8rem;font-weight:400;margin-top:7px}
+/* Quranic text keeps its right-to-left order even when the page switches to English */
+.q{direction:rtl;unicode-bidi:isolate}
+.ayah,.surah-of-ayah,.basmala{direction:rtl;unicode-bidi:isolate}
 .mstep p{color:var(--muted);font-size:.97rem}
 .mstep p b{color:var(--paper);font-weight:600}
 .method-note{text-align:center;color:var(--muted);font-size:.92rem;margin-top:26px;max-width:640px;margin-inline:auto}
@@ -241,7 +244,7 @@ footer{border-top:1px solid var(--border);padding:38px 0 42px;text-align:center;
       <div class="mstep"><div class="k" data-i="m5k">الجدول<small data-i="m5s">يتكيف معك</small></div><p data-i="m5p">الآية المستقرة تبتعد قليلاً كل مرة (يوم، ثلاثة، سبعة، أربعة عشر، ثلاثون…)، والآية التي تنساها تعود <b>في اليوم نفسه</b> حتى تستقر. فالجدول ليس حكماً ثابتاً عليك، بل يتبع حفظك أنت.</p></div>
       <div class="mstep"><div class="k" data-i="m6k">سمّع نفسك<small data-i="m6s">سجّل وقارن</small></div><p data-i="m6p">في وضع الحفظ والمراجعة، <b>سجّل تلاوتك بصوتك</b> ثم شغّل تسجيلك وتلاوة الشيخ واحدًا بعد الآخر. أذنك تلتقط ما لا تلتقطه عينك.</p></div>
     </div>
-    <p class="method-note"><span class="amiri">﴿ وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا ﴾</span><br><span data-i="mNote">وتقدمك كله محفوظ على جهازك، ويمكنك أخذ نسخة احتياطية منه متى شئت — فالحفظ ثمرة شهور، ولا يليق أن تضيع.</span></p>
+    <p class="method-note"><span class="amiri q">﴿ وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا ﴾</span><br><span data-i="mNote">وتقدمك كله محفوظ على جهازك، ويمكنك أخذ نسخة احتياطية منه متى شئت — فالحفظ ثمرة شهور، ولا يليق أن تضيع.</span></p>
   </main>
 </section>
 
@@ -277,9 +280,9 @@ footer{border-top:1px solid var(--border);padding:38px 0 42px;text-align:center;
 
 <footer>
   <div class="wrap">
-    <p class="dua">اللهم اجعل عملي هذا خالصاً لوجهك، وانفع به من يقرأه</p>
+    <p class="dua" data-i="dua">اللهم اجعل عملي هذا خالصاً لوجهك، وانفع به من يقرأه</p>
     <p data-i="footer">ويدجت القرآن الكريم — مجاني ومفتوح المصدر · النص القرآني: Tanzil · التلاوات: cdn.islamic.network · خط أميري</p>
-    <p class="love">صُنع بـ ❤ بواسطة <a href="https://github.com/MohammedTsmu" target="_blank" rel="noopener">MohammedTsmu</a> — إن نفعك هذا العمل فادعُ له</p>
+    <p class="love"><span data-i="loveA">صُنع بـ ❤ بواسطة</span> <a href="https://github.com/MohammedTsmu" target="_blank" rel="noopener">MohammedTsmu</a><span data-i="loveB"> — إن نفعك هذا العمل فادعُ له</span></p>
     <p>© 2026 <a href="https://github.com/MohammedTsmu/QuranWidget" target="_blank" rel="noopener">Quran Widget</a></p>
   </div>
 </footer>
@@ -310,6 +313,8 @@ const I18N = {
     m5k:"The schedule", m5s:"it adapts to you", m5p:"A verse that stays solid moves further away each time (a day, three, seven, fourteen, thirty…); a verse you forget comes back the same day until it settles. The schedule follows your memory, not the other way round.",
     m6k:"Hear yourself", m6s:"record & compare", m6p:"In memorize and review, record your own recitation, then play yours and the reciter's back to back. Your ear catches what your eye misses.",
     mNote:"Your progress lives on your machine, and you can back it up whenever you like — months of hifz should never be lost.",
+    dua:"O Allah, make this work sincerely for Your sake, and let it benefit everyone who reads it",
+    loveA:"Made with ❤ by", loveB:" — if it benefits you, keep him in your prayers",
     dlH:"Get it now", dlSub:"Free & open source — no one should pay a cent to read the Book of Allah",
     dlBtn:"⬇ Download Windows installer", dlNote:"A portable (no-install) exe is also on the releases page · Current version ",
     s1:"Download and run the installer", s2:"The widget appears on your desktop instantly", s3:"Pick language, theme & reciter in ⚙ Settings",
