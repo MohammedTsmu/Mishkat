@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets\Data\quran.json" />
+    <EmbeddedResource Include="Assets\Data\quran.json" LogicalName="Mishkat.Assets.Data.quran.json" />
     <Resource Include="Assets\Fonts\**\*.ttf" />
   </ItemGroup>
 
