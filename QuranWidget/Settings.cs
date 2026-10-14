@@ -102,7 +102,7 @@ public static class SettingsService
         try
         {
             if (File.Exists(FilePath))
-                Current = JsonSerializer.Deserialize<Settings>(File.ReadAllText(FilePath)) ?? new Settings();
+                Current = JsonSerializer.Deserialize<Settings>(File.ReadAllText(FilePath), Json.Read) ?? new Settings();
         }
         catch
         {

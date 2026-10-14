@@ -5,7 +5,7 @@
 ; a clean uninstaller.
 
 #define AppName "Mishkat"
-#define AppVersion "2.9.2"
+#define AppVersion "2.9.3"
 #define AppPublisher "Mishkat"
 #define AppExe "Mishkat.exe"
 
@@ -54,3 +54,4 @@ Filename: "{app}\{#AppExe}"; Description: "Launch {#AppName}"; Flags: nowait pos
 
 [UninstallRun]
 Filename: "{cmd}"; Parameters: "/C taskkill /IM {#AppExe} /F"; Flags: runhidden; RunOnceId: "KillApp"
+

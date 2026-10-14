@@ -62,6 +62,11 @@ public partial class MainWindow : Window
             OnLoadedStartupPin();
         };
         _ready = true;
+        // prayer times used to initialize only when the user toggled the option,
+        // so after a restart an enabled PrayerEnabled setting never started its
+        // timer and the widget showed nothing (or a stale "finding location")
+        if (SettingsService.Current.PrayerEnabled)
+            _ = EnablePrayerTimesAsync();
     }
 
     public string CurrentReference => _passage.Reference;

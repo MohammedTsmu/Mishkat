@@ -14,6 +14,21 @@ public static class PrayerTimes
 
     static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(8) };
 
+    // Providers tried in order. ip-api.com is first because it has no rate limit
+    // for non-commercial use; ipapi.co throttles hard (429) and the widget used
+    // to hammer it every 30 seconds while failing, which kept it throttled.
+    static readonly string[] Providers =
+    {
+        "http://ip-api.com/json/?fields=status,lat,lon,city",
+        "https://ipwho.is/",
+        "https://ipapi.co/json/",
+    };
+
+    // If every provider fails, back off instead of retrying immediately —
+    // repeated 30-second retries kept us in the providers' rate-limit penalty box.
+    static DateTime _lastAllFail = DateTime.MinValue;
+    static readonly TimeSpan FailBackoff = TimeSpan.FromMinutes(3);
+
     static string CachePath()
     {
         var dir = Path.Combine(
@@ -38,35 +53,47 @@ public static class PrayerTimes
         {
             // cache unreadable; re-locate
         }
-        try
+        if (DateTime.UtcNow - _lastAllFail < FailBackoff) return null;
+
+        foreach (var url in Providers)
         {
-            var json = await Http.GetStringAsync("https://ipapi.co/json/");
-            var loc = ParseLocate(json);
-            if (loc != null)
+            try
             {
-                await File.WriteAllTextAsync(CachePath(), JsonSerializer.Serialize(loc));
-                return loc;
+                var json = await Http.GetStringAsync(url);
+                var loc = ParseLocate(json);
+                if (loc != null)
+                {
+                    _lastAllFail = DateTime.MinValue;
+                    await File.WriteAllTextAsync(CachePath(), JsonSerializer.Serialize(loc));
+                    return loc;
+                }
+                Log($"provider returned unusable response: {url}");
+            }
+            catch (Exception ex)
+            {
+                Log($"provider failed: {url} — {ex.Message}");
             }
         }
-        catch
-        {
-            // try the fallback below
-        }
-        try
-        {
-            var json = await Http.GetStringAsync("http://ip-api.com/json/?fields=status,lat,lon,city");
-            var loc = ParseLocate(json);
-            if (loc != null)
-            {
-                await File.WriteAllTextAsync(CachePath(), JsonSerializer.Serialize(loc));
-                return loc;
-            }
-        }
-        catch
-        {
-            // give up; caller decides what to show
-        }
+        _lastAllFail = DateTime.UtcNow;
         return null;
+    }
+
+    static void Log(string message) => Trace(message);
+
+    public static void Trace(string message)
+    {
+        try
+        {
+            var dir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QuranWidget");
+            Directory.CreateDirectory(dir);
+            File.AppendAllText(Path.Combine(dir, "locate.log"),
+                $"{DateTime.Now:u} {message}\n");
+        }
+        catch
+        {
+            // diagnostics are best-effort
+        }
     }
 
     static Location? ParseLocate(string json)
@@ -75,12 +102,32 @@ public static class PrayerTimes
         {
             using var doc = JsonDocument.Parse(json);
             var root = doc.RootElement;
-            if (root.TryGetProperty("status", out var st) && st.GetString() != "success")
+            // ip-api.com and ipwho.is report "status" ("success" string / true bool);
+            // ipapi.co has no status field at all
+            if (root.TryGetProperty("status", out var st))
+            {
+                if (st.ValueKind == JsonValueKind.String && st.GetString() != "success")
+                    return null;
+                if (st.ValueKind == JsonValueKind.False)
+                    return null;
+            }
+            // ip-api.com uses lat/lon; ipapi.co and ipwho.is use latitude/longitude.
+            // Accepting both here fixes the fallback that could never parse its
+            // own provider's response.
+            double? lat = null, lon = null;
+            if (root.TryGetProperty("latitude", out var la) && la.ValueKind == JsonValueKind.Number)
+                lat = la.GetDouble();
+            else if (root.TryGetProperty("lat", out var la2) && la2.ValueKind == JsonValueKind.Number)
+                lat = la2.GetDouble();
+            if (root.TryGetProperty("longitude", out var lo) && lo.ValueKind == JsonValueKind.Number)
+                lon = lo.GetDouble();
+            else if (root.TryGetProperty("lon", out var lo2) && lo2.ValueKind == JsonValueKind.Number)
+                lon = lo2.GetDouble();
+            if (lat == null || lon == null)
                 return null;
-            if (!root.TryGetProperty("latitude", out var la) || !root.TryGetProperty("longitude", out var lo))
-                return null;
-            string city = root.TryGetProperty("city", out var c) ? c.GetString() ?? "" : "";
-            return new Location(la.GetDouble(), lo.GetDouble(), city);
+            string city = root.TryGetProperty("city", out var c) && c.ValueKind == JsonValueKind.String
+                ? c.GetString() ?? "" : "";
+            return new Location(lat.Value, lon.Value, city);
         }
         catch
         {
