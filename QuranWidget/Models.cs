@@ -48,6 +48,19 @@ public sealed class Passage
 
 public static class Json
 {
-    public static readonly JsonSerializerOptions Read = new() { PropertyNameCaseInsensitive = true };
-    public static readonly JsonSerializerOptions Write = new() { WriteIndented = true };
+    // AllowNamedFloatingPointLiterals is required: settings such as Latitude,
+    // Longitude and the widget window positions (WidgetState.X/Y) legitimately
+    // hold double.NaN when unset. Without it, JsonSerializer.Serialize throws
+    // on the first NaN field, and since Save() is best-effort (swallows the
+    // exception) the whole settings file silently stopped being written.
+    public static readonly JsonSerializerOptions Read = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
+    };
+    public static readonly JsonSerializerOptions Write = new()
+    {
+        WriteIndented = true,
+        NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
+    };
 }
