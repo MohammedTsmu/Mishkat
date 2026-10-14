@@ -1,4 +1,4 @@
-﻿<div dir="rtl" align="right">
+<div dir="rtl" align="right">
 
 # ويدجت القرآن الكريم لويندوز 📖
 
@@ -9,8 +9,8 @@
 وواجهة عربية كاملة من اليمين لليسار، تعمل بدون إنترنت بعد أول تشغيل.
 
 <p align="center">
-  <a href="https://mohammedtsmu.github.io/QuranWidget/"><b>🌐 الموقع الرسمي</b></a> ·
-  <a href="https://github.com/MohammedTsmu/QuranWidget/releases/latest"><b>⬇ حمّل أحدث إصدار</b></a> ·
+  <a href="https://mohammedtsmu.github.io/Mishkat/"><b>🌐 الموقع الرسمي</b></a> ·
+  <a href="https://github.com/MohammedTsmu/Mishkat/releases/latest"><b>⬇ حمّل أحدث إصدار</b></a> ·
   <a href="#-المزايا"><b>المزايا</b></a>
 </p>
 
@@ -22,9 +22,9 @@
 
 ## ⬇ التحميل
 
-1. ادخل إلى [صفحة الإصدارات](https://github.com/MohammedTsmu/QuranWidget/releases/latest).
-2. حمّل **`QuranWidgetSetup-x.x.x.exe`** (مثبّت مع اختصار قائمة ابدأ وتشغيل تلقائي اختياري)
-   أو **`QuranWidget.exe`** (نسخة محمولة بدون تثبيت — تحتاج .NET Desktop Runtime).
+1. ادخل إلى [صفحة الإصدارات](https://github.com/MohammedTsmu/Mishkat/releases/latest).
+2. حمّل **`MishkatSetup-x.x.x.exe`** (مثبّت مع اختصار قائمة ابدأ وتشغيل تلقائي اختياري)
+   أو **`Mishkat.exe`** (نسخة محمولة بدون تثبيت — تحتاج .NET Desktop Runtime).
 3. شغّله — يظهر الويدجت على سطح مكتبك فوراً. يبقى في شريط المهام؛ الإغلاق يخفيه فقط.
 
 > 💡 بعد أول تشغيل: اختر اللغة والثيم والقارئ من زر ⚙ الإعدادات.
@@ -98,7 +98,7 @@
 ```cmd
 build.cmd           :: ملف تنفيذي (يحتاج .NET Desktop Runtime)
 build.cmd portable  :: ملف واحد مستقل تماماً
-ISCC.exe installer\QuranWidget.iss   :: مثبّت ويندوز (يتطلب Inno Setup 6)
+ISCC.exe installer\Mishkat.iss   :: مثبّت ويندوز (يتطلب Inno Setup 6)
 ```
 
 ## 🙏 صُنع بـ ❤ بواسطة
@@ -117,7 +117,7 @@ ISCC.exe installer\QuranWidget.iss   :: مثبّت ويندوز (يتطلب Inno
 
 <div dir="ltr" align="left">
 
-# Quran Widget for Windows
+# مشكاة — Mishkat
 
 **The daily Ayah, living on your desktop.**
 
@@ -126,8 +126,8 @@ Uthmani script (Amiri Quran typeface) with its English meaning, recitation from
 7 renowned reciters, prayer times, and a complete memorization & review mode —
 with a full Arabic (RTL) or English interface, fully offline after first run.
 
-**[⬇ Download the latest release](https://github.com/MohammedTsmu/QuranWidget/releases/latest)** ·
-[Website](https://mohammedtsmu.github.io/QuranWidget/)
+**[⬇ Download the latest release](https://github.com/MohammedTsmu/Mishkat/releases/latest)** ·
+[Website](https://mohammedtsmu.github.io/Mishkat/)
 
 ### Features at a glance
 - **Verse of the Day** — a curated verse that changes every midnight (same on every device), with translation and Hijri + Gregorian dates.
@@ -141,13 +141,13 @@ with a full Arabic (RTL) or English interface, fully offline after first run.
 - **Offline-aware** — clear indicator when internet drops; reading, search and copy always work offline.
 
 ### Install
-Grab **`QuranWidgetSetup-x.x.x.exe`** from the [releases page](https://github.com/MohammedTsmu/QuranWidget/releases/latest) (installer with Start-menu shortcut and optional autostart), or the portable **`QuranWidget.exe`** (needs the .NET Desktop Runtime).
+Grab **`MishkatSetup-x.x.x.exe`** from the [releases page](https://github.com/MohammedTsmu/Mishkat/releases/latest) (installer with Start-menu shortcut and optional autostart), or the portable **`Mishkat.exe`** (needs the .NET Desktop Runtime).
 
 ### Build from source
 ```cmd
 build.cmd           :: framework-dependent exe
 build.cmd portable  :: self-contained single exe
-ISCC.exe installer\QuranWidget.iss  :: Windows installer (Inno Setup 6)
+ISCC.exe installer\Mishkat.iss  :: Windows installer (Inno Setup 6)
 ```
 
 **Built with ❤ by [MohammedTsmu](https://github.com/MohammedTsmu)** — if it benefits you, keep him in your prayers.

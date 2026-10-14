@@ -84,7 +84,7 @@ public sealed class Settings
     public int ResumeA { get; set; } = -1;
 
     // GitHub repo "owner/name" for update checks; empty falls back to the default repo
-    public string UpdateRepo { get; set; } = "MohammedTsmu/QuranWidget";
+    public string UpdateRepo { get; set; } = "MohammedTsmu/Mishkat";
 
     public Dictionary<string, WidgetState> Windows { get; set; } = new();
 }
@@ -109,7 +109,7 @@ public static class SettingsService
             Current = new Settings();
         }
         if (string.IsNullOrWhiteSpace(Current.UpdateRepo))
-            Current.UpdateRepo = "MohammedTsmu/QuranWidget";
+            Current.UpdateRepo = "MohammedTsmu/Mishkat";
     }
 
     public static void Save()
@@ -129,7 +129,7 @@ public static class SettingsService
 public static class Autostart
 {
     const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    const string ValueName = "QuranWidget";
+    const string ValueName = "Mishkat";
 
     public static bool IsEnabled()
     {

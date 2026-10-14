@@ -13,7 +13,7 @@ public static class Quran
     public static void Load()
     {
         var asm = Assembly.GetExecutingAssembly();
-        using var stream = asm.GetManifestResourceStream("QuranWidget.Assets.Data.quran.json")
+        using var stream = asm.GetManifestResourceStream("Mishkat.Assets.Data.quran.json")
             ?? throw new InvalidOperationException("Embedded Quran data not found");
         Data = JsonSerializer.Deserialize<QuranData>(stream, Json.Read) ?? new QuranData();
 

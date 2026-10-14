@@ -68,7 +68,7 @@ public partial class App : System.Windows.Application
         }
         catch (Exception ex)
         {
-            System.Windows.MessageBox.Show($"Failed to load Quran data:\n{ex.Message}", "Quran Widget",
+            System.Windows.MessageBox.Show($"Failed to load Quran data:\n{ex.Message}", L10n.T("Mishkat", "مشكاة"),
                 System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             Shutdown(1);
             return;
@@ -97,7 +97,7 @@ public partial class App : System.Windows.Application
 
         if (!smoke && !hidden)
         {
-            _tray?.ShowBalloonTip(2500, "Quran Widget",
+            _tray?.ShowBalloonTip(2500, L10n.T("Mishkat", "مشكاة"),
                 L10n.T("Your verse of the day is on the desktop.\nRight-click it for more options.","آية اليوم على سطح مكتبك.\nانقر بزر الفأرة الأيمن للمزيد من الخيارات."),
                 WinForms.ToolTipIcon.Info);
         }
@@ -142,7 +142,7 @@ public partial class App : System.Windows.Application
         _tray = new WinForms.NotifyIcon
         {
             Icon = IconFactory.CreateIcon(32),
-            Text = "Quran Widget",
+            Text = L10n.T("Mishkat", "مشكاة"),
             Visible = true,
         };
 
@@ -206,7 +206,7 @@ public partial class App : System.Windows.Application
 
     public void ApplyTrayLanguage()    {
         if (_tray == null) return;
-        _tray.Text = "Quran Widget";
+        _tray.Text = L10n.T("Mishkat", "مشكاة");
         foreach (var item in _tray.ContextMenuStrip!.Items.OfType<WinForms.ToolStripMenuItem>())
         {
             item.Text = item.Name switch
@@ -228,9 +228,9 @@ public partial class App : System.Windows.Application
         var repo = SettingsService.Current.UpdateRepo;
         var (update, detail) = await UpdateChecker.CheckAsync(repo);
         if (_tray != null)
-            _tray.ShowBalloonTip(3000, "Quran Widget", detail, WinForms.ToolTipIcon.Info);
+            _tray.ShowBalloonTip(3000, L10n.T("Mishkat", "مشكاة"), detail, WinForms.ToolTipIcon.Info);
         if (update && _tray != null)
-            _tray.Text = $"Quran Widget — {detail}";
+            _tray.Text = $"{L10n.T("Mishkat", "مشكاة")} — {detail}";
     }
 
     void OpenLog()
@@ -334,7 +334,7 @@ public partial class App : System.Windows.Application
             s.HifzLastReminderDay = today;
             SettingsService.Save();
             _reminderArmed = true;
-            _tray?.ShowBalloonTip(8000, "Quran Widget",
+            _tray?.ShowBalloonTip(8000, L10n.T("Mishkat", "مشكاة"),
                 L10n.T($"{due} verse(s) are due for review today. Tap to review.",
                        $"{L10n.Ar(due)} آية مستحقة للمراجعة اليوم. اضغط للمراجعة."),
                 WinForms.ToolTipIcon.Info);

@@ -10,7 +10,7 @@ public static class UpdateChecker
     static readonly HttpClient Http = new()
     {
         Timeout = TimeSpan.FromSeconds(10),
-        DefaultRequestHeaders = { { "User-Agent", "QuranWidget" } },
+        DefaultRequestHeaders = { { "User-Agent", "Mishkat" } },
     };
 
     // Returns the new tag if an update exists, null if up to date,

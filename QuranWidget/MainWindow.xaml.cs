@@ -706,7 +706,7 @@ public partial class MainWindow : Window
             var r = System.Windows.MessageBox.Show(this,
                 L10n.T($"Download the whole Quran recited by {DlReciterName} (~2.5 GB)?\nThis needs a while and a stable connection.",
                        $"تنزيل المصحف كاملاً بصوت {DlReciterName} (~2.5 جيجابايت)؟\nقد يستغرق وقتاً طويلاً ويتطلب اتصالاً مستقراً."),
-                "Quran Widget", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                L10n.T("Mishkat", "مشكاة"), MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (r != MessageBoxResult.Yes) return;
             surahs = Enumerable.Range(1, 114);
         }
@@ -1585,7 +1585,7 @@ public partial class MainWindow : Window
         Autostart.Set(on);
         SettingsService.Current.LaunchAtStartup = on;
         SettingsService.Save();
-        ShowStatus(on ? L10n.T("Quran Widget will start with Windows", "سيبدأ Quran Widget مع Windows") : L10n.T("Autostart disabled", "أُلغي البدء التلقائي"));
+        ShowStatus(on ? L10n.T("Mishkat will start with Windows", "سيبدأ مشكاة مع Windows") : L10n.T("Autostart disabled", "أُلغي البدء التلقائي"));
     }
 
     void SetAlwaysOnTop(bool on)

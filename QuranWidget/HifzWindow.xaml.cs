@@ -1096,7 +1096,7 @@ public partial class HifzWindow : Window
         }
         catch (Exception ex)
         {
-            System.Windows.MessageBox.Show(ex.Message, "Quran Widget",
+            System.Windows.MessageBox.Show(ex.Message, L10n.T("Mishkat", "مشكاة"),
                 System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
         }
     }
@@ -1108,7 +1108,7 @@ public partial class HifzWindow : Window
         var answer = System.Windows.MessageBox.Show(
             L10n.T("Restoring will replace your current memorization progress with the backup. Continue?",
                    "ستؤدي الاستعادة إلى استبدال تقدم الحفظ الحالي بالنسخة الاحتياطية. هل تريد المتابعة؟"),
-            "Quran Widget", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
+            L10n.T("Mishkat", "مشكاة"), System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
         if (answer != System.Windows.MessageBoxResult.Yes) return;
         try
         {
@@ -1123,7 +1123,7 @@ public partial class HifzWindow : Window
         catch (Exception ex)
         {
             try { HifzStore.Open(); } catch { /* already failing */ }
-            System.Windows.MessageBox.Show(ex.Message, "Quran Widget",
+            System.Windows.MessageBox.Show(ex.Message, L10n.T("Mishkat", "مشكاة"),
                 System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
         }
     }
@@ -1146,7 +1146,7 @@ public partial class HifzWindow : Window
         }
         catch (Exception ex)
         {
-            System.Windows.MessageBox.Show(ex.Message, "Quran Widget",
+            System.Windows.MessageBox.Show(ex.Message, L10n.T("Mishkat", "مشكاة"),
                 System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
         }
     }
