@@ -72,12 +72,13 @@ public static class Audio
     // new passage keeps the recitation going (continuous reading), returning null
     // ends it. `next` runs on the UI thread and may update the widget display.
     // `onVerse` is invoked with the index of each verse as it starts playing.
+    // `startVerse` begins playback partway through the passage (tapping a verse).
     public static async void PlayRecitation(Passage passage, string reciterId,
-        Func<Passage?>? next = null, Action<int>? onVerse = null)
+        Func<Passage?>? next = null, Action<int>? onVerse = null, int startVerse = 0)
     {
         StopAll();
         if (passage.Verses.Count == 0) return;
-        await RunLoop(passage, reciterId, next, onVerse, startVerse: 0);
+        await RunLoop(passage, reciterId, next, onVerse, startVerse);
     }
 
     // Live playback state, so the reciter can be switched mid-verse and the
@@ -115,12 +116,22 @@ public static class Audio
     {
         if (!PlayingRecitation) return;
         if (newReciterId == _playingReciter) return;
+        _playingReciter = newReciterId;
+        RestartFrom(_playingVerse);
+    }
+
+    // Restarts the running recitation from the given verse of its current
+    // passage (tapping a verse), continuing onward from there.
+    public static void RestartFrom(int verseIndex)
+    {
+        if (!PlayingRecitation) return;
+        int verse = Math.Clamp(verseIndex, 0, Math.Max(0, _playingPassage.Verses.Count - 1));
         var passage = _playingPassage;
-        int verse = _playingVerse;
         var next = _playingNext;
         var onVerse = _playingOnVerse;
+        var reciter = _playingReciter;
         StopAll();   // bumps the session, which ends the old loop after the current file
-        _ = RunLoop(passage, newReciterId, next, onVerse, startVerse: verse);
+        _ = RunLoop(passage, reciter, next, onVerse, startVerse: verse);
     }
 
     static async Task RunLoop(Passage passage, string reciterId,

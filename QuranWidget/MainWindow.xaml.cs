@@ -256,6 +256,67 @@ public partial class MainWindow : Window
         }
     }
 
+    // ---------- tapping verses ----------
+
+    // Tapping a verse replays it: while recitation is running it restarts from
+    // that verse and continues; when stopped it begins playing from there.
+    void ArabicText_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (!_ready || _verseRuns.Count == 0 || _passage.Verses.Count == 0) return;
+        var pos = ArabicText.GetPositionFromPoint(e.GetPosition(ArabicText), snapToText: true);
+        if (pos == null) return;
+        int idx = VerseIndexFromPosition(pos);
+        if (idx < 0) return;
+        e.Handled = true;
+        PlayFromVerse(idx);
+    }
+
+    int VerseIndexFromPosition(System.Windows.Documents.TextPointer pos)
+    {
+        var start = ArabicText.ContentStart;
+        int p;
+        try { p = start.GetOffsetToPosition(pos); }
+        catch { return -1; }
+        int best = -1, bestDist = int.MaxValue;
+        for (int i = 0; i < _verseRuns.Count; i++)
+        {
+            try
+            {
+                int s = start.GetOffsetToPosition(_verseRuns[i].ContentStart);
+                int en = start.GetOffsetToPosition(_verseRuns[i].ContentEnd);
+                if (p >= s && p <= en) return i;
+                int d = p < s ? s - p : p - en;
+                if (d >= 0 && d < bestDist) { bestDist = d; best = i; }
+            }
+            catch
+            {
+                // a run detached mid-rebuild; skip it
+            }
+        }
+        return best;
+    }
+
+    void PlayFromVerse(int idx)
+    {
+        var s = SettingsService.Current;
+        if (Audio.PlayingRecitation && Audio.IsPlayingPassage(_passage))
+        {
+            _versesPlayed = 0;
+            Audio.RestartFrom(idx);
+            return;
+        }
+        if (!HasInternet())
+        {
+            ShowStatus(L10n.T("No internet — recitation is unavailable", "لا يوجد إنترنت — التلاوة غير متاحة"));
+            return;
+        }
+        _versesPlayed = 0;
+        Audio.PlayRecitation(_passage, s.ReciterId,
+            next: NextReadingPassage, onVerse: HighlightVerse, startVerse: idx);
+        PlayButton.Content = GlyphStop;
+        ShowStatus(L10n.T("Reciting…", "تلاوة…"));
+    }
+
     void HighlightVerse(int indexInPassage)
     {
         var normal = (System.Windows.Media.Brush)FindResource("TextPrimary");
@@ -674,6 +735,7 @@ public partial class MainWindow : Window
 
         // tooltips
         ToolTipService.SetToolTip(SearchButton, L10n.T("Search the Quran (text, verse number like 2:255, or surah name)", "ابحث في القرآن (نص، أو رقم آية مثل 2:255، أو اسم سورة)"));
+        ToolTipService.SetToolTip(ArabicText, L10n.T("Tap a verse to replay it from there", "اضغط على آية لإعادة سماعها من عندها"));
         ToolTipService.SetToolTip(PlayButton, SettingsService.Current.ContinueReading
             ? L10n.T("Play recitation (continuous reading)", "تشغيل التلاوة (متابعة القراءة)")
             : L10n.T("Play recitation", "تشغيل التلاوة"));
