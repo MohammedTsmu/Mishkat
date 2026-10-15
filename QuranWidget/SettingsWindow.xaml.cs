@@ -28,7 +28,9 @@ public partial class SettingsWindow : Window
         Closing += (_, _) => SettingsService.Save();
 
         // The widget survives Win+D ("show desktop"); settings must stay available
-        // the same way, so restore immediately if something ever minimizes it.
+        // the same way. WindowChrome strips the tool-window style, so reassert it,
+        // and restore immediately if something ever minimizes the window anyway.
+        SourceInitialized += (_, _) => WindowEffects.ForceToolWindow(this);
         StateChanged += (_, _) =>
         {
             if (WindowState == WindowState.Minimized)

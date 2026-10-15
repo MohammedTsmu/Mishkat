@@ -71,6 +71,15 @@ public partial class HifzWindow : Window
         SelectTab(TabMemorize);
         Loaded += (_, _) => UpdateStats();
         Closing += (_, _) => { Audio.StopAll(); Recorder.StopAll(); };
+        // stay on screen through Win+D / "show desktop" like the widget does:
+        // WindowChrome strips the tool-window style, so reassert it, and undo
+        // any minimize immediately (the window has no minimize button)
+        SourceInitialized += (_, _) => WindowEffects.ForceToolWindow(this);
+        StateChanged += (_, _) =>
+        {
+            if (WindowState == WindowState.Minimized)
+                WindowState = WindowState.Normal;
+        };
     }
 
     void Close_Click(object sender, RoutedEventArgs e) => Close();

@@ -175,6 +175,26 @@ internal static class WindowEffects
         }
     }
 
+    // Forces the tool-window style (like ShowInTaskbar=False gives plain WPF
+    // windows). WindowChrome strips it during initialization, which turns the
+    // settings and memorization windows into normal windows that Win+D
+    // ("show desktop") minimizes along with everything else.
+    public static void ForceToolWindow(Window w)
+    {
+        try
+        {
+            var hwnd = new System.Windows.Interop.WindowInteropHelper(w).EnsureHandle();
+            int ex = Native.GetWindowLong(hwnd, Native.GWL_EXSTYLE);
+            const int WS_EX_APPWINDOW = 0x00040000;
+            Native.SetWindowLong(hwnd, Native.GWL_EXSTYLE, (ex | Native.WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
+            Native.SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0,
+                Native.SWP_NOMOVE | Native.SWP_NOSIZE | Native.SWP_FRAMECHANGED | Native.SWP_NOACTIVATE);
+        }
+        catch
+        {
+        }
+    }
+
     public static void SendToBottom(IntPtr hwnd)
     {
         try
@@ -191,8 +211,8 @@ internal static class WindowEffects
     {
         try
         {
-            int exStyle = Native.GetWindowLong(hwnd, Native.GWL_EXSTYLE);
-            Native.SetWindowLong(hwnd, Native.GWL_EXSTYLE, exStyle & ~Native.WS_EX_TOOLWINDOW);
+            // keep WS_EX_TOOLWINDOW: the widget always has ShowInTaskbar=False,
+            // so it must stay invisible to Win+D ("show desktop") after unpinning
             Native.SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0,
                 Native.SWP_NOMOVE | Native.SWP_NOSIZE | Native.SWP_FRAMECHANGED | Native.SWP_SHOWWINDOW);
         }

@@ -1059,6 +1059,18 @@ public partial class MainWindow : Window
         // it can safely be re-parented); acrylic is decided by the pin state.
         if (!SettingsService.Current.PinToDesktop)
             WindowEffects.EnableAcrylic(this);
+        // keep the tool-window style (ShowInTaskbar=False) so Win+D / "show
+        // desktop" never minimizes the widget; unpinning re-asserts it too
+        WindowEffects.ForceToolWindow(this);
+        StateChanged += (_, _) =>
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                WindowState = WindowState.Normal;
+                if (SettingsService.Current.AlwaysOnTop && !SettingsService.Current.PinToDesktop)
+                    Topmost = true;
+            }
+        };
     }
 
     bool _startupPinDone;
