@@ -300,9 +300,11 @@ public partial class MainWindow : Window
 
     void OnAudioStatus(string msg)
     {
+        // always sync the play/stop glyphs with the actual audio state — a
+        // reciter switch mid-playback fires status events while playing
+        ResetAudioButtons();
         if (msg.Length == 0)
         {
-            ResetAudioButtons();
             StopShimmer();
             return;
         }

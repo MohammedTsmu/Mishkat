@@ -231,11 +231,16 @@ public partial class SettingsWindow : Window
         if (i < 0 || i >= Audio.Reciters.Length) return;
         if (i != _reciterIndex)
         {
-            if (Audio.PlayingRecitation) Audio.StopAll();
             _reciterIndex = i;
             SettingsService.Current.ReciterId = Audio.Reciters[i].Id;
             ReciterToggle.Content = Audio.ReciterName(i);
             SaveNow();
+            if (Audio.PlayingRecitation)
+            {
+                // keep the recitation going: fetch the new voice and continue
+                // from the verse that was playing
+                Audio.SwitchReciter(Audio.Reciters[i].Id);
+            }
         }
         ReciterPopup.IsOpen = false;
     }

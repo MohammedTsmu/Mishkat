@@ -77,29 +77,68 @@ public static class Audio
     {
         StopAll();
         if (passage.Verses.Count == 0) return;
-        int session = _session;
+        await RunLoop(passage, reciterId, next, onVerse, startVerse: 0);
+    }
+
+    // Live playback state, so the reciter can be switched mid-verse and the
+    // recitation continues from where it reached with the new voice.
+    static Passage _playingPassage = new();
+    static int _playingVerse;
+    static string _playingReciter = "";
+    static Func<Passage?>? _playingNext;
+    static Action<int>? _playingOnVerse;
+
+    public static string PlayingReciterId => _playingReciter;
+
+    // Switches the reciter while recitation is playing: fetches the new voice's
+    // audio (downloading it on demand) and continues from the verse that was
+    // playing. Does nothing when nothing is playing or the reciter is unchanged.
+    public static void SwitchReciter(string newReciterId)
+    {
+        if (!PlayingRecitation) return;
+        if (newReciterId == _playingReciter) return;
+        var passage = _playingPassage;
+        int verse = _playingVerse;
+        var next = _playingNext;
+        var onVerse = _playingOnVerse;
+        StopAll();   // bumps the session, which ends the old loop after the current file
+        _ = RunLoop(passage, newReciterId, next, onVerse, startVerse: verse);
+    }
+
+    static async Task RunLoop(Passage passage, string reciterId,
+        Func<Passage?>? next, Action<int>? onVerse, int startVerse)
+    {
+        int session = _session;   // captured after the caller bumped it via StopAll
         PlayingRecitation = true;
+        _playingPassage = passage;
+        _playingReciter = reciterId;
+        _playingNext = next;
+        _playingOnVerse = onVerse;
+        _playingVerse = Math.Clamp(startVerse, 0, Math.Max(0, passage.Verses.Count - 1));
         Status?.Invoke(L10n.T("Preparing recitation…","جارٍ تحضير التلاوة…"));
         try
         {
             while (true)
             {
-                var files = new List<string>();
-                foreach (var v in passage.Verses)
+                // fetch (and cache) the remaining verses of this passage
+                for (int v = _playingVerse; v < passage.Verses.Count; v++)
                 {
-                    if (session != _session) return;
-                    files.Add(await CacheAsync(reciterId, v.Global));
+                    if (session != _session) { Log($"cache loop exit: session {session} != {_session}"); return; }
+                    await CacheAsync(reciterId, passage.Verses[v].Global);
                 }
-                for (int i = 0; i < files.Count; i++)
+                for (int i = _playingVerse; i < passage.Verses.Count; i++)
                 {
-                    if (session != _session || !PlayingRecitation) return;
+                    if (session != _session || !PlayingRecitation) { Log($"play loop exit: session {session} vs {_session}, playing={PlayingRecitation}"); return; }
+                    _playingVerse = i;
                     Status?.Invoke(L10n.T("Reciting…","تلاوة…"));
                     onVerse?.Invoke(i);
-                    var ok = await PlayFileAsync(files[i]);
+                    var file = Path.Combine(CacheRoot, reciterId, passage.Verses[i].Global + ".mp3");
+                    var ok = await PlayFileAsync(file);
                     if (session != _session) return;
                     if (!ok)
                     {
                         PlayingRecitation = false;
+                        Log($"playback failed: {file}");
                         Status?.Invoke(L10n.T("Could not play the recitation","تعذر تشغيل التلاوة"));
                         return;
                     }
@@ -108,17 +147,34 @@ public static class Audio
                 var following = next();
                 if (following == null || following.Verses.Count == 0) break;
                 passage = following;
+                _playingPassage = passage;
+                _playingVerse = 0;
             }
             if (session != _session) return;
             PlayingRecitation = false;
             onVerse?.Invoke(-1);
             Status?.Invoke("");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Log($"loop exception (session {session}, now {_session}): {ex.Message}");
             if (session != _session) return;
             PlayingRecitation = false;
             Status?.Invoke(L10n.T("Recitation needs an internet connection","تحتاج التلاوة إلى اتصال بالإنترنت"));
+        }
+    }
+
+    static void Log(string message)
+    {
+        try
+        {
+            File.AppendAllText(Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "QuranWidget", "log.txt"), $"{DateTime.Now:u} {message}\n");
+        }
+        catch
+        {
+            // diagnostics are best-effort
         }
     }
 
