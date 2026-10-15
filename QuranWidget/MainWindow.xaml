@@ -185,6 +185,9 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button x:Name="PlayButton" Style="{StaticResource IconButton}" Content="&#xE768;"
                                 ToolTip="Play recitation" Click="PlayRecitation_Click"/>
+                        <Button x:Name="SleepButton" Style="{StaticResource IconButton}" Content="&#xE708;"
+                                ToolTip="Sleep timer" Margin="6,0,0,0" Click="SleepQuick_Click"
+                                AutomationProperties.Name="Sleep timer"/>
                         <Button x:Name="TtsButton" Style="{StaticResource IconButton}" Content="&#xE767;"
                                 ToolTip="Read the meaning aloud" Margin="6,0,0,0" Click="SpeakMeaning_Click"/>
                         <Button x:Name="NextButton" Style="{StaticResource IconButton}" Content="&#xE72C;"
@@ -224,6 +227,26 @@
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                      MaxHeight="260" Margin="0,2,0,0"
                                      SelectionChanged="SearchList_SelectionChanged"/>
+                        </StackPanel>
+                    </Border>
+                </Popup>
+
+                <!-- sleep timer quick popup -->
+                <Popup x:Name="SleepQuickPopup" PlacementTarget="{Binding ElementName=SleepButton}"
+                       Placement="Top" StaysOpen="False" AllowsTransparency="True"
+                       PopupAnimation="Fade" Closed="SleepQuickPopup_Closed">
+                    <Border Background="{DynamicResource Surface}" BorderBrush="{DynamicResource SurfaceBorder}" BorderThickness="1"
+                            CornerRadius="10" Padding="6" Margin="10" MinWidth="250">
+                        <Border.Effect>
+                            <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="16" ShadowDepth="3" Opacity="0.45"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock x:Name="SleepQuickTitle" Text="SLEEP TIMER" FontSize="11"
+                                       Foreground="{DynamicResource TextFaint}" Margin="8,4,0,6"/>
+                            <ListBox x:Name="SleepQuickList" Background="Transparent" BorderThickness="0"
+                                     ItemContainerStyle="{StaticResource DarkListBoxItem}"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     SelectionChanged="SleepQuickList_SelectionChanged"/>
                         </StackPanel>
                     </Border>
                 </Popup>

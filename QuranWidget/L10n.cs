@@ -8,6 +8,13 @@ public static class L10n
 
     public static string T(string en, string ar) => ArabicUI ? ar : en;
 
+    // Sleep timer choices shared by the widget's quick control and settings.
+    public static readonly int[] SleepOptions = { 0, 10, 20, 30, 60 };
+
+    public static string SleepLabel(int minutes) =>
+        minutes <= 0 ? T("Off — play until I stop", "بدون توقيت — حتى أوقفه")
+                     : T($"Stop after {minutes} minutes", $"بعد {minutes} دقيقة");
+
     public static string Ar(int n) => Quran.ToArabicDigits(n);
 
     // "Ayah 7" / "Ayahs 1–7" / "الآية ٧" / "الآيات ١–٧"

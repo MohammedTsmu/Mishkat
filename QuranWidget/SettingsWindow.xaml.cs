@@ -145,7 +145,7 @@ public partial class SettingsWindow : Window
         // picker values follow the language too
         ReciterToggle.Content = Audio.ReciterName(_reciterIndex);
         StopAtToggle.Content = StopAtLabel(SettingsService.Current.StopAt);
-        SleepToggle.Content = SleepLabel(SettingsService.Current.SleepMinutes);
+        SleepToggle.Content = L10n.SleepLabel(SettingsService.Current.SleepMinutes);
         ThemeToggle.Content = ThemeService.NameOf(SettingsService.Current.Theme);
         TranslationToggle.Content = TranslationName(SettingsService.Current.TranslationId);
         if (DlReciterToggle.IsChecked != true) DlReciterToggle.Content = DlReciterName;
@@ -330,12 +330,6 @@ public partial class SettingsWindow : Window
 
     // ---------- sleep timer ----------
 
-    static readonly int[] SleepOptions = { 0, 10, 20, 30, 60 };
-
-    static string SleepLabel(int minutes) =>
-        minutes <= 0 ? L10n.T("Off — play until I stop", "بدون توقيت — حتى أوقفه")
-                     : L10n.T($"Stop after {minutes} minutes", $"بعد {minutes} دقيقة");
-
     bool _pickingSleep;
 
     void SleepToggle_Changed(object sender, RoutedEventArgs e)
@@ -344,8 +338,8 @@ public partial class SettingsWindow : Window
         if (SleepToggle.IsChecked == true)
         {
             _pickingSleep = true;
-            SleepList.ItemsSource = SleepOptions.Select(SleepLabel).ToList();
-            SleepList.SelectedIndex = Array.IndexOf(SleepOptions, SettingsService.Current.SleepMinutes) is >= 0 and int ix ? ix : 0;
+            SleepList.ItemsSource = L10n.SleepOptions.Select(L10n.SleepLabel).ToList();
+            SleepList.SelectedIndex = Array.IndexOf(L10n.SleepOptions, SettingsService.Current.SleepMinutes) is >= 0 and int ix ? ix : 0;
             SleepList.ScrollIntoView(SleepList.SelectedItem);
             _pickingSleep = false;
             SleepPopup.IsOpen = true;
@@ -359,12 +353,12 @@ public partial class SettingsWindow : Window
     {
         if (_pickingSleep) return;
         int i = SleepList.SelectedIndex;
-        if (i < 0 || i >= SleepOptions.Length) return;
-        int minutes = SleepOptions[i];
+        if (i < 0 || i >= L10n.SleepOptions.Length) return;
+        int minutes = L10n.SleepOptions[i];
         if (minutes != SettingsService.Current.SleepMinutes)
         {
             SettingsService.Current.SleepMinutes = minutes;
-            SleepToggle.Content = SleepLabel(minutes);
+            SleepToggle.Content = L10n.SleepLabel(minutes);
             Audio.SetSleepTimer(minutes);
             SaveNow();
             RefreshWidgets();

@@ -307,8 +307,72 @@ public partial class MainWindow : Window
     DispatcherTimer? _probeTimer;
     static readonly HttpClient ProbeHttp = new() { Timeout = TimeSpan.FromSeconds(5) };
 
+    // ---------- sleep timer quick control ----------
+
+    bool _pickingSleepQuick;
+
+    void SleepQuick_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_ready) return;
+        _pickingSleepQuick = true;
+        SleepQuickTitle.Text = L10n.T("SLEEP TIMER", "مؤقت النوم");
+        SleepQuickList.ItemsSource = L10n.SleepOptions.Select(L10n.SleepLabel).ToList();
+        SleepQuickList.SelectedIndex = Array.IndexOf(L10n.SleepOptions, SettingsService.Current.SleepMinutes) is >= 0 and int ix ? ix : 0;
+        SleepQuickList.ScrollIntoView(SleepQuickList.SelectedItem);
+        _pickingSleepQuick = false;
+        SleepQuickPopup.IsOpen = true;
+    }
+
+    void SleepQuickPopup_Closed(object? sender, EventArgs e)
+    {
+        SyncSleepButton();
+    }
+
+    void SleepQuickList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_ready || _pickingSleepQuick) return;
+        int i = SleepQuickList.SelectedIndex;
+        SleepQuickList.SelectedIndex = -1;
+        if (i < 0 || i >= L10n.SleepOptions.Length) return;
+        int minutes = L10n.SleepOptions[i];
+        SleepQuickPopup.IsOpen = false;
+        if (minutes != SettingsService.Current.SleepMinutes)
+        {
+            SettingsService.Current.SleepMinutes = minutes;
+            Audio.SetSleepTimer(minutes);
+            SettingsService.Save();
+            if (minutes > 0) SyncSleepCountdown();
+            ShowStatus(minutes > 0
+                ? L10n.T($"Sleep timer: recitation stops after {minutes} min", $"مؤقت النوم: تتوقف التلاوة بعد {minutes} دقيقة")
+                : L10n.T("Sleep timer off", "مؤقت النوم متوقف"));
+        }
+        SyncSleepButton();
+    }
+
+    // Moon button reflects the armed state: gold while a timer is running,
+    // with the time remaining in the tooltip.
+    void SyncSleepButton()
+    {
+        var end = Audio.SleepEnd;
+        if (end != null)
+        {
+            var rem = end.Value - DateTime.UtcNow;
+            SleepButton.Foreground = (System.Windows.Media.Brush)FindResource("Gold");
+            SleepButton.ToolTip = rem > TimeSpan.Zero
+                ? L10n.T($"Sleep timer — stops in {(int)rem.TotalMinutes}:{rem.Seconds:00}",
+                         $"مؤقت النوم — يتوقف بعد {(int)rem.TotalMinutes}:{rem.Seconds:00}")
+                : L10n.T("Sleep timer", "مؤقت النوم");
+        }
+        else
+        {
+            SleepButton.ClearValue(ForegroundProperty);
+            SleepButton.ToolTip = L10n.T("Sleep timer", "مؤقت النوم");
+        }
+    }
+
     void OnAudioStatus(string msg)
     {
+        SyncSleepButton();
         // always sync the play/stop glyphs with the actual audio state — a
         // reciter switch mid-playback fires status events while playing
         ResetAudioButtons();
@@ -584,6 +648,7 @@ public partial class MainWindow : Window
         Topmost = s.AlwaysOnTop && !s.PinToDesktop;
         ApplyFontSize();
         if (Audio.SleepEnd != null) SyncSleepCountdown();
+        SyncSleepButton();
         ApplyTranslationVisibility();
         ApplyLanguage();
         PlayButton.ToolTip = s.ContinueReading ? "Play recitation (continuous reading)" : "Play recitation";
@@ -650,11 +715,13 @@ public partial class MainWindow : Window
         if (end == null)
         {
             _sleepUiTimer?.Stop();
+            SyncSleepButton();
             if (StatusText.Text.StartsWith("Sleeping in", StringComparison.Ordinal) ||
                 StatusText.Text.StartsWith("سيتم التوقف بعد", StringComparison.Ordinal))
                 ShowStatus("");
             return;
         }
+        SyncSleepButton();
         var rem = end.Value - DateTime.UtcNow;
         if (rem <= TimeSpan.Zero) return;
         ShowStatus(L10n.T($"Sleeping in {(int)rem.TotalMinutes}:{rem.Seconds:00}",
