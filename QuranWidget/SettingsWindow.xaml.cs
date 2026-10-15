@@ -26,6 +26,14 @@ public partial class SettingsWindow : Window
         _loading = false;
         Activated += (_, _) => UpdateResumeText();
         Closing += (_, _) => SettingsService.Save();
+
+        // The widget survives Win+D ("show desktop"); settings must stay available
+        // the same way, so restore immediately if something ever minimizes it.
+        StateChanged += (_, _) =>
+        {
+            if (WindowState == WindowState.Minimized)
+                WindowState = WindowState.Normal;
+        };
     }
 
     void Close_Click(object sender, RoutedEventArgs e) => Close();

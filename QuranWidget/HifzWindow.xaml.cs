@@ -333,7 +333,7 @@ public partial class HifzWindow : Window
         var header = new TextBlock
         {
             Text = L10n.T("START", "البداية"),
-            FontSize = 10, Foreground = (Brush)FindResource("TextFaint"), Margin = new Thickness(8, 4, 8, 4),
+            FontSize = 12, Foreground = (Brush)FindResource("TextFaint"), Margin = new Thickness(8, 4, 8, 4),
         };
         var grid = new Grid();
         grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
