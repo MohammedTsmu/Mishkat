@@ -667,9 +667,11 @@ public partial class SettingsWindow : Window
         IEnumerable<int> surahs;
         if (_dlScope == 2)
         {
+            int bitrate = Audio.BitrateFor(Audio.Reciters[_reciterIndex].Id);
+            string gb = bitrate <= 64 ? "1.3" : "2.5";
             var r = System.Windows.MessageBox.Show(this,
-                L10n.T($"Download the whole Quran recited by {DlReciterName} (~2.5 GB)?\nThis needs a while and a stable connection.",
-                       $"تنزيل المصحف كاملاً بصوت {DlReciterName} (~2.5 جيجابايت)؟\nقد يستغرق وقتاً طويلاً ويتطلب اتصالاً مستقراً."),
+                L10n.T($"Download the whole Quran recited by {DlReciterName} (~{gb} GB)?\nThis needs a while and a stable connection.",
+                       $"تنزيل المصحف كاملاً بصوت {DlReciterName} (~{gb} جيجابايت)؟\nقد يستغرق وقتاً طويلاً ويتطلب اتصالاً مستقراً."),
                 L10n.T("Mishkat", "مشكاة"), MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (r != MessageBoxResult.Yes) return;
             surahs = Enumerable.Range(1, 114);

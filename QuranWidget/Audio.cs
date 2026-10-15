@@ -7,16 +7,35 @@ namespace QuranWidget;
 
 public static class Audio
 {
-    public static readonly (string Id, string Name, string ArName)[] Reciters =
+    // (Id, Name, ArName, Bitrate): most editions stream at 128 kbps, a few are
+    // hosted at 64 kbps only (marked in the list; CacheAsync also falls back).
+    public static readonly (string Id, string Name, string ArName, int Bitrate)[] Reciters =
     {
-        ("ar.alafasy", "Mishary Alafasy", "مشاري العفاسي"),
-        ("ar.abdulbasitmurattal", "Abdul Basit (Murattal)", "عبد الباسط (مرتل)"),
-        ("ar.husary", "Mahmoud Al-Husary", "محمود الحصري"),
-        ("ar.minshawi", "Muhammad Al-Minshawi", "محمد المنشاوي"),
-        ("ar.abdurrahmaansudais", "Abdurrahman As-Sudais", "عبد الرحمن السديس"),
-        ("ar.shaatree", "Abu Bakr Ash-Shaatree", "أبو بكر الشاطري"),
-        ("ar.hudhaify", "Ali Al-Hudhaify", "علي الحذيفي"),
+        ("ar.alafasy", "Mishary Alafasy", "مشاري العفاسي", 128),
+        ("ar.abdulbasitmurattal", "Abdul Basit (Murattal)", "عبد الباسط (مرتل)", 128),
+        ("ar.husary", "Mahmoud Al-Husary", "محمود الحصري", 128),
+        ("ar.minshawi", "Muhammad Al-Minshawi", "محمد المنشاوي", 128),
+        ("ar.abdurrahmaansudais", "Abdurrahman As-Sudais", "عبد الرحمن السديس", 128),
+        ("ar.shaatree", "Abu Bakr Ash-Shaatree", "أبو بكر الشاطري", 128),
+        ("ar.hudhaify", "Ali Al-Hudhaify", "علي الحذيفي", 128),
+        ("ar.mahermuaiqly", "Maher Al Muaiqly", "ماهر المعيقلي", 128),
+        ("ar.ahmedajamy", "Ahmed ibn Ali al-Ajamy", "أحمد بن علي العجمي", 128),
+        ("ar.husarymujawwad", "Al-Husary (Mujawwad)", "محمود الحصري (المجود)", 128),
+        ("ar.muhammadayyoub", "Muhammad Ayyoub", "محمد أيوب", 128),
+        ("ar.muhammadjibreel", "Muhammad Jibreel", "محمد جبريل", 128),
+        ("ar.abdulsamad", "Abdul Basit Abdul Samad", "عبد الباسط عبد الصمد", 64),
+        ("ar.abdullahbasfar", "Abdullah Basfar", "عبد الله بصفر", 64),
+        ("ar.hanirifai", "Hani Ar-Rifai", "هاني الرفاعي", 64),
+        ("ar.saoodshuraym", "Saood Ash-Shuraym", "سعود الشريم", 64),
+        ("ar.aymanswoaid", "Ayman Suwaid", "أيمن سويد", 64),
     };
+
+    // Streaming bitrate of a reciter; 128 when the id is not in the list.
+    public static int BitrateFor(string reciterId)
+    {
+        var r = Array.Find(Reciters, x => x.Id == reciterId);
+        return r.Id == null ? 128 : r.Bitrate;
+    }
 
     public static string ReciterName(int i) =>
         L10n.T(Reciters[Math.Clamp(i, 0, Reciters.Length - 1)].Name,
@@ -210,12 +229,27 @@ public static class Audio
         var path = Path.Combine(dir, globalAyah + ".mp3");
         if (File.Exists(path)) return path;
 
-        var url = $"https://cdn.islamic.network/quran/audio/128/{reciter}/{globalAyah}.mp3";
+        int bitrate = BitrateFor(reciter);
+        try
+        {
+            await FetchAudioFile(reciter, globalAyah, bitrate, path);
+        }
+        catch
+        {
+            // a few editions are served at 64 kbps only; retry there once
+            if (bitrate == 64) throw;
+            await FetchAudioFile(reciter, globalAyah, 64, path);
+        }
+        return path;
+    }
+
+    static async Task FetchAudioFile(string reciter, int globalAyah, int bitrate, string path)
+    {
+        var url = $"https://cdn.islamic.network/quran/audio/{bitrate}/{reciter}/{globalAyah}.mp3";
         var bytes = await Http.GetByteArrayAsync(url);
         var tmp = path + ".tmp";
         await File.WriteAllBytesAsync(tmp, bytes);
         File.Move(tmp, path, overwrite: true);
-        return path;
     }
 
     // ---------- audio downloads (listen offline) ----------
