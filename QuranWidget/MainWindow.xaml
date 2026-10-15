@@ -67,8 +67,6 @@
                     </StackPanel>
                     <TextBlock x:Name="DateText" Text="" FontSize="11.5"
                                Foreground="{DynamicResource TextFaint}" Margin="20,3,0,0"/>
-                    <TextBlock x:Name="PrayerText" Text="" FontSize="11" Visibility="Collapsed"
-                               Foreground="{DynamicResource GoldDim}" Margin="20,2,0,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
                     <!-- wifi-off indicator: pure vector icon, shown only when there is no internet -->
@@ -348,9 +346,6 @@
                             <CheckBox x:Name="StartupCheck" Style="{StaticResource DarkCheck}"
                                       Content="Start with Windows" Margin="0,10,0,0"
                                       Checked="Startup_Changed" Unchecked="Startup_Changed"/>
-                            <CheckBox x:Name="PrayerCheck" Style="{StaticResource DarkCheck}"
-                                      Content="Show next prayer time (auto-locates once)" Margin="0,10,0,0"
-                                      Checked="Prayer_Changed" Unchecked="Prayer_Changed"/>
 
                             <TextBlock x:Name="ContinueLabel" Text="CONTINUOUS READING" FontSize="10" Foreground="{DynamicResource TextFaint}" Margin="0,14,0,5"/>
                             <CheckBox x:Name="ContinueCheck" Style="{StaticResource DarkCheck}"

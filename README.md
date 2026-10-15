@@ -5,7 +5,7 @@
 **آية اليوم على سطح مكتبك — طوال اليوم.**
 
 ويدجت مجاني ومفتوح المصدر لويندوز يعرض آية كل يوم بالرسم العثماني وخط أميري القرآني،
-مع تلاوة من نخبة القرّاء، وأوقات الصلاة، ووضع متكامل للحفظ والمراجعة —
+مع تلاوة من نخبة القرّاء، ووضع متكامل للحفظ والمراجعة —
 وواجهة عربية كاملة من اليمين لليسار، تعمل بدون إنترنت بعد أول تشغيل.
 
 <p align="center">
@@ -65,7 +65,6 @@
 - **عدة ويدجت** — حتى 5 ويدجت، كل منها يتذكّر شاشته.
 
 ### أدوات
-- **أوقات الصلاة** — الصلاة القادمة في الواجهة، تُحسب محلياً من موقعك وتعمل دون إنترنت.
 - **إدراك دون اتصال** — مؤشر انقطاع الإنترنت يظهر لحظياً؛ القراءة والبحث والنسخ تعمل دائماً دون اتصال.
 - **مراجع مفهومة** — كل الأرقام مكتوبة بالكلمات («سورة البقرة — الآية ٢٧٤») بأرقام عربية في الواجهة العربية.
 - **تحديثات** — يفحص أحدث إصدار تلقائياً من هذه الصفحة.
@@ -87,7 +86,6 @@
 |---|---|
 | الإعدادات | `%APPDATA%\QuranWidget\settings.json` |
 | الترجمات المخزنة | `%APPDATA%\QuranWidget\translations\` |
-| موقع الصلاة | `%APPDATA%\QuranWidget\location.json` |
 | التلاوات المخزنة | `%LOCALAPPDATA%\QuranWidget\audio\` |
 | سجل التشخيص | `%LOCALAPPDATA%\QuranWidget\log.txt` |
 
@@ -123,7 +121,7 @@ ISCC.exe installer\Mishkat.iss   :: مثبّت ويندوز (يتطلب Inno Set
 
 A free, open-source Windows widget that shows a verse of the Quran every day in
 Uthmani script (Amiri Quran typeface) with its English meaning, recitation from
-7 renowned reciters, prayer times, and a complete memorization & review mode —
+7 renowned reciters, and a complete memorization & review mode —
 with a full Arabic (RTL) or English interface, fully offline after first run.
 
 **[⬇ Download the latest release](https://github.com/MohammedTsmu/Mishkat/releases/latest)** ·
@@ -134,7 +132,6 @@ with a full Arabic (RTL) or English interface, fully offline after first run.
 - **Uthmani Amiri script** — ayah-end markers ﴿٢٧٤﴾ never break across lines; adjustable font size.
 - **Recitation** — 7 reciters (Alafasy, Abdul Basit, Husary, Minshawy, Sudais, Shatri, Hudhaify), cached locally; download whole surahs or the entire Quran for offline listening.
 - **Memorization mode** — pick a range, loop each verse, recite it hidden, then link it to the verses before it (الربط); a final test gates the group into a spaced review ladder (1, 3, 7, 14, 30, 60, 120 days) that adapts to how well you know each verse. Connected group review, separate new/old review loads, self-recording with A-B compare, a daily portion & streak, a daily review reminder, and backup/restore/CSV export of your progress.
-- **Prayer times** — next prayer in the header, computed locally, works offline.
 - **Search** — jump to `2:255`, or full-text search the Arabic (even without diacritics) and the translation.
 - **Favorites, save as image, sleep timer, read-the-meaning TTS, resume position.**
 - **4 themes**, Arabic/English UI, opacity & font-size sliders, always-on-top, pin-to-desktop mode, up to 5 widgets (multi-monitor aware).

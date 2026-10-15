@@ -5,7 +5,7 @@
 ; a clean uninstaller.
 
 #define AppName "Mishkat"
-#define AppVersion "2.9.3"
+#define AppVersion "2.10.0"
 #define AppPublisher "Mishkat"
 #define AppExe "Mishkat.exe"
 

@@ -45,12 +45,6 @@ public sealed class Settings
     // Sleep timer for recitation (minutes, 0 = off)
     public int SleepMinutes { get; set; }
 
-    // Prayer times
-    public bool PrayerEnabled { get; set; }
-    public double Latitude { get; set; } = double.NaN;
-    public double Longitude { get; set; } = double.NaN;
-    public string CityName { get; set; } = "";
-
     // UI language: "en" or "ar"
     public string Language { get; set; } = "en";
 
@@ -96,20 +90,37 @@ public static class SettingsService
     static readonly string Dir = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "QuranWidget");
     static readonly string FilePath = Path.Combine(Dir, "settings.json");
+    static readonly string BackupPath = Path.Combine(Dir, "settings.bak.json");
 
     public static void Load()
     {
+        // Load the main file first; if it is missing or unreadable (a hard kill
+        // can truncate the JSON mid-write, and an antivirus can hold a lock),
+        // fall back to the last known-good backup instead of resetting to
+        // defaults and wiping the user's settings on the next save.
+        Settings? loaded = TryRead(FilePath);
+        if (loaded == null) loaded = TryRead(BackupPath);
+        if (loaded != null) Current = loaded;
+
+        if (string.IsNullOrWhiteSpace(Current.UpdateRepo))
+            Current.UpdateRepo = "MohammedTsmu/Mishkat";
+
+        // prayer times were removed; drop the stale geolocation cache
+        try { File.Delete(Path.Combine(Dir, "location.json")); } catch { /* best effort */ }
+    }
+
+    static Settings? TryRead(string path)
+    {
         try
         {
-            if (File.Exists(FilePath))
-                Current = JsonSerializer.Deserialize<Settings>(File.ReadAllText(FilePath), Json.Read) ?? new Settings();
+            if (!File.Exists(path)) return null;
+            var s = JsonSerializer.Deserialize<Settings>(File.ReadAllText(path), Json.Read);
+            return s;
         }
         catch
         {
-            Current = new Settings();
+            return null;
         }
-        if (string.IsNullOrWhiteSpace(Current.UpdateRepo))
-            Current.UpdateRepo = "MohammedTsmu/Mishkat";
     }
 
     public static void Save()
@@ -117,7 +128,18 @@ public static class SettingsService
         try
         {
             Directory.CreateDirectory(Dir);
-            File.WriteAllText(FilePath, JsonSerializer.Serialize(Current, Json.Write));
+            string json = JsonSerializer.Serialize(Current, Json.Write);
+
+            // atomic replace: write a temp file, then swap it in. A plain
+            // WriteAllText over settings.json can be truncated if the process
+            // dies mid-write (Windows shutdown kills apps quickly), and a
+            // half-written file used to reset every setting on the next launch.
+            string tmp = FilePath + ".tmp";
+            File.WriteAllText(tmp, json);
+            File.Move(tmp, FilePath, true);
+
+            // keep one known-good copy for recovery
+            try { File.WriteAllText(BackupPath, json); } catch { /* best effort */ }
         }
         catch
         {

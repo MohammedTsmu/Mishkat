@@ -25,15 +25,4 @@ public static class L10n
         return T($"Surah {surah} · {name} — {AyahsLabel(from, to)}",
                  $"سورة {name} — {AyahsLabel(from, to)}");
     }
-
-    public static string Prayer(string name) => name switch
-    {
-        "Fajr" => T("Fajr", "الفجر"),
-        "Sunrise" => T("Sunrise", "الشروق"),
-        "Dhuhr" => T("Dhuhr", "الظهر"),
-        "Asr" => T("Asr", "العصر"),
-        "Maghrib" => T("Maghrib", "المغرب"),
-        "Isha" => T("Isha", "العشاء"),
-        _ => name,
-    };
 }

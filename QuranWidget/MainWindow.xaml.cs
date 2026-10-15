@@ -62,11 +62,6 @@ public partial class MainWindow : Window
             OnLoadedStartupPin();
         };
         _ready = true;
-        // prayer times used to initialize only when the user toggled the option,
-        // so after a restart an enabled PrayerEnabled setting never started its
-        // timer and the widget showed nothing (or a stale "finding location")
-        if (SettingsService.Current.PrayerEnabled)
-            _ = EnablePrayerTimesAsync();
     }
 
     public string CurrentReference => _passage.Reference;
@@ -572,7 +567,6 @@ public partial class MainWindow : Window
         SleepToggle.Content = SleepLabel(s.SleepMinutes);
         if (Audio.SleepEnd != null) SyncSleepCountdown();
         UpdateResumeText();
-        PrayerCheck.IsChecked = s.PrayerEnabled;
         ShowTranslationCheck.IsChecked = s.ShowTranslation;
         FontSizeSlider.Value = Math.Clamp(s.ArabicFontSize, 18, 40);
         ApplyFontSize();
@@ -790,7 +784,6 @@ public partial class MainWindow : Window
         TopmostCheck.Content = L10n.T("Always on top", "دائماً في المقدمة");
         PinCheck.Content = L10n.T("Pin to the desktop background", "تثبيت في خلفية سطح المكتب");
         StartupCheck.Content = L10n.T("Start with Windows", "البدء مع Windows");
-        PrayerCheck.Content = L10n.T("Show next prayer time (auto-locates once)", "إظهار وقت الصلاة القادمة (يحدد الموقع تلقائياً)");
         ShowTranslationCheck.Content = L10n.T("Show translation", "إظهار الترجمة");
         ContinueCheck.Content = L10n.T("Keep reading — continue to the next verses", "متابعة القراءة — انتقل إلى الآيات التالية");
 
@@ -1404,92 +1397,6 @@ public partial class MainWindow : Window
     }
 
     void FavoritesPopup_Closed(object? sender, EventArgs e) { }
-
-    // ---------- prayer times ----------
-
-    DispatcherTimer? _prayerTimer;
-
-    void Prayer_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        bool on = PrayerCheck.IsChecked == true;
-        if (on == SettingsService.Current.PrayerEnabled) return;
-        SettingsService.Current.PrayerEnabled = on;
-        SettingsService.Save();
-        if (on)
-        {
-            _ = EnablePrayerTimesAsync();
-        }
-        else
-        {
-            _prayerTimer?.Stop();
-            PrayerText.Visibility = Visibility.Collapsed;
-        }
-    }
-
-    async Task EnablePrayerTimesAsync()
-    {
-        var s = SettingsService.Current;
-        if (double.IsNaN(s.Latitude) || double.IsNaN(s.Longitude))
-        {
-            // visible feedback right away, so it is clear the option is working
-            PrayerText.Text = "Finding your location…";
-            PrayerText.Visibility = Visibility.Visible;
-            ShowStatus(L10n.T("Finding your location for prayer times…", "جارٍ تحديد موقعك لأوقات الصلاة…"));
-            var loc = await PrayerTimes.LocateAsync();
-            if (loc == null)
-            {
-                // keep the option on and let the timer retry quietly; the location
-                // service is occasionally unavailable
-                ShowStatus(L10n.T("Could not find your location yet — will keep trying", "لم نحدد موقعك بعد — سنحاول مجدداً"));
-            }
-            else
-            {
-                s.Latitude = loc.Lat;
-                s.Longitude = loc.Lon;
-                s.CityName = loc.City;
-                SettingsService.Save();
-                ShowStatus(L10n.T($"Prayer times for {(string.IsNullOrWhiteSpace(loc.City) ? "your area" : loc.City)}", $"أوقات الصلاة لـ {(string.IsNullOrWhiteSpace(loc.City) ? "منطقتك" : loc.City)}"));
-            }
-        }
-        _prayerTimer ??= new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
-        _prayerTimer.Tick -= UpdatePrayerText;
-        _prayerTimer.Tick += UpdatePrayerText;
-        _prayerTimer.Start();
-        UpdatePrayerText(null, null!);
-    }
-
-    void UpdatePrayerText(object? sender, EventArgs e)
-    {
-        var s = SettingsService.Current;
-        if (!s.PrayerEnabled) return;
-        if (double.IsNaN(s.Latitude))
-        {
-            // still no location — retry quietly in the background
-            _ = RetryLocateAsync();
-            return;
-        }
-        var next = PrayerTimes.Next(s.Latitude, s.Longitude);
-        if (next == null) return;
-        string city = string.IsNullOrWhiteSpace(s.CityName) ? "" : $"  ·  {s.CityName}";
-        PrayerText.Text = L10n.T(
-            $"Next prayer: {L10n.Prayer(next.Value.Name)} at {next.Value.Time}{city}",
-            $"الصلاة القادمة: {L10n.Prayer(next.Value.Name)} {next.Value.Time}{city}");
-        PrayerText.Visibility = Visibility.Visible;
-    }
-
-    async Task RetryLocateAsync()
-    {
-        var s = SettingsService.Current;
-        var loc = await PrayerTimes.LocateAsync();
-        if (loc != null && s.PrayerEnabled)
-        {
-            s.Latitude = loc.Lat;
-            s.Longitude = loc.Lon;
-            s.CityName = loc.City;
-            SettingsService.Save();
-        }
-    }
 
     // ---------- sleep timer ----------
 
