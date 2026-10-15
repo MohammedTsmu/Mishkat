@@ -232,6 +232,22 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="MatchTitle" Text="Match Windows theme" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="MatchSub" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <ToggleButton x:Name="SyncSwitch" Grid.Column="1" Style="{StaticResource SwitchToggle}"
+                                                  AutomationProperties.Name="Match Windows theme"
+                                                  Checked="SyncSystem_Changed" Unchecked="SyncSystem_Changed"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
                                         <TextBlock x:Name="ThemeTitle" Text="Theme" Style="{StaticResource RowTitle}"/>
                                         <TextBlock x:Name="ThemeSub" Style="{StaticResource RowSub}"/>
                                     </StackPanel>

@@ -37,6 +37,11 @@ public sealed class Settings
 
     // Appearance
     public string Theme { get; set; } = "emerald";
+
+    // Follow the Windows light/dark personalization: parchment while Windows
+    // uses light apps, the chosen dark theme while it uses dark.
+    public bool SystemSync { get; set; } = true;
+    public string LastDarkTheme { get; set; } = "emerald";
     public double ArabicFontSize { get; set; } = 24;
 
     // Translations ("en.sahih" embedded; others downloaded on demand)

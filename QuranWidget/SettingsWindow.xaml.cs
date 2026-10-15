@@ -26,6 +26,8 @@ public partial class SettingsWindow : Window
         _loading = false;
         Activated += (_, _) => UpdateResumeText();
         Closing += (_, _) => SettingsService.Save();
+        SystemTheme.Applied += OnSystemThemeApplied;
+        Closed += (_, _) => SystemTheme.Applied -= OnSystemThemeApplied;
 
         // The widget survives Win+D ("show desktop"); settings must stay available
         // the same way. WindowChrome strips the tool-window style, so reassert it,
@@ -96,6 +98,8 @@ public partial class SettingsWindow : Window
         SleepSub.Text = L10n.T("Stop recitation automatically", "إيقاف التلاوة تلقائياً");
 
         LookHeader.Text = L10n.T("WIDGET", "الويدجت");
+        MatchTitle.Text = L10n.T("Match Windows theme", "مطابقة مظهر Windows");
+        MatchSub.Text = L10n.T("Light theme when Windows is light, dark when it is dark", "مظهر فاتح مع الوضع الفاتح وداكن مع الداكن");
         ThemeTitle.Text = L10n.T("Theme", "المظهر");
         ThemeSub.Text = L10n.T("Colors of the widget and windows", "ألوان الويدجت والنوافذ");
         OpacityTitle.Text = L10n.T("Opacity", "الشفافية");
@@ -159,6 +163,7 @@ public partial class SettingsWindow : Window
         _reciterIndex = Array.FindIndex(Audio.Reciters, r => r.Id == s.ReciterId);
         if (_reciterIndex < 0) _reciterIndex = 0;
 
+        SyncSwitch.IsChecked = s.SystemSync;
         ContinueSwitch.IsChecked = s.ContinueReading;
         ShowTranslationSwitch.IsChecked = s.ShowTranslation;
         TopmostSwitch.IsChecked = s.AlwaysOnTop;
@@ -364,6 +369,27 @@ public partial class SettingsWindow : Window
 
     // ---------- appearance ----------
 
+    void SyncSystem_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_loading) return;
+        bool on = SyncSwitch.IsChecked == true;
+        if (on == SettingsService.Current.SystemSync) return;
+        SettingsService.Current.SystemSync = on;
+        SaveNow();
+        if (on)
+        {
+            // follow what Windows asks for right now
+            SystemTheme.Reapply();
+            ThemeToggle.Content = ThemeService.NameOf(SettingsService.Current.Theme);
+        }
+    }
+
+    // Windows switched between light and dark while the window is open
+    void OnSystemThemeApplied()
+    {
+        ThemeToggle.Content = ThemeService.NameOf(SettingsService.Current.Theme);
+    }
+
     void SyncOpacityValue() =>
         OpacityValue.Text = L10n.T($"{Math.Round(OpacitySlider.Value * 100)}% opaque", $"شفافية {Math.Round(OpacitySlider.Value * 100)}٪");
 
@@ -418,6 +444,12 @@ public partial class SettingsWindow : Window
         var id = ThemeService.Themes[i].Id;
         if (id != SettingsService.Current.Theme)
         {
+            // an explicit pick wins over following Windows
+            if (SettingsService.Current.SystemSync)
+            {
+                SettingsService.Current.SystemSync = false;
+                SyncSwitch.IsChecked = false;
+            }
             SettingsService.Current.Theme = id;
             ThemeToggle.Content = ThemeService.NameOf(id);
             ThemeService.Apply(id);

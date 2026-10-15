@@ -61,7 +61,11 @@ public partial class App : System.Windows.Application
         SessionEnding += (_, _) => { if (!Exiting) ExitApp(); };
 
         SettingsService.Load();
-        ThemeService.Apply(SettingsService.Current.Theme);
+        // applies the saved theme, or the system one when "Match Windows theme"
+        // is on; keeps watching so light/dark switches on the device follow through
+        SystemTheme.Start();
+        if (!SettingsService.Current.SystemSync)
+            ThemeService.Apply(SettingsService.Current.Theme);
         try
         {
             Quran.Load();
