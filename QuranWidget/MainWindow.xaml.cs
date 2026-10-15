@@ -636,7 +636,7 @@ public partial class MainWindow : Window
     {
         double size = Math.Clamp(SettingsService.Current.ArabicFontSize, 18, 40);
         ArabicText.FontSize = size;
-        TranslationText.FontSize = Math.Clamp(size * 0.60, 12, 24);
+        TranslationText.FontSize = Math.Clamp(size * 0.65, 13, 26);
         TranslationText.LineHeight = TranslationText.FontSize * 1.5;
     }
 

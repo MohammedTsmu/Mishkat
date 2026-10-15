@@ -7,7 +7,8 @@
         WindowStyle="None" ResizeMode="CanResize"
         Background="Transparent" AllowsTransparency="False"
         ShowInTaskbar="False"
-        FontFamily="{StaticResource FontAmiri}">
+        FontFamily="{StaticResource FontAmiri}"
+        FontSize="14">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" ResizeBorderThickness="6" CornerRadius="0" GlassFrameThickness="0" UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
@@ -27,11 +28,11 @@
                  clicks — the background handles the drag manually -->
             <Grid Grid.Row="0" Height="52" Margin="8,4,8,0" Background="Transparent"
                   MouseLeftButtonDown="Header_MouseLeftButtonDown">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">                    <TextBlock x:Name="TitleText" Text="MEMORIZATION — حفظ" FontSize="16.5" FontWeight="Bold"
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">                    <TextBlock x:Name="TitleText" Text="MEMORIZATION — حفظ" FontSize="18" FontWeight="Bold"
                                Foreground="{DynamicResource Gold}" VerticalAlignment="Center"/>
                     <Border Background="{DynamicResource A24}" CornerRadius="8" Padding="10,3" Margin="14,0,0,0"
                             VerticalAlignment="Center">
-                        <TextBlock x:Name="StatsText" FontSize="13" Foreground="{DynamicResource TextSecondary}"/>
+                        <TextBlock x:Name="StatsText" FontSize="14" Foreground="{DynamicResource TextSecondary}"/>
                     </Border>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
@@ -48,14 +49,14 @@
                           HorizontalScrollBarVisibility="Disabled"
                           VerticalScrollBarVisibility="Auto" Margin="14,4,14,14">
                 <StackPanel>
-                    <TextBlock x:Name="PickGroupLabel" FontSize="12" Foreground="{DynamicResource TextFaint}" Margin="4,2,0,8"/>
+                    <TextBlock x:Name="PickGroupLabel" FontSize="13.5" Foreground="{DynamicResource TextFaint}" Margin="4,2,0,8"/>
                     <WrapPanel Margin="0,0,0,12">
                         <Button x:Name="SurahPicker" MinWidth="260" MaxWidth="340" Style="{StaticResource ComboButton}" Click="SurahPicker_Click"/>
                         <Button x:Name="RangePicker" Width="160" Style="{StaticResource ComboButton}" Margin="12,0,0,0" Click="RangePicker_Click"/>
                         <Button x:Name="RepsPicker" Width="170" Style="{StaticResource ComboButton}" Margin="12,0,0,0" Click="RepsPicker_Click"/>
                         <Button x:Name="StartButton" Style="{StaticResource GoldButton}" Margin="12,0,0,0" Click="StartSession_Click"/>
                     </WrapPanel>
-                    <TextBlock x:Name="PickHint" FontSize="13" Foreground="{DynamicResource TextFaint}" Margin="4,0,4,14"
+                    <TextBlock x:Name="PickHint" FontSize="14.5" Foreground="{DynamicResource TextFaint}" Margin="4,0,4,14"
                                TextWrapping="Wrap"/>
 
                     <!-- session card -->
@@ -63,7 +64,7 @@
                             BorderBrush="{DynamicResource Border2}" BorderThickness="1" CornerRadius="12" Padding="20,16">
                         <StackPanel>
                             <Grid>
-                                <TextBlock x:Name="SessionStep" FontSize="12.5" Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Left"/>
+                                <TextBlock x:Name="SessionStep" FontSize="13.5" Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Left"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                     <Button x:Name="RecordButton" Style="{StaticResource IconButton}" Content="&#xE720;" Click="Record_Click"
                                             ToolTip="Record your recitation"/>
@@ -83,19 +84,19 @@
                             <TextBlock x:Name="SessionVerse" FontFamily="{StaticResource FontQuran}" FontSize="34" FlowDirection="RightToLeft"
                                        Foreground="{DynamicResource TextPrimary}" TextAlignment="Center" TextWrapping="Wrap"
                                        Margin="0,14,0,4" LineHeight="64"/>
-                            <TextBlock x:Name="SessionRef" FontSize="13.5" Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Center" Margin="0,2,0,10"/>
-                            <TextBlock x:Name="SessionTranslation" FontSize="15.5" Foreground="{DynamicResource TextSecondary}"
+                            <TextBlock x:Name="SessionRef" FontSize="14.5" Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Center" Margin="0,2,0,10"/>
+                            <TextBlock x:Name="SessionTranslation" FontSize="16.5" Foreground="{DynamicResource TextSecondary}"
                                        TextAlignment="Center" TextWrapping="Wrap" Margin="20,0,20,14"/>
-                            <TextBlock x:Name="LoopCounter" FontSize="13.5" Foreground="{DynamicResource Gold}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                            <TextBlock x:Name="LoopCounter" FontSize="14.5" Foreground="{DynamicResource Gold}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button x:Name="MarkKnownButton" Style="{StaticResource GoldButton}" Click="MarkKnown_Click"/>
                                 <Button x:Name="FinishButton" Style="{StaticResource GoldButton}" Margin="10,0,0,0" Click="FinishSession_Click"/>
                             </StackPanel>
-                            <TextBlock x:Name="SessionStatus" FontSize="13.5" Foreground="{DynamicResource TextFaint}" HorizontalAlignment="Center" Margin="0,12,0,0"
+                            <TextBlock x:Name="SessionStatus" FontSize="14.5" Foreground="{DynamicResource TextFaint}" HorizontalAlignment="Center" Margin="0,12,0,0"
                                        TextWrapping="Wrap" TextAlignment="Center"/>
                             <!-- test gate (الامتحان): shown instead of saving right away -->
                             <StackPanel x:Name="TestPanel" Visibility="Collapsed" Margin="0,14,0,0">
-                                <TextBlock x:Name="TestHint" FontSize="14" Foreground="{DynamicResource GoldDim}" TextAlignment="Center"
+                                <TextBlock x:Name="TestHint" FontSize="15" Foreground="{DynamicResource GoldDim}" TextAlignment="Center"
                                            TextWrapping="Wrap" Margin="0,0,0,10"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <Button x:Name="TestPassButton" Style="{StaticResource GoldButton}" Click="TestPass_Click"/>
@@ -121,7 +122,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="DueLabel" Grid.Row="0" FontSize="12" Foreground="{DynamicResource TextFaint}" Margin="6,2,6,8"/>
+                        <TextBlock x:Name="DueLabel" Grid.Row="0" FontSize="13.5" Foreground="{DynamicResource TextFaint}" Margin="6,2,6,8"/>
                         <ListBox x:Name="DueList" Grid.Row="1" Background="Transparent" BorderThickness="0"
                                  ItemContainerStyle="{StaticResource DarkListBoxItem}"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -134,7 +135,7 @@
                         <StackPanel x:Name="ReviewEmpty" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Text="&#xE73E;" FontFamily="{StaticResource FontIcons}" FontSize="30"
                                        Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                            <TextBlock x:Name="ReviewEmptyText" FontSize="14.5" Foreground="{DynamicResource TextSecondary}"
+                            <TextBlock x:Name="ReviewEmptyText" FontSize="15.5" Foreground="{DynamicResource TextSecondary}"
                                        TextAlignment="Center" TextWrapping="Wrap" MaxWidth="360"/>
                         </StackPanel>
                         <StackPanel x:Name="ReviewCard" Visibility="Collapsed">
@@ -154,8 +155,8 @@
                             <TextBlock x:Name="ReviewVerse" FontFamily="{StaticResource FontQuran}" FontSize="36" FlowDirection="RightToLeft"
                                        Foreground="{DynamicResource TextPrimary}" TextAlignment="Center" TextWrapping="Wrap"
                                        Margin="0,16,0,4" LineHeight="70"/>
-                            <TextBlock x:Name="ReviewRef" FontSize="13.5" Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Center" Margin="0,2,0,12"/>
-                            <TextBlock x:Name="ReviewTranslation" FontSize="15.5" Foreground="{DynamicResource TextSecondary}"
+                            <TextBlock x:Name="ReviewRef" FontSize="14.5" Foreground="{DynamicResource GoldDim}" HorizontalAlignment="Center" Margin="0,2,0,12"/>
+                            <TextBlock x:Name="ReviewTranslation" FontSize="16.5" Foreground="{DynamicResource TextSecondary}"
                                        TextAlignment="Center" TextWrapping="Wrap" Margin="20,0,20,16"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button x:Name="GroupPassButton" Style="{StaticResource GoldButton}" Click="GroupPass_Click"
@@ -165,7 +166,7 @@
                                 <Button x:Name="RememberedButton" Style="{StaticResource GoldButton}" Click="Remembered_Click"/>
                                 <Button x:Name="ForgotButton" Style="{StaticResource GoldButton}" Margin="10,0,0,0" Click="Forgot_Click"/>
                             </StackPanel>
-                            <TextBlock x:Name="ReviewStage" FontSize="13" Foreground="{DynamicResource TextFaint}" HorizontalAlignment="Center" Margin="0,12,0,0"/>
+                            <TextBlock x:Name="ReviewStage" FontSize="14.5" Foreground="{DynamicResource TextFaint}" HorizontalAlignment="Center" Margin="0,12,0,0"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -181,15 +182,15 @@
                         BorderThickness="1" CornerRadius="12" Padding="16,12" Margin="0,0,0,12">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock x:Name="ProgressTotal" FontSize="15" Foreground="{DynamicResource Gold}" FontWeight="Bold"/>
-                            <TextBlock x:Name="ProgressDue" FontSize="15" Foreground="{DynamicResource TextSecondary}" Margin="22,0,0,0"/>
-                            <TextBlock x:Name="ProgressSurahs" FontSize="15" Foreground="{DynamicResource TextSecondary}" Margin="22,0,0,0"/>
+                            <TextBlock x:Name="ProgressTotal" FontSize="16" Foreground="{DynamicResource Gold}" FontWeight="Bold"/>
+                            <TextBlock x:Name="ProgressDue" FontSize="16" Foreground="{DynamicResource TextSecondary}" Margin="22,0,0,0"/>
+                            <TextBlock x:Name="ProgressSurahs" FontSize="16" Foreground="{DynamicResource TextSecondary}" Margin="22,0,0,0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                            <TextBlock x:Name="ProgressPlan" FontSize="13.5" Foreground="{DynamicResource TextSecondary}"/>
-                            <TextBlock x:Name="ProgressStreak" FontSize="13.5" Foreground="{DynamicResource GoldDim}" Margin="22,0,0,0"/>
+                            <TextBlock x:Name="ProgressPlan" FontSize="14.5" Foreground="{DynamicResource TextSecondary}"/>
+                            <TextBlock x:Name="ProgressStreak" FontSize="14.5" Foreground="{DynamicResource GoldDim}" Margin="22,0,0,0"/>
                         </StackPanel>
-                        <TextBlock x:Name="ProgressStrip" FontSize="14" Foreground="{DynamicResource TextFaint}" Margin="0,6,0,0"/>
+                        <TextBlock x:Name="ProgressStrip" FontSize="15" Foreground="{DynamicResource TextFaint}" Margin="0,6,0,0"/>
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                             <Button x:Name="ReminderButton" Style="{StaticResource ComboButton}" Click="Reminder_Click"/>
                             <Button x:Name="BackupButton" Style="{StaticResource ComboButton}" Margin="10,0,0,0" Click="Backup_Click"/>
