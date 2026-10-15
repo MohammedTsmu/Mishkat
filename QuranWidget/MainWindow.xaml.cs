@@ -424,6 +424,11 @@ public partial class MainWindow : Window
 
     int _versesPlayed;
 
+    // True when the displayed passage was chosen by the user (search jump,
+    // favorite, "another verse") — playing must then recite exactly that
+    // passage instead of silently resuming the last saved position.
+    bool _explicitPassage;
+
     void PlayRecitation_Click(object sender, RoutedEventArgs e)
     {
         if (Audio.PlayingRecitation)
@@ -438,9 +443,11 @@ public partial class MainWindow : Window
         }
         _versesPlayed = 0;
 
-        // resume a previous continuous-reading session if one was saved
+        // resume a previous continuous-reading session only when the widget is
+        // showing its ambient verse — never override a passage the user just
+        // searched for or picked
         var s = SettingsService.Current;
-        if (s.ContinueReading && s.ResumeS > 0 &&
+        if (!_explicitPassage && s.ContinueReading && s.ResumeS > 0 &&
             (s.ResumeS != _passage.Verses[0].SurahNumber || s.ResumeA != _passage.Verses[0].NumberInSurah))
         {
             _passage = Quran.GetPassage(s.ResumeS, s.ResumeA, s.ResumeA + 2);
@@ -448,6 +455,14 @@ public partial class MainWindow : Window
             var resumed = L10n.SurahRef(s.ResumeS, s.ResumeA);
             ShowStatus(L10n.T($"Resumed from {resumed}", $"استؤنف من {resumed}"));
         }
+        else if (_explicitPassage)
+        {
+            // playing a verse you chose: it becomes the saved position
+            s.ResumeS = _passage.Verses[0].SurahNumber;
+            s.ResumeA = _passage.Verses[0].NumberInSurah;
+            SettingsService.Save();
+        }
+        _explicitPassage = false;
 
         // remember the position so playback can resume later
         // (set the glyph after PlayRecitation: its internal StopAll raises a status
@@ -489,6 +504,7 @@ public partial class MainWindow : Window
         if (next.Verses.Count == 0) return null;
 
         _passage = next;
+        _explicitPassage = false;   // playback-driven, not user navigation
         ApplyPassage(animate: true);
         var reciting = L10n.SurahRef(next.Verses[0].SurahNumber, next.Verses[0].NumberInSurah,
                                      next.Verses[^1].NumberInSurah);
@@ -516,6 +532,7 @@ public partial class MainWindow : Window
     {
         Audio.StopAll();
         _passage = Quran.RandomPassage(_passage);
+        _explicitPassage = true;
         ApplyPassage(animate: true);
     }
 
@@ -807,6 +824,7 @@ public partial class MainWindow : Window
         if (i < 0 || i >= _searchHits.Count) return;
         var hit = _searchHits[i];
         _passage = Quran.GetPassage(hit.S, hit.A);
+        _explicitPassage = true;
         ApplyPassage(animate: true);
         SearchBox.Clear();
         SearchList.Visibility = Visibility.Collapsed;
@@ -880,6 +898,7 @@ public partial class MainWindow : Window
         if (i < 0 || i >= SettingsService.Current.Favorites.Count) return;
         var f = SettingsService.Current.Favorites[i];
         _passage = Quran.GetPassage(f.S, f.A, f.B);
+        _explicitPassage = true;
         ApplyPassage(animate: true);
         FavoritesPopup.IsOpen = false;
     }
