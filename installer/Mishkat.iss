@@ -1,11 +1,11 @@
-﻿; Mishkat â€” Inno Setup installer script
+﻿; Mishkat — Inno Setup installer script
 ; Build: install Inno Setup 6 (https://jrsoftware.org/isinfo.php), then run:
 ;   ISCC.exe installer\Mishkat.iss
 ; The produced setup installs the widget, registers a Start Menu shortcut and
 ; a clean uninstaller.
 
 #define AppName "Mishkat"
-#define AppVersion "2.10.10"
+#define AppVersion "2.10.11"
 #define AppPublisher "Mishkat"
 #define AppExe "Mishkat.exe"
 
