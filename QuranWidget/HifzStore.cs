@@ -51,9 +51,7 @@ public static class HifzStore
     static SqliteConnection? _db;
     static readonly object Gate = new();
 
-    static string DbPath => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "QuranWidget", "hifz.db");
+    static string DbPath => Path.Combine(AppPaths.Local, "hifz.db");
 
     // Full path of the database file, for backup/restore.
     public static string DatabasePath => DbPath;

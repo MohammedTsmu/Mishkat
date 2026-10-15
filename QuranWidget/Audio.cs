@@ -31,9 +31,7 @@ public static class Audio
     static TaskCompletionSource<bool>? _tcs;
     static SpeechSynthesizer? _tts;
     static int _session;
-    static readonly string CacheRoot = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "QuranWidget", "audio");
+    static readonly string CacheRoot = Path.Combine(AppPaths.Local, "audio");
 
     public static void StopAll()
     {
@@ -197,9 +195,7 @@ public static class Audio
     {
         try
         {
-            File.AppendAllText(Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "QuranWidget", "log.txt"), $"{DateTime.Now:u} {message}\n");
+            File.AppendAllText(Path.Combine(AppPaths.Local, "log.txt"), $"{DateTime.Now:u} {message}\n");
         }
         catch
         {

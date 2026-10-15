@@ -30,8 +30,7 @@ public static class Translations
 
     static string CachePath(string id)
     {
-        var dir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "QuranWidget", "translations");
+        var dir = Path.Combine(AppPaths.Roaming, "translations");
         Directory.CreateDirectory(dir);
         return Path.Combine(dir, id + ".json");
     }

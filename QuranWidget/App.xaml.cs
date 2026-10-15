@@ -28,12 +28,12 @@ public partial class App : System.Windows.Application
         bool hidden = e.Args.Contains("--hidden");
         bool openNew = e.Args.Contains("--new");
 
-        _mutex = new Mutex(true, @"Local\QuranWidget.SingleInstance", out bool first);
+        _mutex = new Mutex(true, @"Local\Mishkat.SingleInstance", out bool first);
         if (!first)
         {
             try
             {
-                using var client = new NamedPipeClientStream(".", "QuranWidget.Pipe", PipeDirection.Out);
+                using var client = new NamedPipeClientStream(".", "Mishkat.Pipe", PipeDirection.Out);
                 client.Connect(1500);
                 using var w = new StreamWriter(client) { AutoFlush = true };
                 w.WriteLine(openNew ? "new" : "show");
@@ -431,7 +431,7 @@ public partial class App : System.Windows.Application
             {
                 try
                 {
-                    using var server = new NamedPipeServerStream("QuranWidget.Pipe", PipeDirection.In);
+                    using var server = new NamedPipeServerStream("Mishkat.Pipe", PipeDirection.In);
                     await server.WaitForConnectionAsync(token);
                     using var r = new StreamReader(server);
                     var line = await r.ReadLineAsync(token);
@@ -457,10 +457,8 @@ public partial class App : System.Windows.Application
 
     static string LogPath()
     {
-        var dir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QuranWidget");
-        Directory.CreateDirectory(dir);
-        return Path.Combine(dir, "log.txt");
+        Directory.CreateDirectory(AppPaths.Local);
+        return Path.Combine(AppPaths.Local, "log.txt");
     }
 }
 

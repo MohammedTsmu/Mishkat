@@ -5,7 +5,7 @@
 ; a clean uninstaller.
 
 #define AppName "Mishkat"
-#define AppVersion "2.10.11"
+#define AppVersion "2.10.12"
 #define AppPublisher "Mishkat"
 #define AppExe "Mishkat.exe"
 
@@ -25,6 +25,9 @@ SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64compatible
 PrivilegesRequired=lowest
 CloseApplications=yes
+; the app was renamed from QuranWidget to Mishkat: always install into the
+; new folder instead of reusing the previous (old-named) install directory
+UsePreviousAppDir=no
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop shortcut"; GroupDescription: "Shortcuts:"
@@ -54,4 +57,24 @@ Filename: "{app}\{#AppExe}"; Description: "Launch {#AppName}"; Flags: nowait pos
 
 [UninstallRun]
 Filename: "{cmd}"; Parameters: "/C taskkill /IM {#AppExe} /F"; Flags: runhidden; RunOnceId: "KillApp"
+
+[Code]
+// The app was renamed from QuranWidget to Mishkat. If a previous install still
+// lives in the old "...\Programs\QuranWidget" folder, uninstall it silently
+// first so its files and Start Menu entries do not linger under the old name.
+function InitializeSetup(): Boolean;
+var
+  Uninst: String;
+  Rc: Integer;
+begin
+  Result := True;
+  if RegQueryStringValue(HKEY_CURRENT_USER,
+      'Software\Microsoft\Windows\CurrentVersion\Uninstall\{7C6E8B1A-52D4-4B3E-9C2F-0A8F7B5D3E11}_is1',
+      'UninstallString', Uninst) then
+  begin
+    if Pos('QuranWidget', Uninst) > 0 then
+      Exec(RemoveQuotes(Uninst), '/VERYSILENT /NORESTART /SUPPRESSMSGBOXES', '',
+           SW_SHOW, ewWaitUntilTerminated, Rc);
+  end;
+end;
 

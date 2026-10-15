@@ -16,9 +16,7 @@ public static class Recorder
     static string _alias = "";
     static string _file = "";
 
-    static string RecordRoot => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "QuranWidget", "recordings");
+    static string RecordRoot => Path.Combine(AppPaths.Local, "recordings");
 
     // Starts recording to a fresh WAV file; returns the file path, or null when
     // no microphone / recording device is available.

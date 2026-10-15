@@ -92,8 +92,7 @@ public static class SettingsService
 {
     public static Settings Current { get; private set; } = new();
 
-    static readonly string Dir = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "QuranWidget");
+    static readonly string Dir = AppPaths.Roaming;
     static readonly string FilePath = Path.Combine(Dir, "settings.json");
     static readonly string BackupPath = Path.Combine(Dir, "settings.bak.json");
 
