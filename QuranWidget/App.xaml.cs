@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.IO.Pipes;
 using System.Windows;
 using System.Windows.Controls;
@@ -72,7 +72,7 @@ public partial class App : System.Windows.Application
         }
         catch (Exception ex)
         {
-            System.Windows.MessageBox.Show($"Failed to load Quran data:\n{ex.Message}", L10n.T("Mishkat", "مشكاة"),
+            System.Windows.MessageBox.Show($"Failed to load Quran data:\n{ex.Message}", L10n.T("Mishkat", "Ù…Ø´ÙƒØ§Ø©"),
                 System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             Shutdown(1);
             return;
@@ -101,8 +101,8 @@ public partial class App : System.Windows.Application
 
         if (!smoke && !hidden)
         {
-            _tray?.ShowBalloonTip(2500, L10n.T("Mishkat", "مشكاة"),
-                L10n.T("Your verse of the day is on the desktop.\nRight-click it for more options.","آية اليوم على سطح مكتبك.\nانقر بزر الفأرة الأيمن للمزيد من الخيارات."),
+            _tray?.ShowBalloonTip(2500, L10n.T("Mishkat", "Ù…Ø´ÙƒØ§Ø©"),
+                L10n.T("Your verse of the day is on the desktop.\nRight-click it for more options.","Ø¢ÙŠØ© Ø§Ù„ÙŠÙˆÙ… Ø¹Ù„Ù‰ Ø³Ø·Ø­ Ù…ÙƒØªØ¨Ùƒ.\nØ§Ù†Ù‚Ø± Ø¨Ø²Ø± Ø§Ù„ÙØ£Ø±Ø© Ø§Ù„Ø£ÙŠÙ…Ù† Ù„Ù„Ù…Ø²ÙŠØ¯ Ù…Ù† Ø§Ù„Ø®ÙŠØ§Ø±Ø§Øª."),
                 WinForms.ToolTipIcon.Info);
         }
 
@@ -146,19 +146,19 @@ public partial class App : System.Windows.Application
         _tray = new WinForms.NotifyIcon
         {
             Icon = IconFactory.CreateIcon(32),
-            Text = L10n.T("Mishkat", "مشكاة"),
+            Text = L10n.T("Mishkat", "Ù…Ø´ÙƒØ§Ø©"),
             Visible = true,
         };
 
         var menu = new WinForms.ContextMenuStrip();
-        var settingsItem = new WinForms.ToolStripMenuItem(L10n.T("Settings", "الإعدادات"), null, (_, _) => ShowSettings()) { Name = "Settings" };
-        var dailyItem = new WinForms.ToolStripMenuItem(L10n.T("Verse of the Day", "آية اليوم"), null, (_, _) => ShowDaily()) { Name = "Daily" };
-        var newWidget = new WinForms.ToolStripMenuItem(L10n.T("New Verse Widget", "أداة آية جديدة"), null, (_, _) => CreateWidget()) { Name = "NewWidget" };
-        var hifzItem = new WinForms.ToolStripMenuItem(L10n.T("Memorize (Hifz)", "الحفظ"), null, (_, _) => ShowHifz()) { Name = "Hifz" };
-        var updates = new WinForms.ToolStripMenuItem(L10n.T("Check for Updates", "التحقق من التحديثات"), null, (_, _) => CheckForUpdates()) { Name = "Updates" };
-        var log = new WinForms.ToolStripMenuItem(L10n.T("Open Log File", "فتح ملف السجل"), null, (_, _) => OpenLog()) { Name = "Log" };
-        var unpin = new WinForms.ToolStripMenuItem(L10n.T("Unpin from desktop", "إلغاء التثبيت من سطح المكتب"), null, (_, _) => UnpinAll()) { Name = "Unpin" };
-        var exit = new WinForms.ToolStripMenuItem(L10n.T("Exit", "خروج"), null, (_, _) => ExitApp()) { Name = "Exit" };
+        var settingsItem = new WinForms.ToolStripMenuItem(L10n.T("Settings", "Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª"), null, (_, _) => ShowSettings()) { Name = "Settings" };
+        var dailyItem = new WinForms.ToolStripMenuItem(L10n.T("Verse of the Day", "Ø¢ÙŠØ© Ø§Ù„ÙŠÙˆÙ…"), null, (_, _) => ShowDaily()) { Name = "Daily" };
+        var newWidget = new WinForms.ToolStripMenuItem(L10n.T("New Verse Widget", "Ø£Ø¯Ø§Ø© Ø¢ÙŠØ© Ø¬Ø¯ÙŠØ¯Ø©"), null, (_, _) => CreateWidget()) { Name = "NewWidget" };
+        var hifzItem = new WinForms.ToolStripMenuItem(L10n.T("Memorize (Hifz)", "Ø§Ù„Ø­ÙØ¸"), null, (_, _) => ShowHifz()) { Name = "Hifz" };
+        var updates = new WinForms.ToolStripMenuItem(L10n.T("Check for Updates", "Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„ØªØ­Ø¯ÙŠØ«Ø§Øª"), null, (_, _) => CheckForUpdates()) { Name = "Updates" };
+        var log = new WinForms.ToolStripMenuItem(L10n.T("Open Log File", "ÙØªØ­ Ù…Ù„Ù Ø§Ù„Ø³Ø¬Ù„"), null, (_, _) => OpenLog()) { Name = "Log" };
+        var unpin = new WinForms.ToolStripMenuItem(L10n.T("Unpin from desktop", "Ø¥Ù„ØºØ§Ø¡ Ø§Ù„ØªØ«Ø¨ÙŠØª Ù…Ù† Ø³Ø·Ø­ Ø§Ù„Ù…ÙƒØªØ¨"), null, (_, _) => UnpinAll()) { Name = "Unpin" };
+        var exit = new WinForms.ToolStripMenuItem(L10n.T("Exit", "Ø®Ø±ÙˆØ¬"), null, (_, _) => ExitApp()) { Name = "Exit" };
         menu.Items.AddRange(new WinForms.ToolStripItem[]
         {
             dailyItem, newWidget, hifzItem, settingsItem, new WinForms.ToolStripSeparator(), updates, log,
@@ -211,19 +211,19 @@ public partial class App : System.Windows.Application
 
     public void ApplyTrayLanguage()    {
         if (_tray == null) return;
-        _tray.Text = L10n.T("Mishkat", "مشكاة");
+        _tray.Text = L10n.T("Mishkat", "Ù…Ø´ÙƒØ§Ø©");
         foreach (var item in _tray.ContextMenuStrip!.Items.OfType<WinForms.ToolStripMenuItem>())
         {
             item.Text = item.Name switch
             {
-                "Daily" => L10n.T("Verse of the Day", "آية اليوم"),
-                "NewWidget" => L10n.T("New Verse Widget", "أداة آية جديدة"),
-                "Hifz" => L10n.T("Memorize (Hifz)", "الحفظ"),
-                "Settings" => L10n.T("Settings", "الإعدادات"),
-                "Updates" => L10n.T("Check for Updates", "التحقق من التحديثات"),
-                "Log" => L10n.T("Open Log File", "فتح ملف السجل"),
-                "Unpin" => L10n.T("Unpin from desktop", "إلغاء التثبيت من سطح المكتب"),
-                "Exit" => L10n.T("Exit", "خروج"),
+                "Daily" => L10n.T("Verse of the Day", "Ø¢ÙŠØ© Ø§Ù„ÙŠÙˆÙ…"),
+                "NewWidget" => L10n.T("New Verse Widget", "Ø£Ø¯Ø§Ø© Ø¢ÙŠØ© Ø¬Ø¯ÙŠØ¯Ø©"),
+                "Hifz" => L10n.T("Memorize (Hifz)", "Ø§Ù„Ø­ÙØ¸"),
+                "Settings" => L10n.T("Settings", "Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª"),
+                "Updates" => L10n.T("Check for Updates", "Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„ØªØ­Ø¯ÙŠØ«Ø§Øª"),
+                "Log" => L10n.T("Open Log File", "ÙØªØ­ Ù…Ù„Ù Ø§Ù„Ø³Ø¬Ù„"),
+                "Unpin" => L10n.T("Unpin from desktop", "Ø¥Ù„ØºØ§Ø¡ Ø§Ù„ØªØ«Ø¨ÙŠØª Ù…Ù† Ø³Ø·Ø­ Ø§Ù„Ù…ÙƒØªØ¨"),
+                "Exit" => L10n.T("Exit", "Ø®Ø±ÙˆØ¬"),
                 _ => item.Text,
             };
         }
@@ -234,9 +234,9 @@ public partial class App : System.Windows.Application
         var repo = SettingsService.Current.UpdateRepo;
         var (update, detail) = await UpdateChecker.CheckAsync(repo);
         if (_tray != null)
-            _tray.ShowBalloonTip(3000, L10n.T("Mishkat", "مشكاة"), detail, WinForms.ToolTipIcon.Info);
+            _tray.ShowBalloonTip(3000, L10n.T("Mishkat", "Ù…Ø´ÙƒØ§Ø©"), detail, WinForms.ToolTipIcon.Info);
         if (update && _tray != null)
-            _tray.Text = $"{L10n.T("Mishkat", "مشكاة")} — {detail}";
+            _tray.Text = $"{L10n.T("Mishkat", "Ù…Ø´ÙƒØ§Ø©")} â€” {detail}";
     }
 
     void OpenLog()
@@ -340,9 +340,9 @@ public partial class App : System.Windows.Application
             s.HifzLastReminderDay = today;
             SettingsService.Save();
             _reminderArmed = true;
-            _tray?.ShowBalloonTip(8000, L10n.T("Mishkat", "مشكاة"),
+            _tray?.ShowBalloonTip(8000, L10n.T("Mishkat", "Ù…Ø´ÙƒØ§Ø©"),
                 L10n.T($"{due} verse(s) are due for review today. Tap to review.",
-                       $"{L10n.Ar(due)} آية مستحقة للمراجعة اليوم. اضغط للمراجعة."),
+                       $"{L10n.Ar(due)} Ø¢ÙŠØ© Ù…Ø³ØªØ­Ù‚Ø© Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„ÙŠÙˆÙ…. Ø§Ø¶ØºØ· Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©."),
                 WinForms.ToolTipIcon.Info);
         }
         catch

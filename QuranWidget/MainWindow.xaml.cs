@@ -129,6 +129,15 @@ public partial class MainWindow : Window
         BuildArabicInlines(_passage);
         TranslationText.Text = Quran.EnglishOf(_passage);
 
+        // rebuilding the runs resets the live highlight; recitation in progress
+        // (e.g. after changing a setting) must stay tracked and highlighted
+        if (Audio.IsPlayingPassage(_passage))
+        {
+            int idx = Audio.PlayingVerseIndex;
+            if (idx >= 0 && idx < _verseRuns.Count)
+                HighlightVerse(idx);
+        }
+
         if (IsDaily)
         {
             ModeText.Text = L10n.T("VERSE OF THE DAY", "آية اليوم");
@@ -507,6 +516,7 @@ public partial class MainWindow : Window
 
         _passage = next;
         _explicitPassage = false;   // playback-driven, not user navigation
+        Audio.AdvancePlayingTo(next);
         ApplyPassage(animate: true);
         var reciting = L10n.SurahRef(next.Verses[0].SurahNumber, next.Verses[0].NumberInSurah,
                                      next.Verses[^1].NumberInSurah);

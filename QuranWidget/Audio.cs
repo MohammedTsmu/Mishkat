@@ -90,6 +90,24 @@ public static class Audio
 
     public static string PlayingReciterId => _playingReciter;
 
+    // Index of the verse currently playing within its passage (-1 when none).
+    public static int PlayingVerseIndex => _playingVerse;
+
+    // Keeps the live playback state in step when continuous reading moves to the
+    // next passage, so the widget can restore the highlight while rebuilding.
+    public static void AdvancePlayingTo(Passage p)
+    {
+        if (!PlayingRecitation) return;
+        _playingPassage = p;
+        _playingVerse = 0;
+    }
+
+    // True when `p` is the passage the recitation is currently on.
+    public static bool IsPlayingPassage(Passage p) =>
+        PlayingRecitation && p.Verses.Count > 0 && _playingPassage.Verses.Count > 0 &&
+        p.Verses[0].Global == _playingPassage.Verses[0].Global &&
+        p.Verses[^1].Global == _playingPassage.Verses[^1].Global;
+
     // Switches the reciter while recitation is playing: fetches the new voice's
     // audio (downloading it on demand) and continues from the verse that was
     // playing. Does nothing when nothing is playing or the reciter is unchanged.
