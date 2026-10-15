@@ -147,6 +147,7 @@ public partial class App : System.Windows.Application
         };
 
         var menu = new WinForms.ContextMenuStrip();
+        var settingsItem = new WinForms.ToolStripMenuItem(L10n.T("Settings", "الإعدادات"), null, (_, _) => ShowSettings()) { Name = "Settings" };
         var dailyItem = new WinForms.ToolStripMenuItem(L10n.T("Verse of the Day", "آية اليوم"), null, (_, _) => ShowDaily()) { Name = "Daily" };
         var newWidget = new WinForms.ToolStripMenuItem(L10n.T("New Verse Widget", "أداة آية جديدة"), null, (_, _) => CreateWidget()) { Name = "NewWidget" };
         var hifzItem = new WinForms.ToolStripMenuItem(L10n.T("Memorize (Hifz)", "الحفظ"), null, (_, _) => ShowHifz()) { Name = "Hifz" };
@@ -156,7 +157,7 @@ public partial class App : System.Windows.Application
         var exit = new WinForms.ToolStripMenuItem(L10n.T("Exit", "خروج"), null, (_, _) => ExitApp()) { Name = "Exit" };
         menu.Items.AddRange(new WinForms.ToolStripItem[]
         {
-            dailyItem, newWidget, hifzItem, new WinForms.ToolStripSeparator(), updates, log,
+            dailyItem, newWidget, hifzItem, settingsItem, new WinForms.ToolStripSeparator(), updates, log,
             new WinForms.ToolStripSeparator(), unpin, new WinForms.ToolStripSeparator(), exit,
         });
 
@@ -214,6 +215,7 @@ public partial class App : System.Windows.Application
                 "Daily" => L10n.T("Verse of the Day", "آية اليوم"),
                 "NewWidget" => L10n.T("New Verse Widget", "أداة آية جديدة"),
                 "Hifz" => L10n.T("Memorize (Hifz)", "الحفظ"),
+                "Settings" => L10n.T("Settings", "الإعدادات"),
                 "Updates" => L10n.T("Check for Updates", "التحقق من التحديثات"),
                 "Log" => L10n.T("Open Log File", "فتح ملف السجل"),
                 "Unpin" => L10n.T("Unpin from desktop", "إلغاء التثبيت من سطح المكتب"),
@@ -357,6 +359,40 @@ public partial class App : System.Windows.Application
         _hifz.Activate();
     }
 
+    public IReadOnlyList<MainWindow> Widgets => _widgets;
+
+    // Re-applies the current settings to every open widget, so changes made in
+    // the settings window apply live without touching the verse being read.
+    public void RefreshWidgets()
+    {
+        foreach (var w in _widgets.ToList())
+        {
+            try { w.ApplySettings(); }
+            catch { /* best effort */ }
+        }
+    }
+
+    // The surah currently shown on the main widget (downloads default to it).
+    public Surah? CurrentVerseSurah()
+    {
+        var w = _widgets.FirstOrDefault(x => !x.IsDaily) ?? _widgets.FirstOrDefault();
+        return w?.CurrentSurah();
+    }
+
+    SettingsWindow? _settings;
+
+    // Opens (or focuses) the settings window; one instance, like the hifz window.
+    public void ShowSettings()
+    {
+        if (_settings == null)
+        {
+            _settings = new SettingsWindow();
+            _settings.Closed += (_, _) => _settings = null;
+        }
+        _settings.Show();
+        _settings.Activate();
+    }
+
     public void WidgetClosed(MainWindow w)
     {
         _widgets.Remove(w);
@@ -399,6 +435,7 @@ public partial class App : System.Windows.Application
                     {
                         if (line == "show") ShowDaily();
                         else if (line == "new") CreateWidget();
+                        else if (line == "settings") ShowSettings();
                     });
                 }
                 catch (OperationCanceledException)

@@ -1,0 +1,488 @@
+<Window x:Class="QuranWidget.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Mishkat"
+        Width="600" Height="640"
+        MinWidth="560" MinHeight="520"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" ResizeMode="CanResize"
+        Background="Transparent" AllowsTransparency="True"
+        ShowInTaskbar="True"
+        UseLayoutRounding="True" SnapsToDevicePixels="True"
+        FontFamily="{StaticResource FontAmiri}"
+        PreviewKeyDown="Window_PreviewKeyDown">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="6" CornerRadius="0" GlassFrameThickness="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <!-- a settings row: title + description on the left, control on the right -->
+        <Style x:Key="SettingsRow" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource Card2}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Border2}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="11"/>
+            <Setter Property="Padding" Value="14,11"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <!-- pickers open below their button, inside the roomy window -->
+        <Style x:Key="PickerPopupBorder" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource Surface}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource SurfaceBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="MinWidth" Value="260"/>
+            <Setter Property="MaxHeight" Value="330"/>
+        </Style>
+
+        <Style x:Key="RowTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+        </Style>
+
+        <Style x:Key="RowSub" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11.5"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextFaint}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="0,2,0,0"/>
+        </Style>
+    </Window.Resources>
+
+    <Border Margin="12" Background="{DynamicResource Surface}" BorderBrush="{DynamicResource SurfaceBorder}"
+            BorderThickness="1" CornerRadius="14">
+        <Border.Effect>
+            <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="22" ShadowDepth="6" Opacity="0.5"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- ============ custom title bar ============ -->
+            <Grid Grid.Row="0" Height="54" Margin="14,6,14,0" Background="Transparent"
+                  MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock x:Name="TitleText" Text="Settings" FontSize="15.5" FontWeight="Bold"
+                               Foreground="{DynamicResource Gold}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <Button Style="{StaticResource IconButton}" Content="&#xE711;" HorizontalAlignment="Right"
+                        Click="Close_Click" ToolTip="Close (Esc)"/>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="14,2,14,14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="176"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- ============ category nav ============ -->
+                <StackPanel Grid.Column="0" Margin="0,4,14,0">
+                    <RadioButton x:Name="NavRecite" Style="{StaticResource NavRadio}" GroupName="nav" IsChecked="True"
+                                 AutomationProperties.Name="Recitation settings" Tag="&#xE768;"
+                                 Checked="NavRecite_Checked"/>
+                    <RadioButton x:Name="NavLook" Style="{StaticResource NavRadio}" GroupName="nav" Margin="0,2,0,0"
+                                 AutomationProperties.Name="Appearance settings" Tag="&#xE790;"
+                                 Checked="NavLook_Checked"/>
+                    <RadioButton x:Name="NavDownload" Style="{StaticResource NavRadio}" GroupName="nav" Margin="0,2,0,0"
+                                 AutomationProperties.Name="Downloads settings" Tag="&#xE896;"
+                                 Checked="NavDownload_Checked"/>
+                    <RadioButton x:Name="NavGeneral" Style="{StaticResource NavRadio}" GroupName="nav" Margin="0,2,0,0"
+                                 AutomationProperties.Name="General settings" Tag="&#xE713;"
+                                 Checked="NavGeneral_Checked"/>
+                    <TextBlock x:Name="CreditsText" FontSize="10.5" Foreground="{DynamicResource TextFaint}"
+                               TextWrapping="Wrap" Margin="10,16,6,0"/>
+                    <TextBlock x:Name="MadeWithLoveText" FontSize="11" Foreground="{DynamicResource Gold}"
+                               Margin="10,8,6,0" TextWrapping="Wrap"/>
+                </StackPanel>
+
+                <!-- ============ pages ============ -->
+                <Grid Grid.Column="1">
+                    <Grid.RenderTransform>
+                        <TranslateTransform x:Name="PageTt"/>
+                    </Grid.RenderTransform>
+
+                    <!-- ===== RECITATION ===== -->
+                    <ScrollViewer x:Name="PageRecite" Style="{StaticResource ThinScrollViewer}"
+                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Margin="0,2,2,2">
+
+                            <TextBlock x:Name="ReciterHeader" Style="{StaticResource RowTitle}" FontSize="12"
+                                       Foreground="{DynamicResource GoldDim}" Margin="2,0,0,8"/>
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="ReciterTitle" Text="Reciter" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="ReciterSub" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <ToggleButton x:Name="ReciterToggle" Grid.Column="1" Style="{StaticResource ComboToggle}"
+                                                  Width="180" AutomationProperties.Name="Choose reciter"
+                                                  Checked="ReciterToggle_Changed" Unchecked="ReciterToggle_Changed"/>
+                                </Grid>
+                            </Border>
+                            <Popup x:Name="ReciterPopup" PlacementTarget="{Binding ElementName=ReciterToggle}"
+                                   Placement="Bottom" StaysOpen="False" AllowsTransparency="True"
+                                   PopupAnimation="Fade" Closed="ReciterPopup_Closed">
+                                <Border Style="{StaticResource PickerPopupBorder}">
+                                    <ListBox x:Name="ReciterList" Background="Transparent" BorderThickness="0"
+                                             ItemContainerStyle="{StaticResource DarkListBoxItem}"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                             SelectionChanged="ReciterList_SelectionChanged"/>
+                                </Border>
+                            </Popup>
+
+                            <TextBlock x:Name="ReadingHeader" Style="{StaticResource RowTitle}" FontSize="12"
+                                       Foreground="{DynamicResource GoldDim}" Margin="2,14,0,8"/>
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="ContinueTitle" Text="Keep reading" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="ContinueSub" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <ToggleButton x:Name="ContinueSwitch" Grid.Column="1" Style="{StaticResource SwitchToggle}"
+                                                  AutomationProperties.Name="Keep reading to next verses"
+                                                  Checked="Continue_Changed" Unchecked="Continue_Changed"/>
+                                </Grid>
+                            </Border>
+                            <Border Style="{StaticResource SettingsRow}" IsEnabled="{Binding IsChecked, ElementName=ContinueSwitch}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="StopAtTitle" Text="Stop after" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="ResumeText" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <ToggleButton x:Name="StopAtToggle" Style="{StaticResource ComboToggle}" Width="180"
+                                                      AutomationProperties.Name="Stop reading after"
+                                                      Checked="StopAtToggle_Changed" Unchecked="StopAtToggle_Changed"/>
+                                        <Button x:Name="ClearResumeButton" Style="{StaticResource ComboButton}" Margin="0,6,0,0"
+                                                Content="Clear saved position" Click="ClearResume_Click"
+                                                AutomationProperties.Name="Clear saved reading position"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            <Popup x:Name="StopAtPopup" PlacementTarget="{Binding ElementName=StopAtToggle}"
+                                   Placement="Bottom" StaysOpen="False" AllowsTransparency="True"
+                                   PopupAnimation="Fade" Closed="StopAtPopup_Closed">
+                                <Border Style="{StaticResource PickerPopupBorder}">
+                                    <ListBox x:Name="StopAtList" Background="Transparent" BorderThickness="0"
+                                             ItemContainerStyle="{StaticResource DarkListBoxItem}"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                             SelectionChanged="StopAtList_SelectionChanged"/>
+                                </Border>
+                            </Popup>
+
+                            <TextBlock x:Name="SleepHeader" Style="{StaticResource RowTitle}" FontSize="12"
+                                       Foreground="{DynamicResource GoldDim}" Margin="2,14,0,8"/>
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="SleepTitle" Text="Sleep timer" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="SleepSub" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <ToggleButton x:Name="SleepToggle" Grid.Column="1" Style="{StaticResource ComboToggle}"
+                                                  Width="180" AutomationProperties.Name="Sleep timer"
+                                                  Checked="SleepToggle_Changed" Unchecked="SleepToggle_Changed"/>
+                                </Grid>
+                            </Border>
+                            <Popup x:Name="SleepPopup" PlacementTarget="{Binding ElementName=SleepToggle}"
+                                   Placement="Bottom" StaysOpen="False" AllowsTransparency="True"
+                                   PopupAnimation="Fade" Closed="SleepPopup_Closed">
+                                <Border Style="{StaticResource PickerPopupBorder}">
+                                    <ListBox x:Name="SleepList" Background="Transparent" BorderThickness="0"
+                                             ItemContainerStyle="{StaticResource DarkListBoxItem}"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                             SelectionChanged="SleepList_SelectionChanged"/>
+                                </Border>
+                            </Popup>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- ===== APPEARANCE ===== -->
+                    <ScrollViewer x:Name="PageLook" Visibility="Collapsed" Style="{StaticResource ThinScrollViewer}"
+                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Margin="0,2,2,2">
+
+                            <TextBlock x:Name="LookHeader" Style="{StaticResource RowTitle}" FontSize="12"
+                                       Foreground="{DynamicResource GoldDim}" Margin="2,0,0,8"/>
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="ThemeTitle" Text="Theme" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="ThemeSub" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <ToggleButton x:Name="ThemeToggle" Grid.Column="1" Style="{StaticResource ComboToggle}"
+                                                  Width="180" AutomationProperties.Name="Choose theme"
+                                                  Checked="ThemeToggle_Changed" Unchecked="ThemeToggle_Changed"/>
+                                </Grid>
+                            </Border>
+                            <Popup x:Name="ThemePopup" PlacementTarget="{Binding ElementName=ThemeToggle}"
+                                   Placement="Bottom" StaysOpen="False" AllowsTransparency="True"
+                                   PopupAnimation="Fade" Closed="ThemePopup_Closed">
+                                <Border Style="{StaticResource PickerPopupBorder}">
+                                    <ListBox x:Name="ThemeList" Background="Transparent" BorderThickness="0"
+                                             ItemContainerStyle="{StaticResource DarkListBoxItem}"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                             SelectionChanged="ThemeList_SelectionChanged"/>
+                                </Border>
+                            </Popup>
+
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="OpacityTitle" Text="Opacity" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="OpacityValue" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <Slider x:Name="OpacitySlider" Grid.Column="1" Width="180" Style="{StaticResource GoldSlider}"
+                                            Minimum="0.35" Maximum="1.0" IsMoveToPointEnabled="True"
+                                            AutomationProperties.Name="Widget opacity"
+                                            ValueChanged="Opacity_ValueChanged"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="FontSizeTitle" Text="Arabic font size" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="FontSizeValue" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <Slider x:Name="FontSizeSlider" Grid.Column="1" Width="180" Style="{StaticResource GoldSlider}"
+                                            Minimum="18" Maximum="40" IsSnapToTickEnabled="True" TickFrequency="2"
+                                            IsMoveToPointEnabled="True" AutomationProperties.Name="Arabic font size"
+                                            ValueChanged="FontSize_ValueChanged"/>
+                                </Grid>
+                            </Border>
+
+                            <TextBlock x:Name="TransHeader" Style="{StaticResource RowTitle}" FontSize="12"
+                                       Foreground="{DynamicResource GoldDim}" Margin="2,14,0,8"/>
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="ShowTransTitle" Text="Show translation" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="ShowTransSub" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <ToggleButton x:Name="ShowTranslationSwitch" Grid.Column="1" Style="{StaticResource SwitchToggle}"
+                                                  AutomationProperties.Name="Show translation"
+                                                  Checked="ShowTranslation_Changed" Unchecked="ShowTranslation_Changed"/>
+                                </Grid>
+                            </Border>
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="TranslationTitle" Text="Translation" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="TranslationSub" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <ToggleButton x:Name="TranslationToggle" Grid.Column="1" Style="{StaticResource ComboToggle}"
+                                                  Width="180" AutomationProperties.Name="Choose translation"
+                                                  Checked="TranslationToggle_Changed" Unchecked="TranslationToggle_Changed"/>
+                                </Grid>
+                            </Border>
+                            <Popup x:Name="TranslationPopup" PlacementTarget="{Binding ElementName=TranslationToggle}"
+                                   Placement="Bottom" StaysOpen="False" AllowsTransparency="True"
+                                   PopupAnimation="Fade" Closed="TranslationPopup_Closed">
+                                <Border Style="{StaticResource PickerPopupBorder}">
+                                    <ListBox x:Name="TranslationList" Background="Transparent" BorderThickness="0"
+                                             ItemContainerStyle="{StaticResource DarkListBoxItem}"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                             SelectionChanged="TranslationList_SelectionChanged"/>
+                                </Border>
+                            </Popup>
+
+                            <TextBlock x:Name="LangHeader" Style="{StaticResource RowTitle}" FontSize="12"
+                                       Foreground="{DynamicResource GoldDim}" Margin="2,14,0,8"/>
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="LangTitle" Text="Language" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="LangSub" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <Button x:Name="LangButton" Grid.Column="1" Style="{StaticResource ComboButton}" Width="180"
+                                            Click="Language_Click" AutomationProperties.Name="Interface language"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- ===== DOWNLOADS ===== -->
+                    <ScrollViewer x:Name="PageDownload" Visibility="Collapsed" Style="{StaticResource ThinScrollViewer}"
+                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Margin="0,2,2,2">
+                            <TextBlock x:Name="DownloadsHint" Style="{StaticResource RowSub}" FontSize="12" Margin="2,0,2,10"/>
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock x:Name="DlReciterCaption" Style="{StaticResource RowSub}" Margin="0,0,0,5"/>
+                                        <ToggleButton x:Name="DlReciterToggle" Style="{StaticResource ComboToggle}"
+                                                      AutomationProperties.Name="Reciter to download"
+                                                      Checked="DlReciterToggle_Changed" Unchecked="DlReciterToggle_Changed"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock x:Name="DlScopeCaption" Style="{StaticResource RowSub}" Margin="0,0,0,5"/>
+                                        <ToggleButton x:Name="DlScopeToggle" Style="{StaticResource ComboToggle}"
+                                                      AutomationProperties.Name="Content to download"
+                                                      Checked="DlScopeToggle_Changed" Unchecked="DlScopeToggle_Changed"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            <Button x:Name="DownloadStartButton" Style="{StaticResource GoldButton}" HorizontalAlignment="Left"
+                                    Margin="2,2,0,0" Click="DownloadStart_Click" AutomationProperties.Name="Download recitation"/>
+                            <Grid x:Name="DownloadsProgressPanel" Visibility="Collapsed" Margin="2,10,2,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ProgressBar x:Name="DownloadsProgress" Height="8" Minimum="0" Maximum="100"
+                                             Foreground="{DynamicResource Gold}" Background="{DynamicResource A26}"
+                                             BorderThickness="0" VerticalAlignment="Center"/>
+                                <Button x:Name="DownloadCancelButton" Grid.Column="1" Style="{StaticResource IconButton}"
+                                        Content="&#xE711;" Margin="8,0,0,0" Click="DownloadCancel_Click"/>
+                            </Grid>
+                            <TextBlock x:Name="DownloadsStatus" Style="{StaticResource RowSub}" Margin="2,8,2,0"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                    <Popup x:Name="DlReciterPopup" PlacementTarget="{Binding ElementName=DlReciterToggle}"
+                           Placement="Bottom" StaysOpen="False" AllowsTransparency="True"
+                           PopupAnimation="Fade" Closed="DlReciterPopup_Closed">
+                        <Border Style="{StaticResource PickerPopupBorder}">
+                            <ListBox x:Name="DlReciterList" Background="Transparent" BorderThickness="0"
+                                     ItemContainerStyle="{StaticResource DarkListBoxItem}"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     SelectionChanged="DlReciterList_SelectionChanged"/>
+                        </Border>
+                    </Popup>
+                    <Popup x:Name="DlScopePopup" PlacementTarget="{Binding ElementName=DlScopeToggle}"
+                           Placement="Bottom" StaysOpen="False" AllowsTransparency="True"
+                           PopupAnimation="Fade" Closed="DlScopePopup_Closed">
+                        <Border Style="{StaticResource PickerPopupBorder}">
+                            <ListBox x:Name="DlScopeList" Background="Transparent" BorderThickness="0"
+                                     ItemContainerStyle="{StaticResource DarkListBoxItem}"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     SelectionChanged="DlScopeList_SelectionChanged"/>
+                        </Border>
+                    </Popup>
+
+                    <!-- ===== GENERAL ===== -->
+                    <ScrollViewer x:Name="PageGeneral" Visibility="Collapsed" Style="{StaticResource ThinScrollViewer}"
+                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Margin="0,2,2,2">
+
+                            <TextBlock x:Name="WindowHeader" Style="{StaticResource RowTitle}" FontSize="12"
+                                       Foreground="{DynamicResource GoldDim}" Margin="2,0,0,8"/>
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="TopmostTitle" Text="Always on top" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="TopmostSub" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <ToggleButton x:Name="TopmostSwitch" Grid.Column="1" Style="{StaticResource SwitchToggle}"
+                                                  AutomationProperties.Name="Always on top"
+                                                  Checked="Topmost_Changed" Unchecked="Topmost_Changed"/>
+                                </Grid>
+                            </Border>
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="PinTitle" Text="Pin to the desktop background" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="PinSub" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <ToggleButton x:Name="PinSwitch" Grid.Column="1" Style="{StaticResource SwitchToggle}"
+                                                  AutomationProperties.Name="Pin to desktop background"
+                                                  Checked="Pin_Changed" Unchecked="Pin_Changed"/>
+                                </Grid>
+                            </Border>
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="StartupTitle" Text="Start with Windows" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="StartupSub" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <ToggleButton x:Name="StartupSwitch" Grid.Column="1" Style="{StaticResource SwitchToggle}"
+                                                  AutomationProperties.Name="Start with Windows"
+                                                  Checked="Startup_Changed" Unchecked="Startup_Changed"/>
+                                </Grid>
+                            </Border>
+
+                            <TextBlock x:Name="UpdatesHeader" Style="{StaticResource RowTitle}" FontSize="12"
+                                       Foreground="{DynamicResource GoldDim}" Margin="2,14,0,8"/>
+                            <Border Style="{StaticResource SettingsRow}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="UpdatesTitle" Text="Updates" Style="{StaticResource RowTitle}"/>
+                                        <TextBlock x:Name="UpdatesSub" Style="{StaticResource RowSub}"/>
+                                    </StackPanel>
+                                    <Button x:Name="CheckUpdatesButton" Grid.Column="1" Style="{StaticResource ComboButton}" Width="180"
+                                            Content="Check for updates" Click="CheckUpdates_Click"
+                                            AutomationProperties.Name="Check for updates"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

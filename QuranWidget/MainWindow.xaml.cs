@@ -26,7 +26,6 @@ public partial class MainWindow : Window
     bool _ready;
     DispatcherTimer? _posSave;
     DispatcherTimer? _dayTimer;
-    int _reciterIndex;
 
     const string GlyphPlay = "\uE768";
     const string GlyphPause = "\uE769";
@@ -457,7 +456,6 @@ public partial class MainWindow : Window
         Audio.PlayRecitation(_passage, SettingsService.Current.ReciterId,
             next: NextReadingPassage, onVerse: HighlightVerse);
         PlayButton.Content = GlyphStop;
-        UpdateResumeText();
     }
 
     // Called by Audio after each passage finishes; returns the next passage to
@@ -500,7 +498,6 @@ public partial class MainWindow : Window
         SettingsService.Current.ResumeS = next.Verses[0].SurahNumber;
         SettingsService.Current.ResumeA = next.Verses[0].NumberInSurah;
         SettingsService.Save();
-        UpdateResumeText();
         return next;
     }
 
@@ -549,209 +546,26 @@ public partial class MainWindow : Window
         StatusText.BeginAnimation(OpacityProperty, anim);
     }
 
-    // ---------- settings panel ----------
+    // ---------- settings applied to this widget ----------
 
-    void ApplySettings()
+    public void ApplySettings()
     {
         var s = SettingsService.Current;
         Opacity = s.Opacity;
         Topmost = s.AlwaysOnTop && !s.PinToDesktop;
-        _reciterIndex = Array.FindIndex(Audio.Reciters, r => r.Id == s.ReciterId);
-        if (_reciterIndex < 0) _reciterIndex = 0;
-        _dlReciterIndex = _reciterIndex;
-        UpdateReciterButton();
-        ContinueCheck.IsChecked = s.ContinueReading;
-        StopAtToggle.Content = StopAtLabel(s.StopAt);
-        ThemeToggle.Content = ThemeService.NameOf(s.Theme);
-        TranslationToggle.Content = TranslationName(s.TranslationId);
-        SleepToggle.Content = SleepLabel(s.SleepMinutes);
-        if (Audio.SleepEnd != null) SyncSleepCountdown();
-        UpdateResumeText();
-        ShowTranslationCheck.IsChecked = s.ShowTranslation;
-        FontSizeSlider.Value = Math.Clamp(s.ArabicFontSize, 18, 40);
         ApplyFontSize();
+        if (Audio.SleepEnd != null) SyncSleepCountdown();
+        ApplyTranslationVisibility();
         ApplyLanguage();
         PlayButton.ToolTip = s.ContinueReading ? "Play recitation (continuous reading)" : "Play recitation";
         SyncFavoriteStar();
     }
 
-    static string TranslationName(string id) =>
-        Translations.DisplayName(Array.FindIndex(Translations.Available, t => t.Id == id));
+    // The surah currently displayed (used by the settings window's downloads scope).
+    public Surah? CurrentSurah() =>
+        _passage.Verses.Count > 0 ? Quran.Surah(_passage.Verses[0].SurahNumber) : null;
 
-    // ---------- downloads (offline audio) ----------
-
-    int _dlReciterIndex;
-    int _dlScope;          // 0 = current surah, 1 = a chosen surah, 2 = whole Quran
-    int _dlSurah = 1;      // surah chosen for scope 1
-    bool _pickingDl;
-
-    string DlReciterName => Audio.ReciterName(_dlReciterIndex);
-
-    string DlScopeLabel(int scope)
-    {
-        var cur = _passage.Verses.Count > 0 ? Quran.Surah(_passage.Verses[0].SurahNumber) : null;
-        string current = cur != null
-            ? L10n.T($"Current surah ({cur.EnglishName})", $"السورة الحالية ({cur.Name})")
-            : L10n.T("Current surah", "السورة الحالية");
-        return scope switch
-        {
-            0 => current,
-            1 => L10n.T($"Surah {Quran.Surah(_dlSurah)?.Number}: {Quran.Surah(_dlSurah)?.EnglishName}",
-                        $"سورة {Quran.Surah(_dlSurah)?.Name}"),
-            _ => L10n.T("Whole Quran (114 surahs)", "المصحف كاملاً (114 سورة)"),
-        };
-    }
-
-    void UpdateDownloadsUi()
-    {
-        DlReciterCaption.Text = L10n.T("Reciter", "القارئ");
-        DlScopeCaption.Text = L10n.T("Content", "المحتوى");
-        if (DlReciterToggle.IsChecked != true) DlReciterToggle.Content = DlReciterName;
-        if (DlScopeToggle.IsChecked != true) DlScopeToggle.Content = DlScopeLabel(_dlScope);
-        DownloadsHint.Text = L10n.T(
-            "Save recitation audio to your device for the reciter and content chosen above, so it plays without internet. Translations are downloaded automatically when you pick them.",
-            "احفظ صوت التلاوة للقارئ والمحتوى المختارين أعلاه ليعمل بدون إنترنت. تُنزَّل الترجمات تلقائياً عند اختيارها.");
-        DownloadStartButton.Content = L10n.T("Download", "تنزيل");
-        DownloadStartButton.IsEnabled = !Audio.Downloading;
-    }
-
-    void DlReciterToggle_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        if (DlReciterToggle.IsChecked == true)
-        {
-            _pickingDl = true;
-            DlReciterList.ItemsSource = Enumerable.Range(0, Audio.Reciters.Length).Select(Audio.ReciterName).ToList();
-            DlReciterList.SelectedIndex = _dlReciterIndex;
-            DlReciterList.ScrollIntoView(DlReciterList.SelectedItem);
-            _pickingDl = false;
-            DlReciterPopup.IsOpen = true;
-        }
-        else DlReciterPopup.IsOpen = false;
-    }
-
-    void DlReciterPopup_Closed(object? sender, EventArgs e) => DlReciterToggle.IsChecked = false;
-
-    void DlReciterList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (!_ready || _pickingDl) return;
-        if (DlReciterList.SelectedIndex >= 0) _dlReciterIndex = DlReciterList.SelectedIndex;
-        DlReciterPopup.IsOpen = false;
-        UpdateDownloadsUi();
-    }
-
-    void DlScopeToggle_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        if (DlScopeToggle.IsChecked == true)
-        {
-            _pickingDl = true;
-            _dlScopePhase = false;
-            DlScopeList.ItemsSource = new List<string> { DlScopeLabel(0), DlScopeLabel(2) };
-            DlScopeList.SelectedIndex = -1;
-            _pickingDl = false;
-            DlScopePopup.IsOpen = true;
-        }
-        else DlScopePopup.IsOpen = false;
-    }
-
-    void DlScopePopup_Closed(object? sender, EventArgs e)
-    {
-        DlScopeToggle.IsChecked = false;
-        _dlScopePhase = false;
-    }
-
-    bool _dlScopePhase; // false = choose kind, true = choose a surah
-
-    void DlScopeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (!_ready || _pickingDl) return;
-        int i = DlScopeList.SelectedIndex;
-        if (i < 0) return;
-
-        if (!_dlScopePhase)
-        {
-            if (i == 1) { _dlScope = 2; DlScopePopup.IsOpen = false; UpdateDownloadsUi(); return; }
-            // open the surah list
-            _pickingDl = true;
-            _dlScopePhase = true;
-            DlScopeList.ItemsSource = Enumerable.Range(1, 114).Select(n =>
-                L10n.T($"{n}. {Quran.Surah(n)?.EnglishName} — {Quran.Surah(n)?.Meaning}",
-                       $"{n}. {Quran.Surah(n)?.Name}")).ToList();
-            DlScopeList.SelectedIndex = _dlSurah - 1;
-            DlScopeList.ScrollIntoView(DlScopeList.SelectedItem);
-            _pickingDl = false;
-            return;
-        }
-
-        _dlScope = 1;
-        _dlSurah = i + 1;
-        DlScopePopup.IsOpen = false;
-        UpdateDownloadsUi();
-    }
-
-    async void DownloadStart_Click(object sender, RoutedEventArgs e)
-    {
-        if (Audio.Downloading) return;
-        if (!HasInternet())
-        {
-            ShowStatus(L10n.T("No internet — downloads are unavailable", "لا يوجد إنترنت — التنزيل غير متاح"));
-            return;
-        }
-
-        IEnumerable<int> surahs;
-        if (_dlScope == 2)
-        {
-            var r = System.Windows.MessageBox.Show(this,
-                L10n.T($"Download the whole Quran recited by {DlReciterName} (~2.5 GB)?\nThis needs a while and a stable connection.",
-                       $"تنزيل المصحف كاملاً بصوت {DlReciterName} (~2.5 جيجابايت)؟\nقد يستغرق وقتاً طويلاً ويتطلب اتصالاً مستقراً."),
-                L10n.T("Mishkat", "مشكاة"), MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (r != MessageBoxResult.Yes) return;
-            surahs = Enumerable.Range(1, 114);
-        }
-        else
-        {
-            if (_dlScope == 0)
-            {
-                if (_passage.Verses.Count == 0) return;
-                _dlSurah = _passage.Verses[0].SurahNumber;
-                UpdateDownloadsUi();
-            }
-            surahs = new[] { _dlSurah };
-        }
-
-        string reciterId = Audio.Reciters[_dlReciterIndex].Id;
-
-        UpdateDownloadsUi();
-        DownloadsProgressPanel.Visibility = Visibility.Visible;
-        DownloadsStatus.Text = L10n.T("Downloading…", "جارٍ التنزيل…");
-        DownloadCancelButton.ToolTip = L10n.T("Cancel download", "إلغاء التنزيل");
-
-        void OnPercent(int pct)
-        {
-            if (pct >= 0)
-            {
-                DownloadsProgress.Value = pct;
-                DownloadsStatus.Text = L10n.T($"Downloading… {pct}%", $"جارٍ التنزيل… {pct}٪");
-            }
-            else
-            {
-                DownloadsProgressPanel.Visibility = Visibility.Collapsed;
-                DownloadsStatus.Text = pct switch
-                {
-                    -1 => L10n.T("Download complete — recitation now works offline", "اكتمل التنزيل — تعمل التلاوة بدون إنترنت"),
-                    -2 => L10n.T("Download cancelled", "أُلغي التنزيل"),
-                    _ => L10n.T("Download failed — check your internet", "فشل التنزيل — تحقق من الإنترنت"),
-                };
-                UpdateDownloadsUi();
-            }
-        }
-        Audio.DownloadPercent += OnPercent;
-        await Audio.DownloadAudioAsync(reciterId, surahs);
-        Audio.DownloadPercent -= OnPercent;
-    }
-
-    void DownloadCancel_Click(object sender, RoutedEventArgs e) => Audio.CancelDownload();
+    public bool IsPinned => SettingsService.Current.PinToDesktop;
 
     // ---------- language (English / Arabic UI) ----------
 
@@ -763,33 +577,6 @@ public partial class MainWindow : Window
         if (_passage.Verses.Count > 0)
             ApplyPassage(animate: false);
 
-        // settings panel
-        // refresh the selected-value toggle buttons so they follow the UI language too
-        ReciterToggle.Content = Audio.ReciterName(_reciterIndex);
-        ThemeToggle.Content = ThemeService.NameOf(SettingsService.Current.Theme);
-        TranslationToggle.Content = TranslationName(SettingsService.Current.TranslationId);
-        ReciterLabel.Text = L10n.T("RECITER", "القارئ");
-        TranslationLabel.Text = L10n.T("TRANSLATION", "الترجمة");
-        ThemeLabel.Text = L10n.T("THEME", "المظهر");
-        OpacityLabel.Text = L10n.T("OPACITY", "الشفافية");
-        FontSizeLabel.Text = L10n.T("ARABIC FONT SIZE", "حجم خط المصحف");
-        ContinueLabel.Text = L10n.T("CONTINUOUS READING", "متابعة القراءة");
-        SleepLabel2.Text = L10n.T("SLEEP TIMER", "مؤقت النوم");
-        UpdatesLabel.Text = L10n.T("UPDATES", "التحديثات");
-        LanguageLabel.Text = L10n.T("LANGUAGE", "اللغة");
-        LangButton.Content = L10n.T("English / العربية", "العربية / English");
-        CheckUpdatesButton.Content = L10n.T("Check for updates now", "تحقق من التحديثات الآن");
-        ClearResumeButton.Content = L10n.T("Clear saved reading position", "مسح موضع القراءة المحفوظ");
-
-        TopmostCheck.Content = L10n.T("Always on top", "دائماً في المقدمة");
-        PinCheck.Content = L10n.T("Pin to the desktop background", "تثبيت في خلفية سطح المكتب");
-        StartupCheck.Content = L10n.T("Start with Windows", "البدء مع Windows");
-        ShowTranslationCheck.Content = L10n.T("Show translation", "إظهار الترجمة");
-        ContinueCheck.Content = L10n.T("Keep reading — continue to the next verses", "متابعة القراءة — انتقل إلى الآيات التالية");
-
-        StopAtToggle.Content = StopAtLabel(SettingsService.Current.StopAt);
-        SleepToggle.Content = SleepLabel(SettingsService.Current.SleepMinutes);
-        SyncTranslationToggle();
 
         // tooltips
         ToolTipService.SetToolTip(SearchButton, L10n.T("Search the Quran (text, verse number like 2:255, or surah name)", "ابحث في القرآن (نص، أو رقم آية مثل 2:255، أو اسم سورة)"));
@@ -805,36 +592,6 @@ public partial class MainWindow : Window
                                     "اكتب كلمات، أو اسم سورة (البقرة / Kahf)، أو 2:255 للانتقال إلى آية");
 
         ApplyTranslationVisibility();
-        UpdateResumeText();
-        UpdateDownloadsUi();
-        SettingsTitle.Text = L10n.T("Settings", "الإعدادات");
-        DownloadsLabel.Text = L10n.T("DOWNLOADS", "التنزيلات");
-        SettingsScrollHint.Text = L10n.T("Scroll for more ↓", "مرّر للمزيد ↓");
-        CreditsText.Text = L10n.T(
-            "Recitation: cdn.islamic.network  ·  Translations: api.alquran.cloud",
-            "التلاوة: cdn.islamic.network  ·  الترجمات: api.alquran.cloud");
-        MadeWithLoveText.Text = L10n.T(
-            "Built with ❤ by MohammedTsmu",
-            "صُنع بـ ❤ بواسطة MohammedTsmu");
-    }
-
-    void Language_Click(object sender, RoutedEventArgs e)
-    {
-        SettingsService.Current.Language = L10n.ArabicUI ? "en" : "ar";
-        SettingsService.Save();
-        ApplyLanguage();
-        App.Instance.ApplyTrayLanguage();
-        ShowStatus(L10n.T("Language: English", "اللغة: العربية"));
-    }
-
-    void ShowTranslation_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        bool on = ShowTranslationCheck.IsChecked == true;
-        if (on == SettingsService.Current.ShowTranslation) return;
-        SettingsService.Current.ShowTranslation = on;
-        SettingsService.Save();
-        ApplyTranslationVisibility();
     }
 
     void ApplyTranslationVisibility()
@@ -843,12 +600,6 @@ public partial class MainWindow : Window
         TranslationScroll.Visibility = on ? Visibility.Visible : Visibility.Collapsed;
         DividerGrid.Visibility = on ? Visibility.Visible : Visibility.Collapsed;
     }
-
-    static readonly int[] SleepOptions = { 0, 10, 20, 30, 60 };
-
-    static string SleepLabel(int minutes) =>
-        minutes <= 0 ? L10n.T("Off — play until I stop", "بدون توقيت — تشغيل حتى أوقفه")
-                     : L10n.T($"Stop after {minutes} minutes", $"التوقف بعد {minutes} دقيقة");
 
     // Live countdown shown in the footer while a sleep timer is armed, so the
     // user always knows when recitation will stop.
@@ -889,276 +640,13 @@ public partial class MainWindow : Window
         TranslationText.LineHeight = TranslationText.FontSize * 1.5;
     }
 
-    static readonly (string En, string Ar)[] StopAtLabels =
-    {
-        ("Stop at the end of the surah", "التوقف في نهاية السورة"),
-        ("Stop after 10 verses", "التوقف بعد 10 آيات"),
-        ("Stop after 25 verses", "التوقف بعد 25 آية"),
-        ("Stop after 50 verses", "التوقف بعد 50 آية"),
-        ("Keep going until I stop", "الاستمرار حتى أوقفه"),
-    };
-
-    static string StopAtLabel(int i) =>
-        L10n.T(StopAtLabels[Math.Clamp(i, 0, StopAtLabels.Length - 1)].En,
-               StopAtLabels[Math.Clamp(i, 0, StopAtLabels.Length - 1)].Ar);
-
-    void UpdateReciterButton()
-    {
-        ReciterToggle.Content = Audio.ReciterName(_reciterIndex);
-    }
-
     void Hifz_Click(object sender, RoutedEventArgs e) => App.Instance.ShowHifz();
 
-    void Settings_Click(object sender, RoutedEventArgs e)
-    {
-        SyncSettingsChecks();
-        SettingsPanel.Visibility = SettingsPanel.Visibility == Visibility.Visible
-            ? Visibility.Collapsed
-            : Visibility.Visible;
-    }
+    void Settings_Click(object sender, RoutedEventArgs e) => App.Instance.ShowSettings();
 
-    void SettingsClose_Click(object sender, RoutedEventArgs e)
-    {
-        SettingsPanel.Visibility = Visibility.Collapsed;
-    }
 
-    // Hides the fade / "Scroll for more" hint once the user reaches the bottom.
-    void SettingsScroll_Changed(object sender, ScrollChangedEventArgs e)
-    {
-        if (e.VerticalChange == 0 && e.ExtentHeightChange == 0) return;
-        bool atEnd = e.VerticalOffset + e.ViewportHeight >= e.ExtentHeight - 4;
-        SettingsFade.Opacity = atEnd ? 0 : 1;
-        SettingsScrollHint.Opacity = atEnd ? 0 : 1;
-    }
 
-    void CheckUpdates_Click(object sender, RoutedEventArgs e)
-    {
-        ShowStatus(L10n.T("Checking for updates…", "جارٍ التحقق من التحديثات…"));
-        App.Instance.CheckForUpdates();
-    }
 
-    void SyncSettingsChecks()
-    {
-        TopmostCheck.IsChecked = SettingsService.Current.AlwaysOnTop;
-        PinCheck.IsChecked = SettingsService.Current.PinToDesktop;
-        StartupCheck.IsChecked = Autostart.IsEnabled();
-    }
-
-    bool _pickingReciter;
-
-    void ReciterToggle_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        if (ReciterToggle.IsChecked == true)
-        {
-            _pickingReciter = true;
-            ReciterList.ItemsSource = Enumerable.Range(0, Audio.Reciters.Length).Select(Audio.ReciterName).ToList();
-            ReciterList.SelectedIndex = _reciterIndex;
-            ReciterList.ScrollIntoView(ReciterList.SelectedItem);
-            _pickingReciter = false;
-            ReciterPopup.IsOpen = true;
-        }
-        else
-        {
-            ReciterPopup.IsOpen = false;
-        }
-    }
-
-    void ReciterPopup_Closed(object? sender, EventArgs e)
-    {
-        ReciterToggle.IsChecked = false;
-    }
-
-    void ReciterList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (!_ready || _pickingReciter) return;
-        int i = ReciterList.SelectedIndex;
-        if (i < 0 || i >= Audio.Reciters.Length) return;
-        if (i != _reciterIndex)
-        {
-            if (Audio.PlayingRecitation) Audio.StopAll();
-            _reciterIndex = i;
-            SettingsService.Current.ReciterId = Audio.Reciters[i].Id;
-            UpdateReciterButton();
-            SettingsService.Save();
-        }
-        ReciterPopup.IsOpen = false;
-    }
-
-    bool _pickingStopAt;
-
-    void Continue_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        bool on = ContinueCheck.IsChecked == true;
-        if (on == SettingsService.Current.ContinueReading) return;
-        SettingsService.Current.ContinueReading = on;
-        SettingsService.Save();
-        PlayButton.ToolTip = on ? L10n.T("Play recitation (continuous reading)","تشغيل التلاوة (متابعة القراءة)") : L10n.T("Play recitation","تشغيل التلاوة");
-        ShowStatus(on ? "Continuous reading on — the recitation will continue to the next verses"
-                      : "Continuous reading off");
-    }
-
-    void StopAtToggle_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        if (StopAtToggle.IsChecked == true)
-        {
-            _pickingStopAt = true;
-            StopAtList.ItemsSource = StopAtLabels.ToList();
-            StopAtList.SelectedIndex = Math.Clamp(SettingsService.Current.StopAt, 0, StopAtLabels.Length - 1);
-            StopAtList.ScrollIntoView(StopAtList.SelectedItem);
-            _pickingStopAt = false;
-            StopAtPopup.IsOpen = true;
-        }
-        else
-        {
-            StopAtPopup.IsOpen = false;
-        }
-    }
-
-    void StopAtPopup_Closed(object? sender, EventArgs e)
-    {
-        StopAtToggle.IsChecked = false;
-    }
-
-    void StopAtList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (!_ready || _pickingStopAt) return;
-        int i = StopAtList.SelectedIndex;
-        if (i < 0) return;
-        if (i != SettingsService.Current.StopAt)
-        {
-            SettingsService.Current.StopAt = i;
-            StopAtToggle.Content = StopAtLabel(i);
-            SettingsService.Save();
-        }
-        StopAtPopup.IsOpen = false;
-    }
-
-    void Opacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        if (!_ready) return;
-        SettingsService.Current.Opacity = OpacitySlider.Value;
-        Opacity = OpacitySlider.Value;
-        SettingsService.Save();
-    }
-
-    void FontSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        if (!_ready) return;
-        SettingsService.Current.ArabicFontSize = FontSizeSlider.Value;
-        ApplyFontSize();
-        SettingsService.Save();
-    }
-
-    // ---------- theme picker ----------
-
-    bool _pickingTheme;
-
-    void ThemeToggle_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        if (ThemeToggle.IsChecked == true)
-        {
-            _pickingTheme = true;
-            ThemeList.ItemsSource = Enumerable.Range(0, ThemeService.Themes.Length).Select(ThemeService.DisplayName).ToList();
-            ThemeList.SelectedIndex = Array.FindIndex(ThemeService.Themes, t => t.Id == SettingsService.Current.Theme);
-            if (ThemeList.SelectedIndex < 0) ThemeList.SelectedIndex = 0;
-            ThemeList.ScrollIntoView(ThemeList.SelectedItem);
-            _pickingTheme = false;
-            ThemePopup.IsOpen = true;
-        }
-        else
-        {
-            ThemePopup.IsOpen = false;
-        }
-    }
-
-    void ThemePopup_Closed(object? sender, EventArgs e) => ThemeToggle.IsChecked = false;
-
-    void ThemeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (!_ready || _pickingTheme) return;
-        int i = ThemeList.SelectedIndex;
-        if (i < 0 || i >= ThemeService.Themes.Length) return;
-        var id = ThemeService.Themes[i].Id;
-        if (id != SettingsService.Current.Theme)
-        {
-            SettingsService.Current.Theme = id;
-            ThemeToggle.Content = ThemeService.NameOf(id);
-            ThemeService.Apply(id);
-            if (!SettingsService.Current.PinToDesktop) WindowEffects.EnableAcrylic(this);
-            SyncFavoriteStar();
-            SettingsService.Save();
-        }
-        ThemePopup.IsOpen = false;
-    }
-
-    // ---------- translation picker ----------
-
-    bool _pickingTranslation;
-
-    void TranslationToggle_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        if (TranslationToggle.IsChecked == true)
-        {
-            _pickingTranslation = true;
-            TranslationList.ItemsSource = Translations.Available
-                .Select(t => Translations.DisplayName(Array.FindIndex(Translations.Available, a => a.Id == t.Id))
-                             + (Translations.IsDownloaded(t.Id) ? "" : L10n.T("  (download)", "  (تنزيل)"))).ToList();
-            TranslationList.SelectedIndex = Array.FindIndex(Translations.Available, t => t.Id == SettingsService.Current.TranslationId);
-            if (TranslationList.SelectedIndex < 0) TranslationList.SelectedIndex = 0;
-            TranslationList.ScrollIntoView(TranslationList.SelectedItem);
-            _pickingTranslation = false;
-            TranslationPopup.IsOpen = true;
-        }
-        else
-        {
-            TranslationPopup.IsOpen = false;
-        }
-    }
-
-    void TranslationPopup_Closed(object? sender, EventArgs e) => TranslationToggle.IsChecked = false;
-
-    async void TranslationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (!_ready || _pickingTranslation) return;
-        int i = TranslationList.SelectedIndex;
-        if (i < 0 || i >= Translations.Available.Length) return;
-        var id = Translations.Available[i].Id;
-        var name = Translations.DisplayName(i);
-        TranslationPopup.IsOpen = false;
-        if (id == SettingsService.Current.TranslationId) return;
-
-        if (!Translations.IsDownloaded(id))
-        {
-            if (!HasInternet())
-            {
-                ShowStatus(L10n.T("Needs internet to download this translation", "يلزم إنترنت لتنزيل هذه الترجمة"));
-                SyncTranslationToggle();
-                return;
-            }
-            ShowStatus(L10n.T($"Downloading {name}…", $"جارٍ تنزيل {name}…"));
-            bool ok = await Translations.DownloadAsync(id);
-            if (!ok)
-            {
-                ShowStatus(L10n.T("Could not download the translation", "تعذر تنزيل الترجمة"));
-                SyncTranslationToggle();
-                return;
-            }
-        }
-        SettingsService.Current.TranslationId = id;
-        SettingsService.Save();
-        Translations.Load(id);
-        SyncTranslationToggle();
-        ApplyPassage(animate: true);
-        ShowStatus(L10n.T($"Translation: {name}", $"الترجمة: {name}"));
-    }
-
-    void SyncTranslationToggle() =>
-        TranslationToggle.Content = TranslationName(SettingsService.Current.TranslationId);
 
     // ---------- search ----------
 
@@ -1398,107 +886,7 @@ public partial class MainWindow : Window
 
     void FavoritesPopup_Closed(object? sender, EventArgs e) { }
 
-    // ---------- sleep timer ----------
 
-    bool _pickingSleep;
-
-    void SleepToggle_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        if (SleepToggle.IsChecked == true)
-        {
-            _pickingSleep = true;
-            SleepList.ItemsSource = SleepOptions.Select(SleepLabel).ToList();
-            SleepList.SelectedIndex = Array.IndexOf(SleepOptions, SettingsService.Current.SleepMinutes) is >= 0 and int ix ? ix : 0;
-            SleepList.ScrollIntoView(SleepList.SelectedItem);
-            _pickingSleep = false;
-            SleepPopup.IsOpen = true;
-        }
-        else
-        {
-            SleepPopup.IsOpen = false;
-        }
-    }
-
-    void SleepPopup_Closed(object? sender, EventArgs e) => SleepToggle.IsChecked = false;
-
-    void SleepList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (!_ready || _pickingSleep) return;
-        int i = SleepList.SelectedIndex;
-        if (i < 0 || i >= SleepOptions.Length) return;
-        int minutes = SleepOptions[i];
-        if (minutes != SettingsService.Current.SleepMinutes)
-        {
-            SettingsService.Current.SleepMinutes = minutes;
-            SleepToggle.Content = SleepLabel(minutes);
-            Audio.SetSleepTimer(minutes);
-            SyncSleepCountdown();
-            SettingsService.Save();
-            ShowStatus(minutes > 0 ? L10n.T($"Sleep timer: recitation stops after {minutes} min", $"مؤقت النوم: تتوقف التلاوة بعد {minutes} دقيقة") : L10n.T("Sleep timer off", "مؤقت النوم متوقف"));
-        }
-        SleepPopup.IsOpen = false;
-    }
-
-    void ClearResume_Click(object sender, RoutedEventArgs e)
-    {
-        SettingsService.Current.ResumeS = -1;
-        SettingsService.Current.ResumeA = -1;
-        SettingsService.Save();
-        UpdateResumeText();
-        ShowStatus(L10n.T("Reading position cleared", "مُسح موضع القراءة"));
-    }
-
-    // Shows where continuous reading would resume, so the saved position is
-    // never an invisible surprise.
-    void UpdateResumeText()
-    {
-        var s = SettingsService.Current;
-        if (ResumeText == null) return;
-        if (s.ResumeS > 0 && s.ResumeA > 0)
-        {
-            string where = L10n.SurahRef(s.ResumeS, s.ResumeA);
-            ResumeText.Text = s.ContinueReading
-                ? L10n.T($"Recitation will resume from {where} the next time you press play.",
-                         $"سيتم استئناف التلاوة من {where} عند التشغيل التالي.")
-                : L10n.T($"Position {where} saved — turn on \u201CKeep reading\u201D above to resume from it.",
-                         $"حُفظ الموضع {where} — فعّل \u201Cمتابعة القراءة\u201D أعلاه للاستئناف منه.");
-        }
-        else
-        {
-            ResumeText.Text = L10n.T(
-                "Play recitation and your position is saved automatically.",
-                "شغّل التلاوة ويُحفظ موضعك تلقائياً.");
-        }
-    }
-
-
-    void Topmost_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        bool on = TopmostCheck.IsChecked == true;
-        if (on == SettingsService.Current.AlwaysOnTop) return;
-        SetAlwaysOnTop(on);
-    }
-
-    void Pin_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        bool on = PinCheck.IsChecked == true;
-        if (on == SettingsService.Current.PinToDesktop) return;
-        SetPin(on);
-    }
-
-    void Startup_Changed(object sender, RoutedEventArgs e)
-    {
-        if (!_ready) return;
-        bool on = StartupCheck.IsChecked == true;
-        if (on == Autostart.IsEnabled()) return;
-        Autostart.Set(on);
-        SettingsService.Current.LaunchAtStartup = on;
-        SettingsService.Save();
-        ShowStatus(on ? L10n.T("Mishkat will start with Windows", "سيبدأ مشكاة مع Windows") : L10n.T("Autostart disabled", "أُلغي البدء التلقائي"));
-    }
 
     void SetAlwaysOnTop(bool on)
     {
@@ -1506,7 +894,6 @@ public partial class MainWindow : Window
         SettingsService.Current.AlwaysOnTop = on;
         Topmost = on;
         SettingsService.Save();
-        SyncSettingsChecks();
         SyncMenuChecks();
     }
 
@@ -1531,9 +918,19 @@ public partial class MainWindow : Window
             ShowStatus(L10n.T("Unpinned from the desktop", "أُلغي التثبيت من سطح المكتب"));
         }
         SettingsService.Save();
-        SyncSettingsChecks();
         SyncMenuChecks();
     }
+
+    public void UnpinIfPinned()
+    {
+        if (!SettingsService.Current.PinToDesktop) return;
+        StopBottomLoop();
+        WindowEffects.UnpinFromDesktop(Handle);
+        WindowEffects.EnableAcrylic(this);
+        ShowStatus(L10n.T("Unpinned from the desktop", "أُلغي التثبيت من سطح المكتب"));
+    }
+
+    public void ApplyPinFromSettings() => ApplyPin();
 
     // ---------- header buttons ----------
 
@@ -1559,7 +956,7 @@ public partial class MainWindow : Window
         SyncFavoriteStar();
     }
 
-    void SyncMenuChecks()
+    public void SyncMenuChecks()
     {
         MenuTopmost.IsChecked = SettingsService.Current.AlwaysOnTop;
         MenuPin.IsChecked = SettingsService.Current.PinToDesktop;
@@ -1681,8 +1078,7 @@ public partial class MainWindow : Window
             SettingsService.Current.PinToDesktop = false;
             SettingsService.Save();
             WindowEffects.EnableAcrylic(this);
-            SyncSettingsChecks();
-            SyncMenuChecks();
+                SyncMenuChecks();
             ShowStatus(L10n.T("Could not pin — right-click and try again", "تعذر التثبيت — انقر بزر الفأرة الأيمن وحاول مجدداً"));
             return;
         }
